@@ -6,20 +6,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 
-class User extends Model
+class Admin extends Model
 {
     use HasFactory;
 
-    protected $table = 'users';
-    protected $primaryKey = 'id_user';
+    protected $table = 'admins';
+    protected $primaryKey = 'id_admin';
     public $incrementing = false;
     protected $keyType = 'string';
 
     protected $fillable = [
-        'id_user',
+        'id_admin',
         'name',
         'email',
-        'phone_number',
         'password',
     ];
 
@@ -31,37 +30,37 @@ class User extends Model
        RELATIONSHIPS
     ============================ */
 
-    // 1 user → banyak booking
+    // 1 admin → banyak booking
     public function bookings()
     {
-        return $this->hasMany(Booking::class, 'id_user', 'id_user');
+        return $this->hasMany(Booking::class, 'id_admin', 'id_admin');
     }
 
-    // 1 user → banyak notifikasi user
+    // 1 admin → banyak notifikasi admin
     public function notifications()
     {
-        return $this->hasMany(UserNotification::class, 'id_user', 'id_user');
+        return $this->hasMany(AdminNotification::class, 'id_admin', 'id_admin');
     }
 
     /* ===========================
        ACCESSORS & HELPERS
     ============================ */
 
-    // Encrypt password saat diset
+    // Hash password otomatis
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = Hash::make($value);
     }
 
-    // Helper: total booking user
-    public function totalBookings()
+    // Helper: total booking yang disetujui admin
+    public function approvedBookings()
     {
-        return $this->bookings()->count();
+        return $this->bookings()->where('status', 'Approved')->count();
     }
 
-    // Helper: booking aktif user
-    public function activeBookings()
+    // Helper: notifikasi belum dibaca
+    public function unreadNotifications()
     {
-        return $this->bookings()->whereIn('status', ['Pending', 'Approved'])->get();
+        return $this->notifications()->where('is_read', false)->get();
     }
 }
