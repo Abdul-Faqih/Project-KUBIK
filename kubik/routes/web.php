@@ -20,10 +20,8 @@ Route::prefix('admin')->group(function () {
         ->middleware('web')
         ->name('admin.dashboard.home');
 
-    // Control Assets page
-    Route::get('/dashboard/assets', function () {
-        return view('admin.dashboard.asset');
-    })->name('admin.dashboard.assets');
+    Route::get('/dashboard/assets', [DashboardController::class, 'assets'])
+        ->name('admin.dashboard.assets');
 
     // Permissions / Bookings page
     Route::get('/dashboard/bookings', function () {
@@ -31,8 +29,10 @@ Route::prefix('admin')->group(function () {
     })->name('admin.dashboard.permissions');
 
     // Export Booking
-    Route::get('/export/bookings', [ExportController::class, 'exportBookings'])
-        ->name('admin.export.bookings');
+    Route::get('/export/bookings', [
+        ExportController::class,
+        'exportBookings'
+    ])->name('admin.export.bookings');
 
     // ===============================
     // AUTH

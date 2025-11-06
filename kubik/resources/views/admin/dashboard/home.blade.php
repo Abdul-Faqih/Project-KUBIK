@@ -21,13 +21,13 @@
             </button>
             <div id="dropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-md py-2">
                 <a href="{{ route('admin.export.bookings') }}"
-                    class="block px-4 py-2 text-sm text-[#2A2A2A] hover:bg-[#FBFBFB]">Export Loan Report</a>
+                    class="block px-4 py-2 text-base text-[#2A2A2A] hover:bg-[#FBFBFB]">Export Loan Report</a>
             </div>
         </div>
     </div>
 
     <!-- ROW 2: Statistic Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="grid grid-cols-1 base:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         @php
             $cards = [
                 ['title' => 'Total Assets', 'value' => $totalAssets ?? 0, 'showToday' => false],
@@ -40,7 +40,7 @@
         @foreach ($cards as $card)
             <div class="bg-white rounded-2xl shadow-md p-6 flex flex-col justify-between hover:shadow-lg transition">
                 <div>
-                    <p class="text-sm text-[#2A2A2A] font-semibold">{{ $card['title'] }}</p>
+                    <p class="text-base text-[#2A2A2A] font-semibold">{{ $card['title'] }}</p>
                     <h2 class="text-3xl font-bold text-[#F26E21] mt-3">{{ number_format($card['value']) }}</h2>
                 </div>
 
@@ -55,16 +55,16 @@
     <!-- ====== ROW 3: CHARTS ====== -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
         <!-- Asset Distribution -->
-        <div class="bg-white rounded-2xl shadow-sm border border-[#FBFBFB] p-6">
-            <h3 class="text-[#F26E21] font-semibold mb-4 text-base">Asset Distribution</h3>
+        <div class="bg-white rounded-2xl shadow-base border border-[#FBFBFB] p-6">
+            <h3 class="text-[#F26E21] font-semibold mb-4 text-xl">Asset Distribution</h3>
             <div class="flex justify-center items-center h-[300px]">
                 <canvas id="assetDistributionChart"></canvas>
             </div>
         </div>
 
         <!-- Loan Activities -->
-        <div class="bg-white rounded-2xl shadow-sm border border-[#FBFBFB] p-6">
-            <h3 class="text-[#F26E21] font-semibold mb-4 text-base">Loan Activities</h3>
+        <div class="bg-white rounded-2xl shadow-base border border-[#FBFBFB] p-6">
+            <h3 class="text-[#F26E21] font-semibold mb-4 text-xl">Loan Activities</h3>
             <div class="h-[300px]">
                 <canvas id="loanActivitiesChart"></canvas>
             </div>
@@ -74,14 +74,14 @@
     <!-- ROW 4: Activity Table -->
     <div class="bg-white rounded-2xl shadow p-6">
         <div class="flex items-center justify-between mb-4">
-            <h3 class="text-[#F26E21] font-semibold">Activity Table</h3>
+            <h3 class="text-[#F26E21] font-semibold mb-4 text-xl">Activity Table</h3>
 
             <!-- Date picker -->
             <form method="GET" action="{{ route('admin.dashboard.home') }}" class="flex items-center space-x-2">
                 <input type="date" name="date" value="{{ \Carbon\Carbon::parse($selectedDate)->format('Y-m-d') }}"
-                    class="border border-[#ECEFF3] rounded-md px-3 py-1 text-sm text-[#2A2A2A] focus:outline-none focus:ring-2 focus:ring-[#F26E21]" />
+                    class="border border-[#ECEFF3] rounded-md px-3 py-1 text-base text-[#2A2A2A] focus:outline-none focus:ring-2 focus:ring-[#F26E21]" />
                 <button type="submit"
-                    class="bg-[#F26E21] text-white px-3 py-1 rounded-md text-sm hover:bg-[#e85f16] transition">Apply</button>
+                    class="bg-[#F26E21] text-white px-3 py-1 rounded-md text-base hover:bg-[#e85f16] transition">Apply</button>
             </form>
         </div>
 
@@ -104,13 +104,13 @@
                         <td class="py-2 px-3 text-left">{{ $item->user?->name ?? 'Unknown' }}</td>
                         <td class="py-2 px-3 text-center">
                             @if($item->status === 'Pending')
-                                <span class="px-3 py-1 rounded-full text-xs bg-yellow-100 text-yellow-600">● Pending</span>
+                                <span class="px-3 py-1 rounded-full text-xs bg-yellow-100 text-yellow-600">Pending</span>
                             @elseif($item->status === 'Rejected')
-                                <span class="px-3 py-1 rounded-full text-xs bg-red-100 text-red-600">● Rejected</span>
+                                <span class="px-3 py-1 rounded-full text-xs bg-red-100 text-red-600">Rejected</span>
                             @elseif($item->status === 'Approved')
-                                <span class="px-3 py-1 rounded-full text-xs bg-blue-100 text-blue-600">● Approved</span>
+                                <span class="px-3 py-1 rounded-full text-xs bg-blue-100 text-blue-600">Approved</span>
                             @else
-                                <span class="px-3 py-1 rounded-full text-xs bg-green-100 text-green-600">● Completed</span>
+                                <span class="px-3 py-1 rounded-full text-xs bg-green-100 text-green-600">Completed</span>
                             @endif
                         </td>
                         <td class="py-2 px-3 text-center">
@@ -127,7 +127,7 @@
                             @if($item->status !== 'Completed')
                                 <span class="text-[#AEAEAE] text-xs">-</span>
                             @elseif($item->is_late)
-                                <span class="px-3 py-1 rounded-full text-xs bg-red-100 text-red-600">Late</span>
+                                <span class="px-3 py-1 rounded-full text-xs bg-red-100 text-red-600">Lated</span>
                             @else
                                 <span class="px-3 py-1 rounded-full text-xs bg-green-100 text-green-600">On Time</span>
                             @endif

@@ -8,6 +8,8 @@ use App\Models\Booking;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Category;
+use App\Models\Type;
 
 class DashboardController extends Controller
 {
@@ -112,4 +114,15 @@ class DashboardController extends Controller
             'loanLateReturning'
         ));
     }
+
+public function assets()
+{
+    $types = Type::orderBy('id_type')->get();
+    $categories = Category::orderBy('id_category')->get();
+    $assets = Asset::with(['master.type', 'master.category'])->get();
+
+    return view('admin.dashboard.assets', compact('types', 'categories', 'assets'));
+}
+
+
 }

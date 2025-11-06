@@ -187,87 +187,6 @@ return new class extends Migration {
                 END IF;
             END
         ");
-
-        /*  ============================================================
-             AUTO NOTIFIKASI USER & ADMIN (FULL SMART LOGIC)
-            ============================================================ */
-
-        DB::unprepared("
-        CREATE TRIGGER trg_booking_after_insert_notif
-        AFTER INSERT ON bookings
-        FOR EACH ROW
-        BEGIN
-
-        INSERT INTO user_notifications (id_user, message, is_read, created_at, updated_at)
-        VALUES (
-            NEW.id_user,
-            CONCAT('Your booking request ', NEW.id_booking, ' has been created and is pending approval.'),
-            FALSE, NOW(), NOW()
-        );
-
-        INSERT INTO admin_notifications (id_admin, message, is_read, created_at, updated_at)
-        SELECT id_admin,
-               CONCAT('New booking request received: ', NEW.id_booking),
-               FALSE, NOW(), NOW()
-        FROM admins
-        LIMIT 1;
-    END
-");
-
-        DB::unprepared("
-        CREATE TRIGGER trg_booking_after_update_notif
-        AFTER UPDATE ON bookings
-        FOR EACH ROW
-        BEGIN
-        IF NEW.status = 'Approved' THEN
-            INSERT INTO user_notifications (id_user, message, is_read, created_at, updated_at)
-            VALUES (
-                NEW.id_user,
-                CONCAT('Your booking ', NEW.id_booking, ' has been approved.'),
-                FALSE, NOW(), NOW()
-            );
-        
-            ELSEIF NEW.status = 'Rejected' THEN
-            INSERT INTO user_notifications (id_user, message, is_read, created_at, updated_at)
-            VALUES (
-                NEW.id_user,
-                CONCAT('Your booking ', NEW.id_booking, ' has been rejected.'),
-                FALSE, NOW(), NOW()
-            );
-
-            ELSEIF NEW.status = 'Pending' AND NEW.return_at IS NOT NULL THEN
-            INSERT INTO admin_notifications (id_admin, message, is_read, created_at, updated_at)
-            VALUES (
-                OLD.id_admin,
-                CONCAT('User ', NEW.id_user, ' has requested to return assets for booking ', NEW.id_booking, '.'),
-                FALSE, NOW(), NOW()
-            );
-
-            INSERT INTO user_notifications (id_user, message, is_read, created_at, updated_at)
-            VALUES (
-                NEW.id_user,
-                CONCAT('Your return request for booking ', NEW.id_booking, ' has been submitted.'),
-                FALSE, NOW(), NOW()
-            );
-
-            ELSEIF NEW.status = 'Completed' THEN
-            INSERT INTO admin_notifications (id_admin, message, is_read, created_at, updated_at)
-            VALUES (
-                OLD.id_admin,
-                CONCAT('User ', NEW.id_user, ' has returned all assets for booking ', NEW.id_booking, '.'),
-                FALSE, NOW(), NOW()
-            );
-
-            INSERT INTO user_notifications (id_user, message, is_read, created_at, updated_at)
-            VALUES (
-                NEW.id_user,
-                CONCAT('Your return for booking ', NEW.id_booking, ' has been approved.'),
-                FALSE, NOW(), NOW()
-            );
-        END IF;
-    END
-");
-
     }
 
     public function down(): void
@@ -285,17 +204,7 @@ return new class extends Migration {
             DROP TRIGGER IF EXISTS trg_booking_after_insert_notif;
             DROP TRIGGER IF EXISTS trg_booking_after_update_notif;
             DROP TRIGGER IF EXISTS trg_admins_autoid;
-            DROP TRIGGER IF EXISTS trg_users_autoid;
-            DROP TRIGGER IF EXISTS trg_user_notif_autoid;
-            DROP TRIGGER IF EXISTS trg_admin_notif_autoid;
-            DROP TRIGGER IF EXISTS trg_bookings_after_update;
-            DROP TRIGGER IF EXISTS trg_bookings_before_update;
-            DROP TRIGGER IF EXISTS trg_booking_after_insert_notif;
-            DROP TRIGGER IF EXISTS trg_booking_after_update_notif;
-            DROP TRIGGER IF EXISTS trg_admins_autoid;
-            DROP TRIGGER IF EXISTS trg_users_autoid;
-            DROP TRIGGER IF EXISTS trg_user_notif_autoid;
-            DROP TRIGGER IF EXISTS trg_admin_notif_autoid;
+            DROP TRIGGER IF EXISTS trg_users_autoid;            
         ");
     }
 };
