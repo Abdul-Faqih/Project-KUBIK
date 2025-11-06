@@ -95,10 +95,10 @@ class Booking extends Model
     public function statusLabel()
     {
         switch ($this->status) {
-            case 'Pending': return '🕒 Waiting Approval';
-            case 'Approved': return '✅ Approved';
-            case 'Rejected': return '❌ Rejected';
-            case 'Completed': return '📦 Completed';
+            case 'Pending': return 'Waiting Approval';
+            case 'Approved': return 'Approved';
+            case 'Rejected': return 'Rejected';
+            case 'Completed': return 'Completed';
             default: return 'Unknown';
         }
     }
