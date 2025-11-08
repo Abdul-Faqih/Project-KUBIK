@@ -1,5 +1,3 @@
-# Project-KUBIK
-````markdown
 # 🧩 Project KUBIK — Laravel 12 Asset Management System
 
 ![Laravel](https://img.shields.io/badge/Laravel-12.x-ff2d20?logo=laravel&logoColor=white)
@@ -83,7 +81,7 @@ php artisan key:generate
 php artisan migrate
 ```
 
-Jika ingin menambahkan data awal (dummy data), jalankan:
+Tambahkan data awal (dummy data), jalankan:
 
 ```bash
 php artisan db:seed
@@ -231,7 +229,7 @@ Route::prefix('admin/dashboard')->group(function () {
 3. Buat branch baru:
 
    ```bash
-   git checkout -b fitur-baru
+   git checkout -b branch-nama
    ```
 4. Lakukan perubahan
 5. Commit dan push:
@@ -261,17 +259,7 @@ Route::prefix('admin/dashboard')->group(function () {
 | Nama                                   | Peran                               | Kontak                                   |
 | -------------------------------------- | ----------------------------------- | ---------------------------------------- |
 | **Abdul Faqih**                        | Fullstack Developer / Project Owner | [GitHub](https://github.com/Abdul-Faqih) |
-| (Opsional) Tambahkan Nama Anggota lain | Frontend / Backend                  | —                                        |
-
----
-
-## 📸 10. Preview UI
-
-| Dashboard                                                                                                | Asset List                                                                                             | Add Asset                                                                                                |
-| -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
-| ![Dashboard](https://raw.githubusercontent.com/Abdul-Faqih/Project-KUBIK/main/screenshots/dashboard.png) | ![Asset List](https://raw.githubusercontent.com/Abdul-Faqih/Project-KUBIK/main/screenshots/assets.png) | ![Add Asset](https://raw.githubusercontent.com/Abdul-Faqih/Project-KUBIK/main/screenshots/add_asset.png) |
-
-> (Pastikan folder `/screenshots` berisi file gambar yang sesuai)
+| Tambahkan Nama Kamu  | Frontend / Backend                  | —                                        |
 
 ---
 
@@ -281,33 +269,3 @@ Project ini dikembangkan untuk keperluan akademik.
 Silakan gunakan dan modifikasi dengan mencantumkan atribusi ke pengembang asli.
 
 ---
-
-✨ **KUBIK — A Simple yet Smart Asset Management System.**
-*“Efficiently manage, monitor, and maintain your assets with ease.”*
-
-```
-
----
-
-### 💡 Petunjuk penggunaan:
-1. Simpan file di root project kamu dengan nama:
-```
-
-README.md
-
-```
-2. (Opsional) Tambahkan folder `screenshots/` berisi:
-```
-
-dashboard.png
-assets.png
-add_asset.png
-
-```
-biar preview GitHub-nya tampil otomatis.
-
----
-
-Kalau lo mau, gue bisa bantu tambahin **badge versi Laravel, link ke dokumentasi Laravel/Tailwind, dan daftar fitur ke depannya (roadmap)** biar repo lo kelihatan seperti project profesional open-source.  
-Mau gue buatin versi “enhanced professional open-source README”?
-```
