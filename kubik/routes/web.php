@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\AssetController;
+use App\Http\Controllers\Admin\AssetMasterController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\TypeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\Auth\AdminAuthController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -20,10 +24,10 @@ Route::prefix('admin')->group(function () {
         ->middleware('web')
         ->name('admin.dashboard.home');
 
-    // Control Assets page
-    Route::get('/dashboard/assets', function () {
-        return view('admin.dashboard.asset');
-    })->name('admin.dashboard.assets');
+    Route::get('/dashboard/assets', [DashboardController::class, 'assets'])
+        ->name('admin.dashboard.assets');
+    Route::get('/assets/{id_asset}', [AssetController::class, 'show'])->name('admin.assets.detail');
+    Route::get('/asset-masters/{id_master}', [AssetMasterController::class, 'show'])->name('admin.assetmasters.detail');
 
     // Permissions / Bookings page
     Route::get('/dashboard/bookings', function () {
@@ -31,8 +35,25 @@ Route::prefix('admin')->group(function () {
     })->name('admin.dashboard.permissions');
 
     // Export Booking
-    Route::get('/export/bookings', [ExportController::class, 'exportBookings'])
-        ->name('admin.export.bookings');
+    Route::get('/export/bookings', [
+        ExportController::class,
+        'exportBookings'
+    ])->name('admin.export.bookings');
+
+    // Route untuk filter dan search aset
+    Route::get('/dashboard/assets/filter', [DashboardController::class, 'filterAssets'])->name('admin.assets.filter');
+
+    // Add Type
+    Route::get('/types/add', [TypeController::class, 'create'])->name('admin.types.create');
+    Route::post('/types/store', [TypeController::class, 'store'])->name('admin.types.store');
+
+    // Add Category
+    Route::get('/categories/add', [CategoryController::class, 'create'])->name('admin.categories.create');
+    Route::post('/categories/store', [CategoryController::class, 'store'])->name('admin.categories.store');
+
+    // Add Asset
+    Route::get('/dashboard/assets/add', [AssetMasterController::class, 'create'])->name('admin.assets.create');
+    Route::post('/dashboard/assets/store', [AssetMasterController::class, 'store'])->name('admin.assets.store');
 
     // ===============================
     // AUTH

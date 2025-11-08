@@ -64,7 +64,7 @@ class BookingSeeder extends Seeder
                 ];
 
                 // Ambil minimal 1 aset, maksimal 4 aset
-                $totalAssets = rand(5, 20);
+                $totalAssets = rand(3, 10);
                 $selectedAssets = collect($assets)->shuffle()->take($totalAssets)->toArray();
 
                 // Pastikan minimal 1 asset selalu dipilih

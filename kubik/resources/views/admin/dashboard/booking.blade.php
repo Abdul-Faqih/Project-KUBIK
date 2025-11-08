@@ -3,5 +3,5 @@
 @section('title', 'Dashboard - Bookings')
 
 @section('content')
-
+    
 @endsection
