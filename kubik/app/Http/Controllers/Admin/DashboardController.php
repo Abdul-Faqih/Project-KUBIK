@@ -123,6 +123,32 @@ public function assets()
 
     return view('admin.dashboard.assets', compact('types', 'categories', 'assets'));
 }
+public function filterAssets(Request $request)
+{
+    $query = Asset::with(['master.type', 'master.category']);
 
+    // Pencarian (ID asset atau nama master)
+    if ($request->filled('search')) {
+        $search = $request->input('search');
+        $query->where('id_asset', 'like', "%$search%")
+              ->orWhereHas('master', fn($q) => $q->where('name', 'like', "%$search%"));
+    }
+
+    // Filter berdasarkan type
+    if ($request->filled('type')) {
+        $query->whereHas('master.type', fn($q) => $q->where('name', $request->type));
+    }
+
+    // Filter berdasarkan category
+    if ($request->filled('category')) {
+        $query->whereHas('master.category', fn($q) => $q->where('name', $request->category));
+    }
+
+    $assets = $query->get();
+
+    return response()->json([
+        'html' => view('admin.dashboard.partials.asset_table', compact('assets'))->render(),
+    ]);
+}
 
 }
