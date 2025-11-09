@@ -8,6 +8,39 @@
 
 ---
 
+## Daftar function
+### Admin
+- [x] login & regist
+- [x] dashboard awal
+- [x] tampil chart
+- [x] tampil asset, cat, type
+- [x] search & filter asset
+- [x] tampil detail asset, cat, type
+- [x] add asset, cat, type
+- [ ] remove asset, cat, type
+- [ ] update asset, cat, type
+- [ ] tampil booking permissions
+- [ ] tampil detai booking permissions
+- [ ] setujui permission
+- [ ] tolak permission
+- [ ] notifikasi
+- [ ] ubah profil
+- [ ] logout
+
+### User
+- [ ] login & regist
+- [ ] dashboard awal
+- [ ] tampil ketersedian asset
+- [ ] membuat permission
+- [ ] mengembalikan asset
+- [ ] tampil status booking
+- [ ] tampil detail booking
+- [ ] tampil riwayat booking
+- [ ] notifikasi
+- [ ] ubah profil
+- [ ] logout
+---
+
 ## 📘 Deskripsi Singkat
 
 **KUBIK** adalah sistem manajemen aset berbasis web yang dikembangkan menggunakan **Laravel v12** dan **Tailwind CSS**.  

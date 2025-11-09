@@ -8,6 +8,15 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
+
+    // Category Detail
+    public function show($id)
+    {
+        $category = Category::findOrFail($id);
+        return view('admin.dashboard.assets.detail_category', compact('category'));
+    }
+
+    // Add Category
     public function create()
     {
         return view('admin.dashboard.assets.add_category');

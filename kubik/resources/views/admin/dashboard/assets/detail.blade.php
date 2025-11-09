@@ -1,5 +1,5 @@
 @extends('admin.dashboard.layout.layoutdashboard')
-
+@section('title', 'Detail Asset')
 @section('content')
     <div class="-mt-5">
         <!-- Breadcrumb -->
@@ -33,7 +33,7 @@
                 <div>
                     <label class="block text-[#2A2A2A] text-base mb-2">ID Asset Master</label>
                     <a href="{{ route('admin.assetmasters.detail', $asset->id_master) }}"
-                        class="block w-full border border-[#ECEFF3] rounded-md px-3 py-2 text-base bg-[#FBFBFB] text-[#F26E21] hover:underline">
+                        class="block w-full border border-[#ECEFF3] rounded-md px-3 py-2 text-base text-[#F26E21] hover:underline">
                         {{ $asset->id_master }}
                     </a>
                 </div>
@@ -41,7 +41,7 @@
                 <div>
                     <label class="block text-[#2A2A2A] text-base mb-1">Name</label>
                     <input type="text" value="{{ $asset->master->name ?? '-' }}"
-                        class="w-full border border-[#ECEFF3] rounded-md px-3 py-2 text-base bg-[#FBFBFB]" disabled />
+                        class="w-full border border-[#ECEFF3] rounded-md px-3 py-2 text-base" disabled />
                 </div>
             </div>
 
@@ -49,25 +49,25 @@
                 <div>
                     <label class="block text-[#2A2A2A] text-base mb-1">Type</label>
                     <input type="text" value="{{ $asset->master->type->name ?? '-' }}"
-                        class="w-full border border-[#ECEFF3] rounded-md px-3 py-2 text-base bg-[#FBFBFB]" disabled />
+                        class="w-full border border-[#ECEFF3] rounded-md px-3 py-2 text-base" disabled />
                 </div>
 
                 <div>
                     <label class="block text-[#2A2A2A] text-base mb-1">Category</label>
                     <input type="text" value="{{ $asset->master->category->name ?? '-' }}"
-                        class="w-full border border-[#ECEFF3] rounded-md px-3 py-2 text-base bg-[#FBFBFB]" disabled />
+                        class="w-full border border-[#ECEFF3] rounded-md px-3 py-2 text-base" disabled />
                 </div>
 
                 <div>
                     <label class="block text-[#2A2A2A] text-base mb-1">Condition</label>
                     <input type="text" value="{{ $asset->condition }}"
-                        class="w-full border border-[#ECEFF3] rounded-md px-3 py-2 text-base bg-[#FBFBFB]" disabled />
+                        class="w-full border border-[#ECEFF3] rounded-md px-3 py-2 text-base" disabled />
                 </div>
 
                 <div>
                     <label class="block text-[#2A2A2A] text-base mb-1">Status</label>
                     <input type="text" value="{{ $asset->status }}"
-                        class="w-full border border-[#ECEFF3] rounded-md px-3 py-2 text-base bg-[#FBFBFB]" disabled />
+                        class="w-full border border-[#ECEFF3] rounded-md px-3 py-2 text-base" disabled />
                 </div>
             </div>
         </div>
