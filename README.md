@@ -190,6 +190,7 @@ http://127.0.0.1:8000/admin/register
 * Trigger update status otomatis saat booking & return
 * Stock tracking otomatis (`stock_total` dan `stock_available`)
 
+<<<<<<< HEAD
 ### Daftar function
 #### Admin
 - [x] login & regist
@@ -221,6 +222,17 @@ http://127.0.0.1:8000/admin/register
 - [ ] notifikasi
 - [ ] ubah profil
 - [ ] logout
+=======
+## Daftar function
+### Admin
+#### Function
+- [x] Buat folder proyek
+- [ ] Tuliskan dokumentasi awal
+- [x] Tambahkan file `README.md`
+- [ ] Deploy aplikasi ke server
+
+
+>>>>>>> 424e519fc3a294ee8ff7d8a09e0a5193010bee35
 ---
 
 ## 🧩 6. Cara Menambah Fitur Baru
