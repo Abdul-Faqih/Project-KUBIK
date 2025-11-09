@@ -1,8 +1,8 @@
 @extends('admin.dashboard.layout.layoutdashboard')
 
 @section('content')
-<div class="p-6 bg-[#ECEFF3] min-h-screen">
-    <div class="text-sm text-[#F26E21] mb-3">
+<div class="-mt-5">
+    <div class="text-base text-[#F26E21] mb-3">
         <a href="{{ route('admin.dashboard.assets') }}" class="hover:underline">Assets</a> 
         <span class="text-[#2A2A2A]"> > Add Type</span>
     </div>
@@ -13,9 +13,9 @@
         <form action="{{ route('admin.types.store') }}" method="POST">
             @csrf
             <div class="mb-4">
-                <label class="block text-[#2A2A2A] text-sm mb-1">Name</label>
+                <label class="block text-[#2A2A2A] text-base mb-1">Name</label>
                 <input name="name" type="text" placeholder="Type" 
-                    class="w-full border border-[#ECEFF3] rounded-md px-3 py-2 text-sm bg-[#FBFBFB]" required />
+                    class="w-full border border-[#ECEFF3] rounded-md px-3 py-2 text-base focus:border-1 focus:border-[#F26E21] focus:outline-none" required />
                 <p class="text-xs text-[#AEAEAE] mt-1">Please enter type name</p>
             </div>
 

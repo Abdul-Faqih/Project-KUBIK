@@ -10,7 +10,7 @@
             <!-- TYPES LIST -->
             <div class="bg-white rounded-2xl shadow p-6">
                 <div class="flex items-center justify-between mb-3">
-                    <h3 class="text-[#F26E21] font-semibold">Types List</h3>
+                    <h3 class="text-[#F26E21] text-xl font-semibold">Types List</h3>
                     <a href="{{ route('admin.types.create') }}"
                         class="text-[#F26E21] font-semibold text-sm hover:text-[#e65d1f] transition">+ Add</a>
                 </div>
@@ -22,6 +22,7 @@
                                 <th class="py-2 px-3 text-center">No.</th>
                                 <th class="py-2 px-3 text-center">ID</th>
                                 <th class="py-2 px-3 text-center">Name</th>
+                                <th class="py-2 px-3 text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -30,6 +31,12 @@
                                     <td class="py-2 px-3 text-center">{{ $index + 1 }}</td>
                                     <td class="py-2 px-3 text-center">{{ $type->id_type }}</td>
                                     <td class="py-2 px-3">{{ $type->name }}</td>
+                                    <td class="py-2 px-3 text-center">
+                                        <a href="{{ route('admin.dashboard.types.detail', $type->id_type) }}"
+                                            class="text-[#F26E21] hover:underline">
+                                            Detail
+                                        </a>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
@@ -56,6 +63,7 @@
                                 <th class="py-2 px-3 text-center">No.</th>
                                 <th class="py-2 px-3 text-center">ID</th>
                                 <th class="py-2 px-3 text-center">Name</th>
+                                <th class="py-2 px-3 text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -64,6 +72,12 @@
                                     <td class="py-2 px-3 text-center">{{ $index + 1 }}</td>
                                     <td class="py-2 px-3 text-center">{{ $cat->id_category }}</td>
                                     <td class="py-2 px-3">{{ $cat->name }}</td>
+                                    <td class="py-2 px-3 text-center">
+                                        <a href="{{ route('admin.dashboard.categories.detail', $cat->id_category) }}"
+                                            class="text-[#F26E21] hover:underline">
+                                            Detail
+                                        </a>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
