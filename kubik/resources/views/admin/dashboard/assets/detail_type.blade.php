@@ -82,7 +82,7 @@
     </div>
 
     <!-- Delete Confirmation Modal -->
-    <div id="deleteModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+    <div id="deleteModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-2xl shadow-lg p-6 w-[380px]">
             <h3 class="text-[#F26E21] text-xl font-semibold mb-5">Delete Confirmation</h3>
             <p class="text-base text-[#2A2A2A] mb-6 text-justify">
