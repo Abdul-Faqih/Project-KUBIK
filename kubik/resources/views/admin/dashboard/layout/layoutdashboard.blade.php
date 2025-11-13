@@ -12,12 +12,12 @@
 <body class="bg-[#ECEFF3] min-h-screen flex flex-col font-sans">
 
     <!-- ================= TOP NAVBAR ================= -->
-    <header class="bg-white shadow-sm w-full flex items-center justify-between px-6 py-3">
+    <header class="bg-white shadow-base w-full flex items-center justify-between px-6 py-3">
         <!-- Left section: Logo + Nav Tabs -->
-        <div class="flex items-center space-x-6">
+        <div class="flex items-center space-x-7">
             <!-- Logo -->
             <div class="flex items-center space-x-2">
-                <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-9 h-9">
+                <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-11 h-11">
             </div>
 
             <!-- Navigation Tabs -->
@@ -25,19 +25,19 @@
                 <!-- Home -->
                 <a href="{{ route('admin.dashboard.home') }}"
                     class="flex flex-col items-center {{ request()->routeIs('admin.dashboard.home') ? 'text-[#F26E21]' : 'text-[#AEAEAE]' }} hover:text-[#F26E21] transition">
-                    <span class="text-sm">Home</span>
+                    <span class="text-base font-semibold">Home</span>
                 </a>
 
                 <!-- Assets -->
                 <a href="{{ route('admin.dashboard.assets') }}"
                     class="flex flex-col items-center {{ request()->routeIs('admin.dashboard.assets') ? 'text-[#F26E21]' : 'text-[#AEAEAE]' }} hover:text-[#F26E21] transition">
-                    <span class="text-sm">Assets</span>
+                    <span class="text-base font-semibold">Assets</span>
                 </a>
 
                 <!-- Permissions -->
                 <a href="{{ route('admin.dashboard.permissions') }}"
                     class="flex flex-col items-center {{ request()->routeIs('admin.dashboard.permissions') ? 'text-[#F26E21]' : 'text-[#AEAEAE]' }} hover:text-[#F26E21] transition">
-                    <span class="text-sm">Permissions</span>
+                    <span class="text-base font-semibold">Permissions</span>
                 </a>
             </nav>
 
@@ -50,7 +50,7 @@
 
             <a href="{{ route('admin.logout') }}"
                 class="flex flex-col items-center {{ request()->routeIs('admin.logout') ? 'text-[#F26E21]' : 'text-[#ff0000]' }} hover:text-[#aeaeae] transition">
-                <span class="text-sm">Log-out</span>
+                <span class="text-base">Log-out</span>
             </a>
         </div>
     </header>

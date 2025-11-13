@@ -29,11 +29,11 @@
                 </button>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-1 gap-4 mt-3">
-                    <div>
-                        <label class="block text-[#2A2A2A] text-base mb-1">Name</label>
-                        <input type="text" value="{{ $master->name }}"
-                            class="w-full border border-[#ECEFF3] rounded-md px-3 py-2 text-base bg-[#FBFBFB]" disabled />
-                    </div>
+                <div>
+                    <label class="block text-[#2A2A2A] text-base mb-1">Name</label>
+                    <input type="text" value="{{ $master->name }}"
+                        class="w-full border border-[#ECEFF3] rounded-md px-3 py-2 text-base bg-[#FBFBFB]" disabled />
+                </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
                     <div>
@@ -73,9 +73,9 @@
 
         <!-- List Asset Section -->
         <div class="mt-6 bg-white rounded-2xl shadow p-8">
-            <h3 class="text-[#F26E21] font-semibold mb-3">List Asset</h3>
+            <h3 class="text-[#F26E21] text-xl font-semibold mb-3">Asset List</h3>
             <table class="w-full text-base text-center">
-                <thead class="border-b border-[#ECEFF3] text-[#2A2A2A] ">
+                <thead class="text-[#2A2A2A] ">
                     <tr>
                         <th class="py-2 px-3">No.</th>
                         <th class="py-2 px-3">ID</th>
@@ -85,13 +85,11 @@
                 </thead>
                 <tbody>
                     @forelse($master->assets as $index => $item)
-                        <tr class="border-b border-[#ECEFF3] hover:bg-[#FBFBFB] transition">
+                        <tr class="border-b border-[#FBFBFB] hover:bg-[#F26E21] transition hover:text-white"
+                            onclick="window. location='{{ route('admin.assets.detail', $item->id_asset) }}'">
                             <td class="py-2 px-3">{{ $index + 1 }}</td>
                             <td class="py-2 px-3 text-center">
-                                <a href="{{ route('admin.assets.detail', $item->id_asset) }}"
-                                    class="text-[#F26E21] hover:underline">
-                                    {{ $item->id_asset }}
-                                </a>
+                                {{ $item->id_asset }}
                             </td>
                             <td class="py-2 px-3">{{ $item->condition }}</td>
                             <td class="py-2 px-3">{{ $item->status }}</td>
