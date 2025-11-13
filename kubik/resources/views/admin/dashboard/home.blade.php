@@ -5,8 +5,8 @@
 @section('content')
 
     <!-- ROW 1: Header -->
-    <div class="flex items-center justify-between mb-8">
-        <div class="text-left leading-tight">
+    <div class="flex items-center justify-between -mt-5 mb-5">
+        <div class="text-left leading-tight gap-3">
             <h1 class="text-3xl font-bold text-[rgb(242,110,33)]">Hello, {{ session('admin_name') ?? 'Admin' }}</h1>
             <p class="text-l text-[#aeaeae] font-reguler">ID: {{ session('admin_id') ?? '0001' }}</p>
         </div>

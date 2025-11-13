@@ -73,7 +73,7 @@
 
                 <div class="flex justify-end space-x-3 mt-6">
                     <a href="{{ route('admin.dashboard.assets') }}"
-                        class="px-4 py-2 rounded-md bg-[#F26E21]/10 text-[#F26E21] hover:bg-[#F26E21]/20 transition">Cancel</a>
+                        class="px-4 py-2 rounded-md bg-[#FBFBFB] border border-[#ECEFF3] text-[#2A2A2A] hover:bg-[#F5F5F5]">Cancel</a>
                     <button type="submit"
                         class="px-4 py-2 rounded-md bg-[#F26E21] text-white hover:bg-[#e65d1f] transition">Confirm</button>
                 </div>

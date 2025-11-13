@@ -12,31 +12,25 @@
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-[#F26E21] text-xl font-semibold">Types List</h3>
                     <a href="{{ route('admin.types.create') }}"
-                        class="text-[#F26E21] font-semibold text-sm hover:text-[#e65d1f] transition">+ Add</a>
+                        class="text-[#F26E21] font-semibold text-sm hover:text-[#FBFBFB] hover:bg-[#F26E21] py-1 px-2 rounded-md transition">+ Add</a>
                 </div>
                 <div
                     class="overflow-y-auto max-h-64 scrollbar-thin scrollbar-thumb-[#F26E21]/60 scrollbar-track-gray-100 rounded-md">
                     <table class="w-full text-base">
-                        <thead class="text-[#2A2A2A] border-b border-[#FBFBFB] sticky top-0 bg-white">
+                        <thead class="text-[#2A2A2A] sticky top-0 bg-white">
                             <tr>
                                 <th class="py-2 px-3 text-center">No.</th>
                                 <th class="py-2 px-3 text-center">ID</th>
                                 <th class="py-2 px-3 text-center">Name</th>
-                                <th class="py-2 px-3 text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($types as $index => $type)
-                                <tr class="border-b border-[#FBFBFB] hover:bg-[#00000010] transition">
-                                    <td class="py-2 px-3 text-center">{{ $index + 1 }}</td>
+                                <tr class="border-b border-[#FBFBFB] hover:bg-[#F26E21] transition hover:text-white"
+                                    onclick="window. location='{{ route('admin.dashboard.types.detail', $type->id_type) }}'">
+                                    <td class="py-2 px-3 text-center ">{{ $index + 1 }}</td>
                                     <td class="py-2 px-3 text-center">{{ $type->id_type }}</td>
-                                    <td class="py-2 px-3">{{ $type->name }}</td>
-                                    <td class="py-2 px-3 text-center">
-                                        <a href="{{ route('admin.dashboard.types.detail', $type->id_type) }}"
-                                            class="text-[#F26E21] hover:underline">
-                                            Detail
-                                        </a>
-                                    </td>
+                                    <td class="py-2 px-3 text-center">{{ $type->name }}</td>
                                 </tr>
                             @empty
                                 <tr>
@@ -53,31 +47,25 @@
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-[#F26E21] text-xl font-semibold">Categories List</h3>
                     <a href="{{ route('admin.categories.create') }}"
-                        class="text-[#F26E21] font-semibold text-sm hover:text-[#e65d1f] transition">+ Add</a>
+                        class="text-[#F26E21] font-semibold text-sm hover:text-[#FBFBFB] hover:bg-[#F26E21] py-1 px-2 rounded-md transition">+ Add</a>
                 </div>
                 <div
                     class="overflow-y-auto max-h-64 scrollbar-thin scrollbar-thumb-[#F26E21]/60 scrollbar-track-gray-100 rounded-md">
                     <table class="w-full text-base">
-                        <thead class="text-[#2A2A2A] border-b border-[#FBFBFB] sticky top-0 bg-white">
+                        <thead class="text-[#2A2A2A] sticky top-0 bg-white">
                             <tr>
                                 <th class="py-2 px-3 text-center">No.</th>
                                 <th class="py-2 px-3 text-center">ID</th>
                                 <th class="py-2 px-3 text-center">Name</th>
-                                <th class="py-2 px-3 text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($categories as $index => $cat)
-                                <tr class="border-b border-[#FBFBFB] hover:bg-[#00000010] transition">
+                                <tr class="border-b border-[#FBFBFB] hover:bg-[#F26E21] transition hover:text-white"
+                                    onclick="window. location='{{ route('admin.dashboard.categories.detail', $cat->id_category) }}'">
                                     <td class="py-2 px-3 text-center">{{ $index + 1 }}</td>
                                     <td class="py-2 px-3 text-center">{{ $cat->id_category }}</td>
-                                    <td class="py-2 px-3">{{ $cat->name }}</td>
-                                    <td class="py-2 px-3 text-center">
-                                        <a href="{{ route('admin.dashboard.categories.detail', $cat->id_category) }}"
-                                            class="text-[#F26E21] hover:underline">
-                                            Detail
-                                        </a>
-                                    </td>
+                                    <td class="py-2 px-3 text-center">{{ $cat->name }}</td>
                                 </tr>
                             @empty
                                 <tr>
@@ -115,7 +103,7 @@
                     </select>
 
                     <a href="{{ route('admin.assets.create') }}"
-                        class="text-[#F26E21] font-semibold text-sm hover:text-[#e65d1f] transition">+ Add</a>
+                        class="text-[#F26E21] font-semibold text-sm hover:text-[#FBFBFB] hover:bg-[#F26E21] py-1 px-2 rounded-md transition">+ Add</a>
 
                 </div>
             </div>

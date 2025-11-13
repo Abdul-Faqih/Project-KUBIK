@@ -28,4 +28,29 @@ class CategoryController extends Controller
         Category::create(['name' => $request->name]);
         return redirect()->route('admin.dashboard.assets')->with('success', 'Category added successfully!');
     }
+
+    // Category Update
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:100',
+        ]);
+
+        $category = Category::findOrFail($id);
+        $category->name = $request->name;
+        $category->save();
+
+        return redirect()->route('admin.dashboard.categories.detail', $id)
+            ->with('success', 'Category name updated successfully.');
+    }
+
+    // Category Delete
+    public function destroy($id)
+    {
+        $category = Category::findOrFail($id);
+        $category->delete();
+
+        return redirect()->route('admin.dashboard.assets')
+            ->with('success', 'Category deleted successfully.');
+    }
 }

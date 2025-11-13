@@ -37,6 +37,9 @@ Route::prefix('admin')->group(function () {
     // CATEGORY DETAIL
     Route::get('/categories/{id}', [CategoryController::class, 'show'])
         ->name('admin.dashboard.categories.detail');
+    //CATEGORY update and delete
+    Route::post('/categories/{id}/update', [CategoryController::class, 'update'])->name('admin.dashboard.categories.update');
+    Route::delete('/categories/{id}/delete', [CategoryController::class, 'destroy'])->name('admin.dashboard.categories.delete');
 
     // TYPE DETAIL
     Route::get('/types/{id}', [TypeController::class, 'show'])
@@ -80,11 +83,7 @@ Route::prefix('admin')->group(function () {
     // Login
     Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('admin.login');
     Route::post('/login', [AdminAuthController::class, 'login'])->name('admin.login.attempt');
-
-    // Register
-    Route::get('/register', [AdminAuthController::class, 'showRegister'])->name('admin.register');
-    Route::post('/register', [AdminAuthController::class, 'register'])->name('admin.register.store');
-
+    
     // Logout
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 });

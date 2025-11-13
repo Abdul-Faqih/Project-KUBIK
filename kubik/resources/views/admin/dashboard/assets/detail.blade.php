@@ -12,7 +12,7 @@
         <div class="bg-[#FBFBFB] rounded-2xl shadow p-8 relative">
             <div class="flex items-start justify-between">
                 <div>
-                    <h2 class="text-[#F26E21] font-bold text-xl mb-1">{{ $asset->id_asset }}</h2>
+                    <h2 class="text-[#F26E21] font-bold text-xl mb-2">{{ $asset->id_asset }}</h2>
                     <p class="text-base text-[#AEAEAE]">
                         Updated at:
                         {{ \Carbon\Carbon::parse($asset->updated_at)->format('H : i') }} ;
@@ -33,41 +33,41 @@
                 <div>
                     <label class="block text-[#2A2A2A] text-base mb-2">ID Asset Master</label>
                     <a href="{{ route('admin.assetmasters.detail', $asset->id_master) }}"
-                        class="block w-full border border-[#ECEFF3] rounded-md px-3 py-2 text-base text-[#F26E21] hover:underline">
+                        class="block w-full border border-[#ECEFF3] bg-[#FBFBFB] rounded-md px-3 py-2 text-base text-[#F26E21] hover:underline">
                         {{ $asset->id_master }}
                     </a>
                 </div>
 
                 <div>
-                    <label class="block text-[#2A2A2A] text-base mb-1">Name</label>
+                    <label class="block text-[#2A2A2A] text-base mb-2">Name</label>
                     <input type="text" value="{{ $asset->master->name ?? '-' }}"
-                        class="w-full border border-[#ECEFF3] rounded-md px-3 py-2 text-base" disabled />
+                        class="block w-full border border-[#ECEFF3] bg-[#FBFBFB] rounded-md px-3 py-2 text-base" disabled />
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
                 <div>
-                    <label class="block text-[#2A2A2A] text-base mb-1">Type</label>
+                    <label class="block text-[#2A2A2A] text-base mb-2">Type</label>
                     <input type="text" value="{{ $asset->master->type->name ?? '-' }}"
-                        class="w-full border border-[#ECEFF3] rounded-md px-3 py-2 text-base" disabled />
+                        class="block w-full border border-[#ECEFF3] bg-[#FBFBFB] rounded-md px-3 py-2 text-base" disabled />
                 </div>
 
                 <div>
-                    <label class="block text-[#2A2A2A] text-base mb-1">Category</label>
+                    <label class="block text-[#2A2A2A] text-base mb-2">Category</label>
                     <input type="text" value="{{ $asset->master->category->name ?? '-' }}"
-                        class="w-full border border-[#ECEFF3] rounded-md px-3 py-2 text-base" disabled />
+                        class="block w-full border border-[#ECEFF3] bg-[#FBFBFB] rounded-md px-3 py-2 text-base" disabled />
                 </div>
 
                 <div>
-                    <label class="block text-[#2A2A2A] text-base mb-1">Condition</label>
+                    <label class="block text-[#2A2A2A] text-base mb-2">Condition</label>
                     <input type="text" value="{{ $asset->condition }}"
-                        class="w-full border border-[#ECEFF3] rounded-md px-3 py-2 text-base" disabled />
+                        class="block w-full border border-[#ECEFF3] bg-[#FBFBFB] rounded-md px-3 py-2 text-base" disabled />
                 </div>
 
                 <div>
-                    <label class="block text-[#2A2A2A] text-base mb-1">Status</label>
+                    <label class="block text-[#2A2A2A] text-base mb-2">Status</label>
                     <input type="text" value="{{ $asset->status }}"
-                        class="w-full border border-[#ECEFF3] rounded-md px-3 py-2 text-base" disabled />
+                        class="block w-full border border-[#ECEFF3] bg-[#FBFBFB] rounded-md px-3 py-2 text-base" disabled />
                 </div>
             </div>
         </div>
