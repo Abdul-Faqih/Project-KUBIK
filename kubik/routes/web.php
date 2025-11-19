@@ -31,12 +31,30 @@ Route::prefix('admin')->group(function () {
     // ASSET DETAIL
     Route::get('/assets/{id_asset}', [AssetController::class, 'show'])->name('admin.assets.detail');
 
+    // Update Asset
+    Route::post('/dashboard/assets/{id}/update', [AssetController::class, 'update'])
+        ->name('admin.dashboard.assets.update');
+
+    // Delete Asset
+    Route::delete('/dashboard/assets/{id}/delete', [AssetController::class, 'destroy'])
+        ->name('admin.dashboard.assets.delete');
+
     // ASSET MASTER DETAIL
-    Route::get('/asset-masters/{id_master}', [AssetMasterController::class, 'show'])->name('admin.assetmasters.detail');
+    Route::get('/asset-masters/{id_master}', [AssetMasterController::class, 'show'])
+        ->name('admin.assetmasters.detail');
+
+    // Update Asset Master
+    Route::post('/dashboard/asset-masters/{id}/update', [AssetMasterController::class, 'update'])
+        ->name('admin.dashboard.assetmasters.update');
+
+    // Delete Asset Master
+    Route::delete('/dashboard/asset-masters/{id}/delete', [AssetMasterController::class, 'destroy'])
+        ->name('admin.dashboard.assetmasters.delete');
 
     // CATEGORY DETAIL
     Route::get('/categories/{id}', [CategoryController::class, 'show'])
         ->name('admin.dashboard.categories.detail');
+
     //CATEGORY update and delete
     Route::post('/categories/{id}/update', [CategoryController::class, 'update'])->name('admin.dashboard.categories.update');
     Route::delete('/categories/{id}/delete', [CategoryController::class, 'destroy'])->name('admin.dashboard.categories.delete');
@@ -44,7 +62,7 @@ Route::prefix('admin')->group(function () {
     // TYPE DETAIL
     Route::get('/types/{id}', [TypeController::class, 'show'])
         ->name('admin.dashboard.types.detail');
-        
+
     // Type update (edit name only)
     Route::post('/types/{id}/update', [TypeController::class, 'update'])->name('admin.dashboard.types.update');
 
@@ -83,7 +101,7 @@ Route::prefix('admin')->group(function () {
     // Login
     Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('admin.login');
     Route::post('/login', [AdminAuthController::class, 'login'])->name('admin.login.attempt');
-    
+
     // Logout
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 });
