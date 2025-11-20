@@ -16,7 +16,10 @@ class AssetMasterController extends Controller
             ->where('id_master', $id_master)
             ->firstOrFail();
 
-        return view('admin.dashboard.assets.master_detail', compact('master'));
+        $types = Type::all();
+        $categories = Category::all();
+
+        return view('admin.dashboard.assets.master_detail', compact('master', 'types', 'categories'));
     }
 
     public function create()
@@ -25,7 +28,6 @@ class AssetMasterController extends Controller
         $categories = Category::all();
         return view('admin.dashboard.assets.add_asset', compact('types', 'categories'));
     }
-
     public function store(Request $request)
     {
         $request->validate([
