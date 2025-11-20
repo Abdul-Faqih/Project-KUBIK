@@ -12,7 +12,8 @@
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-[#F26E21] text-xl font-semibold">Types List</h3>
                     <a href="{{ route('admin.types.create') }}"
-                        class="text-[#F26E21] font-semibold text-sm hover:text-[#FBFBFB] hover:bg-[#F26E21] py-1 px-2 rounded-md transition">+ Add</a>
+                        class="text-[#F26E21] font-semibold text-sm hover:text-[#FBFBFB] hover:bg-[#F26E21] py-1 px-2 rounded-md transition">+
+                        Add</a>
                 </div>
                 <div
                     class="overflow-y-auto max-h-64 scrollbar-thin scrollbar-thumb-[#F26E21]/60 scrollbar-track-gray-100 rounded-md">
@@ -22,6 +23,7 @@
                                 <th class="py-2 px-3 text-center">No.</th>
                                 <th class="py-2 px-3 text-center">ID</th>
                                 <th class="py-2 px-3 text-center">Name</th>
+                                <th class="py-2 px-3 text-center">Total Assets</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -31,6 +33,11 @@
                                     <td class="py-2 px-3 text-center ">{{ $index + 1 }}</td>
                                     <td class="py-2 px-3 text-center">{{ $type->id_type }}</td>
                                     <td class="py-2 px-3 text-center">{{ $type->name }}</td>
+
+                                    <!-- jumlah asset -->
+                                    <td class="py-2 px-3 text-center">
+                                        {{ $type->assets->count() }}
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
@@ -47,7 +54,8 @@
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-[#F26E21] text-xl font-semibold">Categories List</h3>
                     <a href="{{ route('admin.categories.create') }}"
-                        class="text-[#F26E21] font-semibold text-sm hover:text-[#FBFBFB] hover:bg-[#F26E21] py-1 px-2 rounded-md transition">+ Add</a>
+                        class="text-[#F26E21] font-semibold text-sm hover:text-[#FBFBFB] hover:bg-[#F26E21] py-1 px-2 rounded-md transition">+
+                        Add</a>
                 </div>
                 <div
                     class="overflow-y-auto max-h-64 scrollbar-thin scrollbar-thumb-[#F26E21]/60 scrollbar-track-gray-100 rounded-md">
@@ -57,6 +65,7 @@
                                 <th class="py-2 px-3 text-center">No.</th>
                                 <th class="py-2 px-3 text-center">ID</th>
                                 <th class="py-2 px-3 text-center">Name</th>
+                                <th class="py-2 px-3 text-center">Total Assets</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -66,6 +75,10 @@
                                     <td class="py-2 px-3 text-center">{{ $index + 1 }}</td>
                                     <td class="py-2 px-3 text-center">{{ $cat->id_category }}</td>
                                     <td class="py-2 px-3 text-center">{{ $cat->name }}</td>
+                                    <td class="py-2 px-3 text-center">
+                                        {{ $cat->assets->count() }}
+                                    </td>
+
                                 </tr>
                             @empty
                                 <tr>
@@ -103,7 +116,8 @@
                     </select>
 
                     <a href="{{ route('admin.assets.create') }}"
-                        class="text-[#F26E21] font-semibold text-sm hover:text-[#FBFBFB] hover:bg-[#F26E21] py-1 px-2 rounded-md transition">+ Add</a>
+                        class="text-[#F26E21] font-semibold text-sm hover:text-[#FBFBFB] hover:bg-[#F26E21] py-1 px-2 rounded-md transition">+
+                        Add</a>
 
                 </div>
             </div>

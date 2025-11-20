@@ -120,7 +120,7 @@ public function assets()
     $types = Type::orderBy('id_type')->get();
     $categories = Category::orderBy('id_category')->get();
     $assets = Asset::with(['master.type', 'master.category'])->get();
-
+    
     return view('admin.dashboard.assets', compact('types', 'categories', 'assets'));
 }
 public function filterAssets(Request $request)

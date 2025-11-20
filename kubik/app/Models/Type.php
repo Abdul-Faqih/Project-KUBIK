@@ -31,6 +31,18 @@ class Type extends Model
         return $this->hasMany(AssetMaster::class, 'id_type', 'id_type');
     }
 
+    public function assets()
+    {
+        return $this->hasManyThrough(
+            Asset::class,        // model anak terakhir
+            AssetMaster::class,  // model perantara
+            'id_type',           // FK di asset_masters yg mengarah ke types
+            'id_master',         // FK di assets yg mengarah ke asset_masters
+            'id_type',           // PK di types
+            'id_master'          // PK di asset_masters
+        );
+    }
+
     /* ===========================
        HELPERS
     ============================ */

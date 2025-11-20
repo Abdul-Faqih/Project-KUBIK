@@ -40,8 +40,7 @@
 
                 <p class="text-sm text-gray-400">
                     Updated at:
-                    {{ \Carbon\Carbon::parse($master->updated_at)->format('H : i') }} ;
-                    {{ \Carbon\Carbon::parse($master->updated_at)->format('d M Y') }}
+                    {{ \Carbon\Carbon::parse($master->updated_at)->format('d/m/Y H:i') }}
                 </p>
             </div>
 
@@ -160,53 +159,59 @@
 
             </form>
 
-            </div>
+        </div>
 
-            <!-- ASSET LIST TABLE -->
-            <div class="bg-white rounded-2xl shadow-md px-10 py-6 mt-10">
+        <!-- ASSET LIST TABLE -->
+        <div class="bg-white rounded-2xl shadow-md px-10 py-6 mt-10">
 
-                <h2 class="text-lg font-semibold text-[#F26E21] mb-4">Asset List</h2>
+            <h2 class="text-lg font-semibold text-[#F26E21] mb-4">Asset List</h2>
 
-                @if ($master->assets->count() > 0)
+            @if ($master->assets->count() > 0)
 
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-center border-collapse">
-                            <thead>
-                                <tr class="border-b border-gray-200 text-[#2A2A2A] text-base">
-                                    <th class="py-3 px-2">ID Asset</th>
-                                    <th class="py-3 px-2">Condition</th>
-                                    <th class="py-3 px-2">Status</th>
-                                </tr>
-                            </thead>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-center border-collapse">
+                        <thead>
+                            <tr class="border-b border-gray-200 text-[#2A2A2A] text-base">
+                                <th class="py-3 px-2">ID Asset</th>
+                                <th class="py-3 px-2">Updated at</th>
+                                <th class="py-3 px-2">Condition</th>
+                                <th class="py-3 px-2">Status</th>
+                            </tr>
+                        </thead>
 
-                            <tbody class="text-[#2A2A2A] text-center text-base">
+                        <tbody class="text-[#2A2A2A] text-center text-base">
 
-                                @foreach ($master->assets as $asset)
-                                    <tr class="border-b border-[#FBFBFB] hover:bg-[#F26E21] transition hover:text-white"
+                            @foreach ($master->assets as $asset)
+                                <tr class="border-b border-[#FBFBFB] hover:bg-[#F26E21] transition hover:text-white"
                                     onclick="window. location='{{ route('admin.assets.detail', $asset->id_asset) }}'">
 
-                                        <td class="py-3 px-2"> {{ $asset->id_asset }}
-                                        </td>
+                                    <td class="py-3 px-2"> {{ $asset->id_asset }}
+                                    </td>
 
-                                        <td class="py-3 px-2">
-                                            {{ $asset->condition }}
-                                        </td>
+                                    <!-- UPDATED AT (custom format) -->
+                                    <td class="py-3 px-2">
+                                        {{ \Carbon\Carbon::parse($asset->updated_at)->format('d/m/Y H:i') }}
+                                    </td>
 
-                                        <td class="py-3 px-2">
-                                            {{ $asset->status }}
-                                        </td>
-                                    </tr>
-                                @endforeach
+                                    <td class="py-3 px-2">
+                                        {{ $asset->condition }}
+                                    </td>
 
-                            </tbody>
-                        </table>
-                    </div>
+                                    <td class="py-3 px-2">
+                                        {{ $asset->status }}
+                                    </td>
+                                </tr>
+                            @endforeach
 
-                @else
-                    <p class="text-gray-500 italic">No assets found for this Asset Master.</p>
-                @endif
+                        </tbody>
+                    </table>
+                </div>
 
-            </div>
+            @else
+                <p class="text-gray-500 italic">No assets found for this Asset Master.</p>
+            @endif
+
+        </div>
 
     </div>
 
@@ -266,10 +271,10 @@
 
             // Replace preview image with "No image"
             document.querySelector('#imagePreviewContainer').innerHTML = `
-                                                    <div class="text-center text-gray-400">
-                                                        <p>No image</p>
-                                                    </div>
-                                                `;
+                                                                    <div class="text-center text-gray-400">
+                                                                        <p>No image</p>
+                                                                    </div>
+                                                                `;
         }
 
         document.getElementById('imageInput').addEventListener('change', function (e) {
@@ -282,9 +287,9 @@
             // Replace preview with new image
             const previewContainer = document.getElementById('imagePreviewContainer');
             previewContainer.innerHTML = `
-                                    <img src="${URL.createObjectURL(file)}"
-                                         class="w-full h-full object-cover">
-                                `;
+                                                    <img src="${URL.createObjectURL(file)}"
+                                                         class="w-full h-full object-cover">
+                                                `;
         });
 
         function cancelEdit() {
