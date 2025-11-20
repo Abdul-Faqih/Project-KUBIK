@@ -7,6 +7,8 @@ use App\Models\Type;
 use App\Models\Category;
 use App\Models\AssetMaster;
 use Illuminate\Http\Request;
+use App\Models\Asset;
+
 
 class AssetMasterController extends Controller
 {
@@ -91,7 +93,6 @@ class AssetMasterController extends Controller
         // UPLOAD NEW IMAGE
         if ($request->hasFile('image_asset')) {
 
-            // delete old image
             if (
                 $master->image_asset &&
                 file_exists(public_path('uploads/assetmasters/' . $master->image_asset))
@@ -103,7 +104,7 @@ class AssetMasterController extends Controller
             $request->image_asset->move(public_path('uploads/assetmasters'), $imageName);
         }
 
-        // UPDATE DB
+        // UPDATE MASTER
         $master->update([
             'name' => $request->name,
             'id_type' => $request->type_id,
@@ -113,9 +114,56 @@ class AssetMasterController extends Controller
             'image_asset' => $imageName,
         ]);
 
+
+        // ===============================
+        // SYNC ASSETS WITH NEW STOCK TOTAL
+        // ===============================
+
+        $currentCount = $master->assets()->count();
+        $newCount = (int) $request->stock_total;
+
+        if ($newCount > $currentCount) {
+
+            $add = $newCount - $currentCount;
+
+            for ($i = 0; $i < $add; $i++) {
+
+                $lastId = Asset::max('id_asset');
+
+                if (!$lastId) {
+                    $newId = 'AST00001';
+                } else {
+                    $num = (int) substr($lastId, 3);
+                    $newId = 'AST' . str_pad($num + 1, 5, '0', STR_PAD_LEFT);
+                }
+
+                Asset::create([
+                    'id_asset' => $newId,
+                    'id_master' => $master->id_master,
+                    'condition' => 'Good',
+                    'status' => 'Available',
+                ]);
+            }
+        }
+
+        if ($newCount < $currentCount) {
+            $remove = $currentCount - $newCount;
+
+            $assetsToRemove = $master->assets()
+                ->orderBy('updated_at', 'DESC')
+                ->take($remove)
+                ->get();
+
+            foreach ($assetsToRemove as $asset) {
+                $asset->delete();
+            }
+        }
+
+
         return redirect()->route('admin.assetmasters.detail', $master->id_master)
             ->with('success', 'Asset Master updated successfully!');
     }
+
     public function destroy($id)
     {
         $master = AssetMaster::where('id_master', $id)->firstOrFail();

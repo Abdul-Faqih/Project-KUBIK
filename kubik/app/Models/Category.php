@@ -31,6 +31,18 @@ class Category extends Model
         return $this->hasMany(AssetMaster::class, 'id_category', 'id_category');
     }
 
+    public function assets()
+    {
+        return $this->hasManyThrough(
+            Asset::class,        // model akhir
+            AssetMaster::class,  // model perantara
+            'id_category',       // FK di asset_masters yg menuju categories
+            'id_master',         // FK di assets yg menuju asset_masters
+            'id_category',       // PK di categories
+            'id_master'          // PK di asset_masters
+        );
+    }
+
     /* ===========================
        HELPERS
     ============================ */

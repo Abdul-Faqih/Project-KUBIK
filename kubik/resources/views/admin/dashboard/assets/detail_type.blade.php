@@ -14,10 +14,9 @@
                 <div class="flex items-start justify-between">
                     <div>
                         <h2 class="text-[#F26E21] font-bold text-xl mb-1">{{ $type->id_type }}</h2>
-                        <p class="text-base text-[#AEAEAE]">
+                        <p class="text-sm text-gray-400">
                             Updated at:
-                            {{ \Carbon\Carbon::parse($type->updated_at)->format('H : i') }} ;
-                            {{ \Carbon\Carbon::parse($type->updated_at)->format('d M Y') }}
+                            {{ \Carbon\Carbon::parse($type->updated_at)->format('d/m/Y H:i') }}
                         </p>
                     </div>
 
