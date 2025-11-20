@@ -1,18 +1,17 @@
 @extends('admin.dashboard.layout.layoutdashboard')
 @section('title', 'Detail Asset Master')
-
 @section('content')
 
-    <div class="mt-2">
+    <div class="-mt-5">
 
         <!-- Breadcrumb -->
-        <p class="text-sm text-gray-500 mb-3">
+        <p class="text-base text-[#2A2A2A] mb-3">
             <a href="{{ route('admin.dashboard.assets') }}" class="text-[#F26E21] hover:underline">Assets</a>
             > {{ $master->id_master }}
         </p>
 
         <!-- MAIN CARD -->
-        <div class="bg-white rounded-2xl shadow-md px-10 py-8 relative">
+        <div class="bg-[#FBFBFB] rounded-2xl shadow-md px-10 py-8 relative">
 
             <!-- EDIT + DELETE BUTTONS -->
             <div class="absolute top-6 right-8 flex gap-3">
@@ -36,8 +35,8 @@
             </div>
 
             <!-- HEADER -->
-            <div class="mb-8">
-                <h1 class="text-xl font-semibold text-[#F26E21]">{{ $master->id_master }}</h1>
+            <div class="mb-3">
+                <h1 class="text-xl font-semibold text-[#F26E21] mb-1">{{ $master->id_master }}</h1>
 
                 <p class="text-sm text-gray-400">
                     Updated at:
@@ -53,32 +52,37 @@
 
                 <!-- NAME -->
                 <div class="mb-6">
-                    <label class="block text-gray-700 mb-2">Name</label>
+                    <label class="block text-[#2A2A2A] text-base mb-1">Name</label>
                     <input type="text" name="name" value="{{ $master->name }}"
-                        class="w-full rounded-lg bg-gray-100 border border-gray-200 px-4 py-2" disabled>
+                        class="w-full border border-[#ECEFF3] rounded-md px-3 py-2 bg-[#F9FAFB]" disabled>
                 </div>
 
                 <!-- TYPE + CATEGORY -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
 
                     <div>
-                        <label class="block text-gray-700 mb-2">Type</label>
-                        <select name="type_id" class="w-full rounded-lg bg-gray-100 border border-gray-200 px-4 py-2"
+                        <label class="block text-[#2A2A2A] text-base mb-1">Type</label>
+                        <select name="type_id" class="w-full border border-[#ECEFF3] rounded-md px-3 py-2 bg-[#F9FAFB]"
                             disabled>
-                            <option value="{{ $master->id_type }}">
-                                {{ $master->type->name ?? '-' }}
-                            </option>
+                            @foreach ($types as $type)
+                                <option value="{{ $type->id_type }}" {{ $master->id_type == $type->id_type ? 'selected' : '' }}>
+                                    {{ $type->name }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
 
                     <div>
-                        <label class="block text-gray-700 mb-2">Category</label>
-                        <select name="category_id" class="w-full rounded-lg bg-gray-100 border border-gray-200 px-4 py-2"
+                        <label class="block text-[#2A2A2A] text-base mb-1">Category</label>
+                        <select name="category_id" class="w-full border border-[#ECEFF3] rounded-md px-3 py-2 bg-[#F9FAFB]"
                             disabled>
-                            <option value="{{ $master->id_category }}">
-                                {{ $master->category->name ?? '-' }}
-                            </option>
+                            @foreach ($categories as $cat)
+                                <option value="{{ $cat->id_category }}" {{ $master->id_category == $cat->id_category ? 'selected' : '' }}>
+                                    {{ $cat->name }}
+                                </option>
+                            @endforeach
                         </select>
+
                     </div>
 
                 </div>
@@ -88,16 +92,16 @@
 
                     <!-- LEFT: IMAGE -->
                     <div>
-                        <label class="block text-gray-700 mb-2">Image</label>
+                        <label class="block text-[#2A2A2A] text-base mb-1">Image</label>
 
                         <div id="imagePreviewContainer"
-                            class="border border-gray-200 rounded-xl bg-gray-50 flex items-center justify-center overflow-hidden w-[508px] h-[381px] max-w-full mb-3">
+                            class="border border-[#ECEFF3] bg-[#F9FAFB] rounded-md px-3 py-2 flex items-center justify-center overflow-hidden w-[508px] h-[381px] max-w-full mb-3">
 
                             @if ($master->image_asset)
                                 <img src="{{ asset('uploads/assetmasters/' . $master->image_asset) }}"
                                     class="w-full h-full object-cover">
                             @else
-                                <div class="text-center text-gray-400">
+                                <div class="text-center text-[#2A2A2A] text-base">
                                     <p>No image</p>
                                 </div>
                             @endif
@@ -119,58 +123,105 @@
                     <div class="flex flex-col gap-6 w-full">
 
                         <div>
-                            <label class="block text-gray-700 mb-2">Total Stock</label>
+                            <label class="block text-[#2A2A2A] text-base mb-1">Total Stock</label>
                             <input type="number" name="stock_total" value="{{ $master->stock_total }}" disabled
-                                class="w-full rounded-lg bg-gray-100 border border-gray-200 px-4 py-2">
+                                class="w-full border border-[#ECEFF3] rounded-md px-3 py-2">
                         </div>
 
                         <div class="flex-grow">
-                            <label class="block text-gray-700 mb-2">Description</label>
+                            <label class="block text-[#2A2A2A] text-base mb-1">Description</label>
                             <textarea name="description"
-                                class="w-full min-h-[278px] rounded-xl bg-gray-100 border border-gray-200 px-4 py-3 resize-none text-gray-700"
-                                placeholder="Description" disabled>{{ $master->description }}</textarea>
+                                class="w-full min-h-[278px] rounded-xl border border-[#ECEFF3] px-4 py-3 resize-none text-[#2A2A2A]"
+                                disabled>{{ $master->description }}</textarea>
                         </div>
 
                     </div>
 
                 </div>
 
-                <!-- SAVE / CANCEL -->
+                <!-- Button SAVE / CANCEL -->
                 <div id="editActions" class="hidden flex justify-end gap-3 mt-8">
 
-                    <!-- CLEAR IMAGE BUTTON -->
                     <button type="button" onclick="clearImage()" id="clearImageBtn"
-                        class="px-4 py-2 rounded-lg bg-gray-100 border border-gray-300 text-gray-700">
+                        class="px-4 py-2 rounded-md bg-[#FBFBFB] border border-[#ECEFF3] text-[#2A2A2A] hover:bg-[#F5F5F5]">
                         Clear Image
                     </button>
 
                     <button type="button" onclick="cancelEdit()"
-                        class="px-4 py-2 rounded-lg bg-gray-100 border border-gray-300 text-gray-700">
+                        class="px-4 py-2 rounded-md bg-[#FBFBFB] border border-[#ECEFF3] text-[#2A2A2A] hover:bg-[#F5F5F5]">
                         Cancel
                     </button>
 
-                    <button type="submit" class="px-4 py-2 rounded-lg bg-[#F26E21] text-white hover:bg-[#e65d1f]">
+                    <button type="submit" class="px-4 py-2 rounded-md bg-[#F26E21] text-white hover:bg-[#e65d1f]">
                         Save
                     </button>
 
                 </div>
 
             </form>
-        </div>
+
+            </div>
+
+            <!-- ASSET LIST TABLE -->
+            <div class="bg-white rounded-2xl shadow-md px-10 py-6 mt-10">
+
+                <h2 class="text-lg font-semibold text-[#F26E21] mb-4">Asset List</h2>
+
+                @if ($master->assets->count() > 0)
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-center border-collapse">
+                            <thead>
+                                <tr class="border-b border-gray-200 text-[#2A2A2A] text-base">
+                                    <th class="py-3 px-2">ID Asset</th>
+                                    <th class="py-3 px-2">Condition</th>
+                                    <th class="py-3 px-2">Status</th>
+                                </tr>
+                            </thead>
+
+                            <tbody class="text-[#2A2A2A] text-center text-base">
+
+                                @foreach ($master->assets as $asset)
+                                    <tr class="border-b border-[#FBFBFB] hover:bg-[#F26E21] transition hover:text-white"
+                                    onclick="window. location='{{ route('admin.assets.detail', $asset->id_asset) }}'">
+
+                                        <td class="py-3 px-2"> {{ $asset->id_asset }}
+                                        </td>
+
+                                        <td class="py-3 px-2">
+                                            {{ $asset->condition }}
+                                        </td>
+
+                                        <td class="py-3 px-2">
+                                            {{ $asset->status }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                @else
+                    <p class="text-gray-500 italic">No assets found for this Asset Master.</p>
+                @endif
+
+            </div>
 
     </div>
 
     <!-- DELETE MODAL -->
     <div id="deleteModal"
-        class="hidden fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50">
+        class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
 
         <div class="bg-white rounded-2xl p-6 w-[380px] shadow-xl">
 
-            <h3 class="text-[#F26E21] font-semibold mb-2">Delete Confirmation</h3>
+            <h3 class="text-[#F26E21] text-xl font-semibold mb-4">Delete Confirmation</h3>
 
-            <p class="text-sm text-gray-700 mb-6">
+            <p class="text-base text-[#2A2A2A] mb-7">
                 Are you sure you want to delete
-                <span class="font-semibold text-[#F26E21]">{{ $master->id_master }}</span>?
+                <span class="font-semibold text-[#F26E21]">{{ $master->id_master }}</span>?<br>
+                This action cannot be undone.
             </p>
 
             <form method="POST" action="{{ route('admin.dashboard.assetmasters.delete', $master->id_master) }}">
@@ -180,11 +231,11 @@
                 <div class="flex justify-end gap-3">
 
                     <button type="button" onclick="toggleDeleteModal(false)"
-                        class="px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg">
+                        class="px-4 py-2 rounded-md bg-[#FBFBFB] border border-[#ECEFF3] text-[#2A2A2A] hover:bg-[#F5F5F5]">
                         Cancel
                     </button>
 
-                    <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
+                    <button type="submit" class="px-4 py-2 rounded-md bg-red-500 text-white hover:bg-red-600 transition">
                         Delete
                     </button>
 
@@ -215,10 +266,10 @@
 
             // Replace preview image with "No image"
             document.querySelector('#imagePreviewContainer').innerHTML = `
-                                        <div class="text-center text-gray-400">
-                                            <p>No image</p>
-                                        </div>
-                                    `;
+                                                    <div class="text-center text-gray-400">
+                                                        <p>No image</p>
+                                                    </div>
+                                                `;
         }
 
         document.getElementById('imageInput').addEventListener('change', function (e) {
@@ -231,9 +282,9 @@
             // Replace preview with new image
             const previewContainer = document.getElementById('imagePreviewContainer');
             previewContainer.innerHTML = `
-                        <img src="${URL.createObjectURL(file)}"
-                             class="w-full h-full object-cover">
-                    `;
+                                    <img src="${URL.createObjectURL(file)}"
+                                         class="w-full h-full object-cover">
+                                `;
         });
 
         function cancelEdit() {

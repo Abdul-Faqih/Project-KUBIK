@@ -2,6 +2,7 @@
 @section('title', 'Detail Asset')
 @section('content')
     <div class="-mt-5">
+        <!-- Breadcrumb -->
         <p class="text-base text-[#2A2A2A] mb-2">
             <a href="{{ route('admin.dashboard.assets') }}" class="hover:underline text-[#F26E21]">Assets</a> >
             {{ $asset->id_asset }}
@@ -14,7 +15,7 @@
                 <div class="flex items-start justify-between">
                     <div>
                         <h2 class="text-[#F26E21] font-bold text-xl mb-1">{{ $asset->id_asset }}</h2>
-                        <p class="text-base text-[#AEAEAE]">
+                        <p class="text-sm text-[#AEAEAE]">
                             Updated at:
                             {{ \Carbon\Carbon::parse($asset->updated_at)->format('H : i') }} ;
                             {{ \Carbon\Carbon::parse($asset->updated_at)->format('d M Y') }}
@@ -117,8 +118,8 @@
     <div id="deleteModal"
         class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
         <div class="bg-white rounded-2xl shadow-lg p-6 w-[380px]">
-            <h3 class="text-[#F26E21] font-semibold mb-2">Delete Confirmation</h3>
-            <p class="text-sm text-[#2A2A2A] mb-6">
+            <h3 class="text-[#F26E21] text-xl font-semibold mb-4">Delete Confirmation</h3>
+            <p class="text-base text-[#2A2A2A] mb-7">
                 Are you sure you want to delete
                 <span class="font-semibold text-[#F26E21]">{{ $asset->id_asset }}</span>?<br>
                 This action cannot be undone.
