@@ -4,93 +4,6 @@
 
 @section('content')
     <div class="grid">
-        <!-- TYPES & CATEGORIES LIST -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-            <!-- TYPES LIST -->
-            <div class="bg-white rounded-2xl shadow p-6">
-                <div class="flex items-center justify-between mb-3">
-                    <h3 class="text-[#F26E21] text-xl font-semibold">Types List</h3>
-                    <a href="{{ route('admin.types.create') }}"
-                        class="text-[#F26E21] font-semibold text-sm hover:text-[#FBFBFB] hover:bg-[#F26E21] py-1 px-2 rounded-md transition">+
-                        Add</a>
-                </div>
-                <div
-                    class="overflow-y-auto max-h-64 scrollbar-thin scrollbar-thumb-[#F26E21]/60 scrollbar-track-gray-100 rounded-md">
-                    <table class="w-full text-base">
-                        <thead class="text-[#2A2A2A] sticky top-0 bg-white">
-                            <tr>
-                                <th class="py-2 px-3 text-center">No.</th>
-                                <th class="py-2 px-3 text-center">ID</th>
-                                <th class="py-2 px-3 text-center">Name</th>
-                                <th class="py-2 px-3 text-center">Total Assets</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($types as $index => $type)
-                                <tr class="border-b border-[#FBFBFB] hover:bg-[#F26E21] transition hover:text-white"
-                                    onclick="window. location='{{ route('admin.dashboard.types.detail', $type->id_type) }}'">
-                                    <td class="py-2 px-3 text-center ">{{ $index + 1 }}</td>
-                                    <td class="py-2 px-3 text-center">{{ $type->id_type }}</td>
-                                    <td class="py-2 px-3 text-center">{{ $type->name }}</td>
-
-                                    <!-- jumlah asset -->
-                                    <td class="py-2 px-3 text-center">
-                                        {{ $type->assets->count() }}
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="3" class="py-3 text-center text-[#AEAEAE]">No type data.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- CATEGORIES LIST -->
-            <div class="bg-white rounded-2xl shadow p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-[#F26E21] text-xl font-semibold">Categories List</h3>
-                    <a href="{{ route('admin.categories.create') }}"
-                        class="text-[#F26E21] font-semibold text-sm hover:text-[#FBFBFB] hover:bg-[#F26E21] py-1 px-2 rounded-md transition">+
-                        Add</a>
-                </div>
-                <div
-                    class="overflow-y-auto max-h-64 scrollbar-thin scrollbar-thumb-[#F26E21]/60 scrollbar-track-gray-100 rounded-md">
-                    <table class="w-full text-base">
-                        <thead class="text-[#2A2A2A] sticky top-0 bg-white">
-                            <tr>
-                                <th class="py-2 px-3 text-center">No.</th>
-                                <th class="py-2 px-3 text-center">ID</th>
-                                <th class="py-2 px-3 text-center">Name</th>
-                                <th class="py-2 px-3 text-center">Total Assets</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($categories as $index => $cat)
-                                <tr class="border-b border-[#FBFBFB] hover:bg-[#F26E21] transition hover:text-white"
-                                    onclick="window. location='{{ route('admin.dashboard.categories.detail', $cat->id_category) }}'">
-                                    <td class="py-2 px-3 text-center">{{ $index + 1 }}</td>
-                                    <td class="py-2 px-3 text-center">{{ $cat->id_category }}</td>
-                                    <td class="py-2 px-3 text-center">{{ $cat->name }}</td>
-                                    <td class="py-2 px-3 text-center">
-                                        {{ $cat->assets->count() }}
-                                    </td>
-
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="3" class="py-3 text-center text-[#AEAEAE]">No category data.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
         <!-- ASSETS LIST -->
         <div class="bg-white rounded-2xl shadow p-6 mt-6">
             <div class="flex items-center justify-between mb-4">
@@ -122,7 +35,7 @@
                 </div>
             </div>
             <!-- TABLE -->
-            <div class="overflow-y-auto max-h-96 scrollbar-thin scrollbar-thumb-[#F26E21]/60 scrollbar-track-gray-100 rounded-md"
+            <div class="overflow-y-auto max-h-[75vh] scrollbar-thin scrollbar-thumb-[#F26E21]/60 scrollbar-track-gray-100 rounded-md"
                 id="assetTableContainer">
                 @include('admin.dashboard.partials.asset_table', ['assets' => $assets])
             </div>

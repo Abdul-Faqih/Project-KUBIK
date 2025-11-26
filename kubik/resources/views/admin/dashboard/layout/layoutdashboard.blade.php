@@ -7,6 +7,9 @@
     <title>@yield('title', 'Dashboard | KUBIK')</title>
     @vite('resources/css/app.css')
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Date Range Picker -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" />
+    <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
 </head>
 
 <body class="bg-[#ECEFF3] min-h-screen flex flex-col font-sans">
@@ -31,27 +34,29 @@
 
             <!-- Assets -->
             <a href="{{ route('admin.dashboard.assets') }}" class="text-base font-medium px-2 py-2 rounded-lg 
-            {{ request()->routeIs('admin.dashboard.assets') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }} 
+            {{ request()->routeIs('admin.dashboard.assets*') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }} 
             hover:text-[#F26E21] transition">
                 Assets
             </a>
 
-            <!-- Type -->
-            <a href="#"
-                class="text-base font-medium px-2 py-2 rounded-lg text-[#AEAEAE] hover:text-[#F26E21] transition">
+            <!-- Types -->
+            <a href="{{ route('admin.dashboard.types') }}" class="text-base font-medium px-2 py-2 rounded-lg
+        {{ request()->routeIs('admin.dashboard.types*') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }}
+        hover:text-[#F26E21] transition">
                 Types
             </a>
 
-            <!-- Category -->
-            <a href="#"
-                class="text-base font-medium px-2 py-2 rounded-lg text-[#AEAEAE] hover:text-[#F26E21] transition">
+            <!-- Categories -->
+            <a href="{{ route('admin.dashboard.categories') }}" class="text-base font-medium px-2 py-2 rounded-lg
+        {{ request()->routeIs('admin.dashboard.categories*') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }}
+        hover:text-[#F26E21] transition">
                 Categories
             </a>
 
             <!-- Permissions -->
-            <a href="{{ route('admin.dashboard.permissions') }}" class="text-base font-medium px-2 py-2 rounded-lg 
-            {{ request()->routeIs('admin.dashboard.permissions') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }} 
-            hover:text-[#F26E21] transition">
+            <a href="{{ route('admin.dashboard.permissions') }}" class="text-base font-medium px-2 py-2 rounded-lg
+    {{ request()->routeIs('admin.dashboard.permissions*') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }}
+    hover:text-[#F26E21] transition">
                 Permissions
             </a>
 

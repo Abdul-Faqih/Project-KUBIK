@@ -8,49 +8,123 @@ use Illuminate\Http\Request;
 
 class TypeController extends Controller
 {
-    // Type Detail
-    public function show($id)
+    /**
+     * ==============================
+     *        TYPE LIST PAGE
+     * ==============================
+     */
+    public function index()
     {
-        $type = Type::findOrFail($id);
+        // Auth check
+        if (!admin()) {
+            return redirect()->route('admin.login');
+        }
+
+        // Ambil type + hitungan assets & assetMasters
+        $types = Type::with(['assetMasters', 'assets'])
+            ->orderBy('id_type')
+            ->get();
+
+        return view('admin.dashboard.types', compact('types'));
+    }
+
+    /**
+     * ==============================
+     *        TYPE DETAIL PAGE
+     * ==============================
+     */
+    public function show($id_type)
+    {
+        if (!admin()) {
+            return redirect()->route('admin.login');
+        }
+
+        $type = Type::with(['assetMasters', 'assets'])
+            ->where('id_type', $id_type)
+            ->firstOrFail();
+
         return view('admin.dashboard.assets.detail_type', compact('type'));
     }
 
-    // Type Detail
+    /**
+     * ==============================
+     *        ADD TYPE FORM
+     * ==============================
+     */
     public function create()
     {
+        if (!admin()) {
+            return redirect()->route('admin.login');
+        }
+
         return view('admin.dashboard.assets.add_type');
     }
 
+    /**
+     * ==============================
+     *        STORE NEW TYPE
+     * ==============================
+     */
     public function store(Request $request)
     {
-        $request->validate(['name' => 'required|string|max:100']);
-        Type::create(['name' => $request->name]);
-        return redirect()->route('admin.dashboard.assets')->with('success', 'Type added successfully!');
+        if (!admin()) {
+            return redirect()->route('admin.login');
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:100'
+        ]);
+
+        Type::create([
+            'name' => $request->name
+        ]);
+
+        return redirect()->route('admin.dashboard.types')
+            ->with('success', 'Type added successfully!');
     }
 
-    // Type Update
-    public function update(Request $request, $id)
+    /**
+     * ==============================
+     *        UPDATE TYPE
+     * ==============================
+     */
+    public function update(Request $request, $id_type)
     {
+        if (!admin()) {
+            return redirect()->route('admin.login');
+        }
+
         $request->validate([
             'name' => 'required|string|max:100',
         ]);
 
-        $type = Type::findOrFail($id);
-        $type->name = $request->name;
-        $type->save();
+        $type = Type::where('id_type', $id_type)->firstOrFail();
 
-        return redirect()->route('admin.dashboard.types.detail', $id)
-            ->with('success', 'Type name updated successfully.');
+        $type->update([
+            'name' => $request->name,
+        ]);
+
+        return redirect()->route('admin.dashboard.types.detail', $id_type)
+            ->with('success', 'Type updated successfully.');
     }
 
-    // Type Delete
-    public function destroy($id)
+    /**
+     * ==============================
+     *        DELETE TYPE
+     * ==============================
+     */
+    public function destroy($id_type)
     {
-        $type = Type::findOrFail($id);
+        if (!admin()) {
+            return redirect()->route('admin.login');
+        }
+
+        $type = Type::where('id_type', $id_type)->firstOrFail();
+
+        // Hapus type
         $type->delete();
 
-        return redirect()->route('admin.dashboard.assets')
+        return redirect()->route('admin.dashboard.types')
             ->with('success', 'Type deleted successfully.');
     }
-
 }

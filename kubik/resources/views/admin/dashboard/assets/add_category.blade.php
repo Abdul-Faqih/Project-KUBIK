@@ -3,7 +3,7 @@
 @section('content')
 <div class="-mt-5">
     <div class="text-base text-[#F26E21] mb-3">
-        <a href="{{ route('admin.dashboard.assets') }}" class="hover:underline">Assets</a> 
+        <a href="{{ route('admin.dashboard.categories') }}" class="hover:underline">Categories</a> 
         <span class="text-[#2A2A2A]"> > Add Category</span>
     </div>
 
@@ -20,7 +20,7 @@
             </div>
 
             <div class="flex justify-end space-x-3 mt-6">
-                <a href="{{ route('admin.dashboard.assets') }}" 
+                <a href="{{ route('admin.dashboard.categories') }}" 
                     class="px-4 py-2 rounded-md bg-[#FBFBFB] border border-[#ECEFF3] text-[#2A2A2A] hover:bg-[#F5F5F5]">Cancel</a>
                 <button type="submit" 
                     class="px-4 py-2 rounded-md bg-[#F26E21] text-white hover:bg-[#e65d1f] transition">Confirm</button>
