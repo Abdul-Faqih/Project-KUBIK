@@ -50,7 +50,7 @@ class UserAuthController extends Controller
         User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password)
+            'password' => $request->password
         ]);
 
         return redirect()->route('user.login')->with('success', 'Your account has been successfully created. Please log in.');
