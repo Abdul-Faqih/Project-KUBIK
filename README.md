@@ -17,18 +17,18 @@
 - [x] search & filter asset
 - [x] tampil detail asset, cat, type
 - [x] add asset, cat, type
-- [ ] remove asset, cat, type
-- [ ] update asset, cat, type
-- [ ] tampil booking permissions
-- [ ] tampil detai booking permissions
-- [ ] setujui permission
-- [ ] tolak permission
+- [x] remove asset, cat, type
+- [x] update asset, cat, type
+- [x] tampil booking permissions
+- [x] tampil detai booking permissions
+- [x] setujui permission
+- [x] tolak permission
 - [ ] notifikasi
 - [ ] ubah profil
-- [ ] logout
+- [x] logout
 
 ### User
-- [ ] login & regist
+- [x] login & regist
 - [ ] dashboard awal
 - [ ] tampil ketersedian asset
 - [ ] membuat permission
