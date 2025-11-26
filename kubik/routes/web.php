@@ -8,12 +8,19 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\Auth\AdminAuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ExportController;
+use App\Http\Controllers\Admin\BookingController;
+use App\Http\Controllers\User\Auth\UserAuthController;
+use App\Http\Controllers\User\HomeController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 */
+Route::get('/test-admin', function () {
+    dd(admin());
+});
+
 
 Route::prefix('admin')->group(function () {
 
@@ -27,6 +34,14 @@ Route::prefix('admin')->group(function () {
     // ASSETS PAGE
     Route::get('/dashboard/assets', [DashboardController::class, 'assets'])
         ->name('admin.dashboard.assets');
+
+    // TYPES PAGE
+    Route::get('/types', [TypeController::class, 'index'])
+        ->name('admin.dashboard.types');
+
+    // CATEGORIES PAGE
+    Route::get('/categories', [CategoryController::class, 'index'])
+        ->name('admin.dashboard.categories');
 
     // ASSET DETAIL
     Route::get('/assets/{id_asset}', [AssetController::class, 'show'])->name('admin.assets.detail');
@@ -69,10 +84,29 @@ Route::prefix('admin')->group(function () {
     // Type delete
     Route::delete('/types/{id}/delete', [TypeController::class, 'destroy'])->name('admin.dashboard.types.delete');
 
-    // Permissions / Bookings page
-    Route::get('/dashboard/bookings', function () {
-        return view('admin.dashboard.booking');
-    })->name('admin.dashboard.permissions');
+    // Permission / Booking Page
+    Route::get('/permissions', [BookingController::class, 'index'])
+        ->name('admin.dashboard.permissions');
+
+    // Filter AJAX
+    Route::get('/admin/permissions/filter', [BookingController::class, 'filter'])
+        ->name('admin.permissions.filter');
+
+    // Permission Detail
+    Route::get('/permissions/{id}', [BookingController::class, 'show'])
+        ->name('admin.permissions.detail');
+
+    // Update
+    Route::post('/permissions/{id}/update', [BookingController::class, 'update'])
+        ->name('admin.permissions.update');
+
+    // Accept
+    Route::post('/permissions/{id}/accept', [BookingController::class, 'accept'])
+        ->name('admin.permissions.accept');
+
+    // Reject
+    Route::post('/permissions/{id}/reject', [BookingController::class, 'reject'])
+        ->name('admin.permissions.reject');
 
     // Export Booking
     Route::get('/export/bookings', [
@@ -100,8 +134,31 @@ Route::prefix('admin')->group(function () {
     // ===============================
     // Login
     Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('admin.login');
-    Route::post('/login', [AdminAuthController::class, 'login'])->name('admin.login.attempt');
-
-    // Logout
-    Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
+    Route::post('/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
+    Route::get('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 });
+
+/* ======================
+      USER 
+====================== */
+
+Route::prefix('user')->group(function () {
+
+    /* ======================
+      USER AUTH
+    ====================== */
+
+    Route::get('/login', [UserAuthController::class, 'showLogin'])->name('user.login');
+    Route::post('/login', [UserAuthController::class, 'login']);
+
+    Route::get('/register', [UserAuthController::class, 'showRegister'])->name('user.register');
+    Route::post('/register', [UserAuthController::class, 'register']);
+
+    Route::get('/logout', [UserAuthController::class, 'logout'])->name('user.logout');
+
+    // USER HOME
+    Route::get('/home', [HomeController::class, 'index'])->name('user.home');
+});
+
+
+

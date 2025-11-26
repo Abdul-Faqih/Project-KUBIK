@@ -10,27 +10,29 @@ use Illuminate\Support\Facades\Session;
 
 class AdminAuthController extends Controller
 {
-    /**
-     * Tampilkan halaman login admin
-     */
+    // Show login page
     public function showLogin()
     {
+        // Jika admin sudah login → langsung ke dashboard
+        if (admin()) {
+            return redirect()->route('admin.dashboard.home');
+        }
+
         return view('admin.auth.login');
     }
 
-    /**
-     * Proses login admin
-     */
+    // Login process
     public function login(Request $request)
     {
         $request->validate([
             'email' => 'required|email',
-            'password' => 'required|string|min:6',
+            'password' => 'required|min:6',
         ]);
 
         $admin = Admin::where('email', $request->email)->first();
 
         if ($admin && Hash::check($request->password, $admin->password)) {
+
             Session::put('admin_id', $admin->id_admin);
             Session::put('admin_name', $admin->name);
 
@@ -40,40 +42,11 @@ class AdminAuthController extends Controller
         return back()->with('error', 'Email atau password salah!');
     }
 
-    /**
-     * Tampilkan halaman register admin
-     */
-    public function showRegister()
-    {
-        return view('admin.auth.register');
-    }
-
-    /**
-     * Proses registrasi admin baru
-     */
-    public function register(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:100',
-            'email' => 'required|email|unique:admins,email',
-            'password' => 'required|min:6',
-        ]);
-
-        Admin::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-
-        return redirect()->route('admin.login')->with('success', 'Akun berhasil dibuat! Silakan login.');
-    }
-
-    /**
-     * Logout admin
-     */
+    // Logout
     public function logout()
     {
         Session::forget(['admin_id', 'admin_name']);
+
         return redirect()->route('admin.login');
     }
 }

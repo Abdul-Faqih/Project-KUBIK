@@ -5,64 +5,81 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Asset;
 use App\Models\Booking;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Models\Category;
 use App\Models\Type;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
+    /**
+     * ==============================
+     *        DASHBOARD HOME
+     * ==============================
+     */
     public function home(Request $request)
     {
-        // Pastikan tanggal diambil dari query, default hari ini
-        $selectedDate = $request->input('date')
-            ? Carbon::parse($request->input('date'))
+        // ========== AUTH CHECK ==========
+        if (!admin()) {
+            return redirect()->route('admin.login')->with('error', 'Please login first.');
+        }
+
+        // Selected date or today's date
+        $selectedDate = $request->date
+            ? Carbon::parse($request->date)
             : Carbon::today();
 
-        // Total semua aset (tidak dibatasi tanggal)
+        // Total assets
         $totalAssets = Asset::count();
 
-        // Total permintaan peminjaman (Pending) di tanggal terpilih
+        // Loan demand (Pending)
         $loanDemand = Booking::where('status', 'Pending')
             ->whereDate('created_at', $selectedDate)
             ->count();
 
-        // Total peminjaman aktif (Approved) di tanggal terpilih
+        // Active loan (Approved)
         $activeLoan = Booking::where('status', 'Approved')
             ->whereDate('created_at', $selectedDate)
             ->count();
 
-        // Total aset yang sedang dipinjam (Borrowed) di tanggal terpilih
+        // Active borrowed assets
         $activeAssets = Asset::where('status', 'Borrowed')
             ->whereDate('updated_at', $selectedDate)
             ->count();
 
-        // Ambil aktivitas di tanggal terpilih
+        // Recent activities
         $activities = Booking::with('user')
             ->whereDate('created_at', $selectedDate)
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($item) {
-                // Tentukan apakah pengembalian terlambat
                 $item->is_late = false;
-                if ($item->status === 'Completed' && $item->end_time && $item->return_at) {
+
+                if (
+                    $item->status === 'Completed' &&
+                    $item->end_time &&
+                    $item->return_at
+                ) {
                     $diffHours = Carbon::parse($item->end_time)
                         ->diffInHours(Carbon::parse($item->return_at), false);
+
                     $item->is_late = $diffHours >= 1;
                 }
+
                 return $item;
             });
 
-        // ========== Asset Distribution ==========
+        // ========== Asset Distribution Charts ==========
         $assetLabels = ['Rooms', 'Items'];
         $assetCounts = [
             Asset::whereHas('master.type', fn($q) => $q->where('name', 'Rooms'))->count(),
             Asset::whereHas('master.type', fn($q) => $q->where('name', 'Items'))->count(),
         ];
 
-        // ========== Loan Activities ==========
+        // ========== Loan Activity Chart (Last 6 months) ==========
         $loanMonths = collect(range(1, 6))->map(fn($m) => Carbon::now()->subMonths(6 - $m)->format('M'));
+
         $loanBorrowing = [];
         $loanRejecting = [];
         $loanUsed = [];
@@ -71,16 +88,19 @@ class DashboardController extends Controller
         foreach (range(1, 6) as $i) {
             $month = Carbon::now()->subMonths(6 - $i);
 
-            $loanBorrowing[] = Booking::whereMonth('created_at', $month->month)
+            // Completed loans
+            $loanBorrowing[] = Booking::where('status', 'Completed')
                 ->whereYear('created_at', $month->year)
-                ->where('status', 'Completed')
+                ->whereMonth('created_at', $month->month)
                 ->count();
 
-            $loanRejecting[] = Booking::whereMonth('updated_at', $month->month)
+            // Rejected loans
+            $loanRejecting[] = Booking::where('status', 'Rejected')
                 ->whereYear('updated_at', $month->year)
-                ->where('status', 'Rejected')
+                ->whereMonth('updated_at', $month->month)
                 ->count();
 
+            // Used assets
             $loanUsed[] = DB::table('booking_assets')
                 ->join('bookings', 'bookings.id_booking', '=', 'booking_assets.id_booking')
                 ->whereIn('bookings.status', ['Approved', 'Completed'])
@@ -89,11 +109,12 @@ class DashboardController extends Controller
                 ->distinct('booking_assets.id_asset')
                 ->count('booking_assets.id_asset');
 
+            // Late returning
             $loanLateReturning[] = Booking::where('status', 'Completed')
-                ->whereMonth('updated_at', $month->month)
-                ->whereYear('updated_at', $month->year)
                 ->whereNotNull('end_time')
                 ->whereNotNull('return_at')
+                ->whereYear('updated_at', $month->year)
+                ->whereMonth('updated_at', $month->month)
                 ->whereRaw('TIMESTAMPDIFF(HOUR, end_time, return_at) >= 1')
                 ->count();
         }
@@ -115,40 +136,71 @@ class DashboardController extends Controller
         ));
     }
 
-public function assets()
-{
-    $types = Type::orderBy('id_type')->get();
-    $categories = Category::orderBy('id_category')->get();
-    $assets = Asset::with(['master.type', 'master.category'])->get();
-    
-    return view('admin.dashboard.assets', compact('types', 'categories', 'assets'));
-}
-public function filterAssets(Request $request)
-{
-    $query = Asset::with(['master.type', 'master.category']);
+    /**
+     * ==============================
+     *        ASSETS PAGE
+     * ==============================
+     */
+    public function assets()
+    {
+        if (!admin()) {
+            return redirect()->route('admin.login');
+        }
 
-    // Pencarian (ID asset atau nama master)
-    if ($request->filled('search')) {
-        $search = $request->input('search');
-        $query->where('id_asset', 'like', "%$search%")
-              ->orWhereHas('master', fn($q) => $q->where('name', 'like', "%$search%"));
+        $types = Type::orderBy('id_type')->get();
+        $categories = Category::orderBy('id_category')->get();
+        $assets = Asset::with(['master.type', 'master.category'])
+            ->orderBy('id_asset')
+            ->get();
+
+        return view('admin.dashboard.assets', compact('types', 'categories', 'assets'));
     }
 
-    // Filter berdasarkan type
-    if ($request->filled('type')) {
-        $query->whereHas('master.type', fn($q) => $q->where('name', $request->type));
+    /**
+     * ==============================
+     *        FILTER ASSETS (AJAX)
+     * ==============================
+     */
+    public function filterAssets(Request $request)
+    {
+        if (!admin()) {
+            return response()->json(['html' => 'Unauthorized']);
+        }
+
+        $query = Asset::with(['master.type', 'master.category']);
+
+        // Search
+        if ($request->search) {
+            $query->where('id_asset', 'like', "%{$request->search}%")
+                ->orWhereHas(
+                    'master',
+                    fn($q) =>
+                    $q->where('name', 'like', "%{$request->search}%")
+                );
+        }
+
+        // Filter type
+        if ($request->type) {
+            $query->whereHas(
+                'master.type',
+                fn($q) =>
+                $q->where('name', $request->type)
+            );
+        }
+
+        // Filter category
+        if ($request->category) {
+            $query->whereHas(
+                'master.category',
+                fn($q) =>
+                $q->where('name', $request->category)
+            );
+        }
+
+        $assets = $query->orderBy('id_asset')->get();
+
+        return response()->json([
+            'html' => view('admin.dashboard.partials.asset_table', compact('assets'))->render()
+        ]);
     }
-
-    // Filter berdasarkan category
-    if ($request->filled('category')) {
-        $query->whereHas('master.category', fn($q) => $q->where('name', $request->category));
-    }
-
-    $assets = $query->get();
-
-    return response()->json([
-        'html' => view('admin.dashboard.partials.asset_table', compact('assets'))->render(),
-    ]);
-}
-
 }

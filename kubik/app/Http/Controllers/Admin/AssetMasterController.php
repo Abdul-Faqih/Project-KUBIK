@@ -6,14 +6,20 @@ use App\Http\Controllers\Controller;
 use App\Models\Type;
 use App\Models\Category;
 use App\Models\AssetMaster;
-use Illuminate\Http\Request;
 use App\Models\Asset;
-
+use Illuminate\Http\Request;
 
 class AssetMasterController extends Controller
 {
+    /**
+     * Show Detail Asset Master
+     */
     public function show($id_master)
     {
+        if (!admin()) {
+            return redirect()->route('admin.login')->with('error', 'Please login as admin.');
+        }
+
         $master = AssetMaster::with(['type', 'category', 'assets'])
             ->where('id_master', $id_master)
             ->firstOrFail();
@@ -24,14 +30,30 @@ class AssetMasterController extends Controller
         return view('admin.dashboard.assets.master_detail', compact('master', 'types', 'categories'));
     }
 
+    /**
+     * Show Create Page
+     */
     public function create()
     {
+        if (!admin()) {
+            return redirect()->route('admin.login')->with('error', 'Please login as admin.');
+        }
+
         $types = Type::all();
         $categories = Category::all();
+
         return view('admin.dashboard.assets.add_asset', compact('types', 'categories'));
     }
+
+    /**
+     * Store New Asset Master
+     */
     public function store(Request $request)
     {
+        if (!admin()) {
+            return redirect()->route('admin.login')->with('error', 'Please login as admin.');
+        }
+
         $request->validate([
             'name' => 'required|string|max:100',
             'type_id' => 'required',
@@ -48,7 +70,7 @@ class AssetMasterController extends Controller
             $request->image_asset->move(public_path('uploads/assetmasters'), $imageName);
         }
 
-        // Create new asset master
+        // Create master
         AssetMaster::create([
             'name' => $request->name,
             'id_type' => $request->type_id,
@@ -62,8 +84,15 @@ class AssetMasterController extends Controller
             ->with('success', 'Asset Master added successfully!');
     }
 
+    /**
+     * Update Asset Master
+     */
     public function update(Request $request, $id)
     {
+        if (!admin()) {
+            return redirect()->route('admin.login')->with('error', 'Please login as admin.');
+        }
+
         $request->validate([
             'name' => 'required|string|max:100',
             'type_id' => 'required|string',
@@ -79,24 +108,15 @@ class AssetMasterController extends Controller
 
         // CLEAR IMAGE
         if ($request->clear_image == "1") {
-
-            if (
-                $master->image_asset &&
-                file_exists(public_path('uploads/assetmasters/' . $master->image_asset))
-            ) {
+            if ($master->image_asset && file_exists(public_path('uploads/assetmasters/' . $master->image_asset))) {
                 unlink(public_path('uploads/assetmasters/' . $master->image_asset));
             }
-
             $imageName = null;
         }
 
         // UPLOAD NEW IMAGE
         if ($request->hasFile('image_asset')) {
-
-            if (
-                $master->image_asset &&
-                file_exists(public_path('uploads/assetmasters/' . $master->image_asset))
-            ) {
+            if ($master->image_asset && file_exists(public_path('uploads/assetmasters/' . $master->image_asset))) {
                 unlink(public_path('uploads/assetmasters/' . $master->image_asset));
             }
 
@@ -114,28 +134,22 @@ class AssetMasterController extends Controller
             'image_asset' => $imageName,
         ]);
 
-
-        // ===============================
-        // SYNC ASSETS WITH NEW STOCK TOTAL
-        // ===============================
-
+        /**
+         * SYNC CHILD ASSETS WITH NEW STOCK
+         */
         $currentCount = $master->assets()->count();
         $newCount = (int) $request->stock_total;
 
+        // Add assets
         if ($newCount > $currentCount) {
-
             $add = $newCount - $currentCount;
 
             for ($i = 0; $i < $add; $i++) {
-
                 $lastId = Asset::max('id_asset');
 
-                if (!$lastId) {
-                    $newId = 'AST00001';
-                } else {
-                    $num = (int) substr($lastId, 3);
-                    $newId = 'AST' . str_pad($num + 1, 5, '0', STR_PAD_LEFT);
-                }
+                $newId = $lastId
+                    ? 'AST' . str_pad(((int) substr($lastId, 3)) + 1, 5, '0', STR_PAD_LEFT)
+                    : 'AST00001';
 
                 Asset::create([
                     'id_asset' => $newId,
@@ -146,6 +160,7 @@ class AssetMasterController extends Controller
             }
         }
 
+        // Remove assets
         if ($newCount < $currentCount) {
             $remove = $currentCount - $newCount;
 
@@ -159,33 +174,32 @@ class AssetMasterController extends Controller
             }
         }
 
-
         return redirect()->route('admin.assetmasters.detail', $master->id_master)
             ->with('success', 'Asset Master updated successfully!');
     }
 
+    /**
+     * Delete Asset Master
+     */
     public function destroy($id)
     {
+        if (!admin()) {
+            return redirect()->route('admin.login')->with('error', 'Please login as admin.');
+        }
+
         $master = AssetMaster::where('id_master', $id)->firstOrFail();
 
-        // Hapus gambar
-        if (
-            $master->image_asset &&
-            file_exists(public_path('uploads/assetmasters/' . $master->image_asset))
-        ) {
+        if ($master->image_asset && file_exists(public_path('uploads/assetmasters/' . $master->image_asset))) {
             unlink(public_path('uploads/assetmasters/' . $master->image_asset));
         }
 
-        // Hapus semua asset anak
         foreach ($master->assets as $asset) {
             $asset->delete();
         }
 
-        // Hapus master
         $master->delete();
 
         return redirect()->route('admin.dashboard.assets')
             ->with('success', 'Asset Master deleted successfully!');
     }
-
 }

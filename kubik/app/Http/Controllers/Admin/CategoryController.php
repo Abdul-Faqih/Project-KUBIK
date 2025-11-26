@@ -8,32 +8,76 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
+    /**
+     * CATEGORY LIST PAGE
+     */
+    public function index()
+    {
+        if (!admin()) {
+            return redirect()->route('admin.login')->with('error', 'Please login first.');
+        }
 
-    // Category Detail
+        $categories = Category::with(['assetMasters', 'assets'])->get();
+
+        return view('admin.dashboard.categories', compact('categories'));
+    }
+
+    /**
+     * CATEGORY DETAIL PAGE
+     */
     public function show($id)
     {
+        if (!admin()) {
+            return redirect()->route('admin.login')->with('error', 'Please login first.');
+        }
+
         $category = Category::findOrFail($id);
+
         return view('admin.dashboard.assets.detail_category', compact('category'));
     }
 
-    // Add Category
+    /**
+     * SHOW ADD CATEGORY FORM
+     */
     public function create()
     {
+        if (!admin()) {
+            return redirect()->route('admin.login')->with('error', 'Please login first.');
+        }
+
         return view('admin.dashboard.assets.add_category');
     }
 
+    /**
+     * STORE NEW CATEGORY
+     */
     public function store(Request $request)
     {
-        $request->validate(['name' => 'required|string|max:100']);
+        if (!admin()) {
+            return redirect()->route('admin.login')->with('error', 'Please login first.');
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:100'
+        ]);
+
         Category::create(['name' => $request->name]);
-        return redirect()->route('admin.dashboard.assets')->with('success', 'Category added successfully!');
+
+        return redirect()->route('admin.dashboard.categories')
+            ->with('success', 'Category added successfully!');
     }
 
-    // Category Update
+    /**
+     * UPDATE CATEGORY NAME
+     */
     public function update(Request $request, $id)
     {
+        if (!admin()) {
+            return redirect()->route('admin.login')->with('error', 'Please login first.');
+        }
+
         $request->validate([
-            'name' => 'required|string|max:100',
+            'name' => 'required|string|max:100'
         ]);
 
         $category = Category::findOrFail($id);
@@ -41,16 +85,22 @@ class CategoryController extends Controller
         $category->save();
 
         return redirect()->route('admin.dashboard.categories.detail', $id)
-            ->with('success', 'Category name updated successfully.');
+            ->with('success', 'Category updated successfully!');
     }
 
-    // Category Delete
+    /**
+     * DELETE CATEGORY
+     */
     public function destroy($id)
     {
+        if (!admin()) {
+            return redirect()->route('admin.login')->with('error', 'Please login first.');
+        }
+
         $category = Category::findOrFail($id);
         $category->delete();
 
-        return redirect()->route('admin.dashboard.assets')
-            ->with('success', 'Category deleted successfully.');
+        return redirect()->route('admin.dashboard.categories')
+            ->with('success', 'Category deleted successfully!');
     }
 }

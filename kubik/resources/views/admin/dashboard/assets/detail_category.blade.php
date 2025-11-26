@@ -3,7 +3,7 @@
 @section('content')
     <div class="-mt-5">
         <p class="text-base text-[#2A2A2A] mb-2">
-            <a href="{{ route('admin.dashboard.assets') }}" class="hover:underline text-[#F26E21]">Assets</a> >
+            <a href="{{ route('admin.dashboard.categories') }}" class="hover:underline text-[#F26E21]">Categories</a> >
             {{ $category->id_category }}
         </p>
 

@@ -27,7 +27,7 @@
         @endif
 
         <!-- Form -->
-        <form method="POST" action="{{ route('admin.login.attempt') }}" class="space-y-4">
+        <form method="POST" action="{{ route('admin.login') }}" class="space-y-4">
             @csrf
             <input type="email" name="email" placeholder="Insert Your Email" value="{{ old('email') }}"
                 class="w-full text-sm py-3 px-4 rounded-xl bg-[#FBFBFB] border border-[#FBFBFB] text-[#2A2A2A] focus:outline-none focus:ring-2 focus:ring-[#F26E21]"
