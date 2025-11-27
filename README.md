@@ -28,6 +28,7 @@
 - [x] logout
 
 ### User
+- [x] On Boarding
 - [x] login & regist
 - [ ] dashboard awal
 - [ ] tampil ketersedian asset
