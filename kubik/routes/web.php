@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\ExportController;
 use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\User\Auth\UserAuthController;
 use App\Http\Controllers\User\HomeController;
+use App\Http\Controllers\User\OnBoardingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -143,6 +144,22 @@ Route::prefix('admin')->group(function () {
 ====================== */
 
 Route::prefix('user')->group(function () {
+
+    // ONBOARDING
+    Route::get('/', function () {
+        if (!session()->has('user_onboarding')) {
+            return redirect()->route('user.onboarding.1');
+        }
+        return redirect()->route('user.login');
+    });
+
+    Route::get('/onboarding/1', [OnBoardingController::class, 'screen1'])->name('user.onboarding.1');
+    Route::get('/onboarding/2', [OnBoardingController::class, 'screen2'])->name('user.onboarding.2');
+    Route::get('/onboarding/3', [OnBoardingController::class, 'screen3'])->name('user.onboarding.3');
+
+    // skip (langsung ke login)
+    Route::get('/onboarding/finish', [OnBoardingController::class, 'finish'])->name('user.onboarding.finish');
+
 
     /* ======================
       USER AUTH

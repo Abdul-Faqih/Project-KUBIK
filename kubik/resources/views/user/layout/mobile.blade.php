@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
@@ -24,13 +25,21 @@
         input {
             height: 52px;
         }
+
+        /* REMOVE PADDING KHUSUS ONBOARDING */
+        .onboarding-wrapper {
+            padding: 0 !important;
+        }
     </style>
+
 </head>
+
 <body>
 
-<div class="mobile-wrapper">
-    @yield('content')
-</div>
+    <div class="mobile-wrapper @yield('wrapperClass')">
+        @yield('content')
+    </div>
 
 </body>
+
 </html>

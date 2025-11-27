@@ -53,7 +53,7 @@ class UserAuthController extends Controller
             'password' => $request->password
         ]);
 
-        return redirect()->route('user.login')->with('success', 'Your account has been successfully created. Please log in.');
+        return redirect()->route('user.register')->with('registered', true);
     }
 
     public function logout()
