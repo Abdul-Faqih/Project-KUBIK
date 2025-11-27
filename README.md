@@ -290,9 +290,9 @@ Route::prefix('admin/dashboard')->group(function () {
 
 ## 👥 9. Tim Pengembang
 
-| Nama                                   | Peran                               | Kontak                                   |
-| -------------------------------------- | ----------------------------------- | ---------------------------------------- |
-| **Abdul Faqih**                        | Fullstack Developer / Project Owner | [GitHub](https://github.com/Abdul-Faqih) |
+| Nama                                   | Peran                               | Kontak                                   | | Instagram                                   |
+| -------------------------------------- | ----------------------------------- | ---------------------------------------- | | ---------------------------------------- |
+| **Abdul Faqih**                        | Fullstack Developer / Project Owner | [GitHub](https://github.com/Abdul-Faqih) | | [Instagram](https://www.instagram.com/bdlllll_/) |
 | Tambahkan Nama Kamu  | Frontend / Backend                  | —                                        |
 
 ---
