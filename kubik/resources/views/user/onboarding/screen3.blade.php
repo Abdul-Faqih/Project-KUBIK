@@ -12,7 +12,7 @@
     <!-- CARD -->
     <div class="bg-white w-full rounded-t-[32px] mt-3 pt-10 pb-16 px-6 text-center">
 
-        <h1 class="text-2xl font-semibold text-[#2A2A2A] leading-snug">
+        <h1 class="text-2xl font-semibold text-[#F26E21] leading-snug">
             Sign Up or Log In to Get Started!
         </h1>
 
