@@ -18,7 +18,7 @@
             max-width: 430px;
             height: 932px;
             margin: 0 auto;
-            background: #ffffff;
+            background: #FBFBFB;
             padding: 32px 24px;
         }
 
