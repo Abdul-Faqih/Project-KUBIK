@@ -147,12 +147,16 @@ Route::prefix('user')->group(function () {
 
     // ONBOARDING
     Route::get('/', function () {
+        // Cek sesi: Jika belum ada 'user_onboarding', arahkan ke onboarding 1
         if (!session()->has('user_onboarding')) {
             return redirect()->route('user.onboarding.1');
         }
-        return redirect()->route('user.login');
+
+        // Jika sudah ada, arahkan ke dashboard
+        return redirect()->route('user.home');
     });
 
+    // Onboarding Screens
     Route::get('/onboarding/1', [OnBoardingController::class, 'screen1'])->name('user.onboarding.1');
     Route::get('/onboarding/2', [OnBoardingController::class, 'screen2'])->name('user.onboarding.2');
     Route::get('/onboarding/3', [OnBoardingController::class, 'screen3'])->name('user.onboarding.3');
