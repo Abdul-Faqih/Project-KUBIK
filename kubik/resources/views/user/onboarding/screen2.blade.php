@@ -15,7 +15,7 @@
             Request & Schedule Your Needs
         </h1>
 
-        <p class="text-base text-[#6A6A6A] mt-10 mb-10">
+        <p class="text-base text-[#6A6A6A] mt-1 mb-10">
             Select your preferred needs and schedule, then await verification from the administrator.
         </p>
 
