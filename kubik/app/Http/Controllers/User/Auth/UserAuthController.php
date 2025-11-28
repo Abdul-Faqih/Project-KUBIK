@@ -12,6 +12,10 @@ class UserAuthController extends Controller
 {
     public function showLogin()
     {
+        if (user()) {
+            return redirect()->route('user.home');
+        }
+
         return view('user.auth.login');
     }
 
@@ -28,6 +32,7 @@ class UserAuthController extends Controller
             return back()->with('error', 'Invalid email or password!');
         }
 
+        // simpan session
         Session::put('user_id', $user->id_user);
         Session::put('user_name', $user->name);
 
@@ -36,6 +41,10 @@ class UserAuthController extends Controller
 
     public function showRegister()
     {
+        if (user()) {
+            return redirect()->route('user.home');
+        }
+
         return view('user.auth.register');
     }
 
@@ -50,7 +59,7 @@ class UserAuthController extends Controller
         User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => $request->password
+            'password' => Hash::make($request->password), // WAJIB!
         ]);
 
         return redirect()->route('user.register')->with('registered', true);

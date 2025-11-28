@@ -10,7 +10,7 @@
          class="w-full object-cover">
 
     <!-- CARD -->
-    <div class="bg-white w-full rounded-t-[32px] mt-3 pt-3 pb-16 px-6 text-center">
+    <div class="bg-white w-full rounded-t-[32px] mt-3 pt-3 px-6 text-center">
 
         <h1 class="text-2xl font-semibold text-[#F26E21] leading-snug">
             Sign Up or Log In to Get Started!

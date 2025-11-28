@@ -3,16 +3,17 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Session;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        if (!Session::has('user_id')) {
-            return redirect()->route('user.login');
+        // ========== AUTH CHECK ==========
+        if (!user()) {
+            return redirect()->route('user.login')
+                ->with('error', 'Please login first.');
         }
 
-        return view('user.home'); // file nanti kamu isi
+        return view('user.home');
     }
 }
