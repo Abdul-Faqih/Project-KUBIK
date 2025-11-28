@@ -16,11 +16,11 @@
             Sign Up or Log In to Get Started!
         </h1>
 
-        <p class="text-base text-[#6A6A6A] mt-10 mb-10">
+        <p class="text-base text-[#6A6A6A] mt-1 mb-10">
             Click Sign Up to create a new account or Log In to begin using the app.
         </p>
 
-        <div class="flex justify-between gap-3 mt-8">
+        <div class="flex justify-between gap-3">
 
             <a href="{{ route('user.register') }}"
                class="w-1/2 text-center bg-[#F26E21] text-white py-3 rounded-xl font-medium">

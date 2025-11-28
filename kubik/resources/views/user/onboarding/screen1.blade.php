@@ -16,7 +16,7 @@
             Use your loans responsibly.
         </h1>
 
-        <p class="text-base text-[#6A6A6A] mt-10 mb-10">
+        <p class="text-base text-[#6A6A6A] mt-9 mb-10">
             Ensure that inventory is used as needed and returned on time.
         </p>
 
