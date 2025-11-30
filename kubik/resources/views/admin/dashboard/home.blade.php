@@ -108,9 +108,9 @@
                             @elseif($item->status === 'Rejected')
                                 <span class="px-3 py-1 rounded-full text-xs bg-red-100 text-red-600">Rejected</span>
                             @elseif($item->status === 'Approved')
-                                <span class="px-3 py-1 rounded-full text-xs bg-blue-100 text-blue-600">Approved</span>
+                                <span class="px-3 py-1 rounded-full text-xs bg-green-100 text-green-600">Approved</span>
                             @else
-                                <span class="px-3 py-1 rounded-full text-xs bg-green-100 text-green-600">Completed</span>
+                                <span class="px-3 py-1 rounded-full text-xs bg-blue-100 text-blue-600">Completed</span>
                             @endif
                         </td>
                         <td class="py-2 px-3 text-center">
