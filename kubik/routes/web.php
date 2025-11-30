@@ -179,6 +179,10 @@ Route::prefix('user')->group(function () {
 
     // USER HOME
     Route::get('/home', [HomeController::class, 'index'])->name('user.home');
+
+    // ========== AVAILABILITY INFO ==========
+    Route::get('/availability', [HomeController::class, 'availability'])
+        ->name('user.availability');
 });
 
 
