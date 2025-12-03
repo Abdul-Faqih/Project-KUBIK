@@ -25,6 +25,18 @@ Route::get('/test-admin', function () {
 
 Route::prefix('admin')->group(function () {
 
+    // Landing Page / Root
+    Route::get('/', function () {
+        // Cek status login menggunakan helper kustom 'user()' Anda
+        if (admin()) {
+            // Jika SUDAH login (user() mengembalikan objek user/truthy), arahkan ke home.
+            return redirect()->route('admin.dashboard.home');
+        }
+
+        // Jika BELUM login (user() mengembalikan null/falsy), arahkan ke onboarding 1.
+        return redirect()->route('admin.login');
+    });
+
     // ===============================
     // DASHBOARD
     // ===============================
@@ -145,15 +157,16 @@ Route::prefix('admin')->group(function () {
 
 Route::prefix('user')->group(function () {
 
-    // ONBOARDING
+    // Landing Page / Root
     Route::get('/', function () {
-        // Cek sesi: Jika belum ada 'user_onboarding', arahkan ke onboarding 1
-        if (!session()->has('user_onboarding')) {
-            return redirect()->route('user.onboarding.1');
+        // Cek status login menggunakan helper kustom 'user()' Anda
+        if (user()) {
+            // Jika SUDAH login (user() mengembalikan objek user/truthy), arahkan ke home.
+            return redirect()->route('user.home');
         }
 
-        // Jika sudah ada, arahkan ke dashboard
-        return redirect()->route('user.home');
+        // Jika BELUM login (user() mengembalikan null/falsy), arahkan ke onboarding 1.
+        return redirect()->route('user.onboarding.1');
     });
 
     // Onboarding Screens
@@ -183,6 +196,24 @@ Route::prefix('user')->group(function () {
     // ========== AVAILABILITY INFO ==========
     Route::get('/availability', [HomeController::class, 'availability'])
         ->name('user.availability');
+
+    // CART
+    Route::post('/cart/add', [HomeController::class, 'addToCart'])
+        ->name('user.cart.add');
+
+    Route::post('/cart/remove', [HomeController::class, 'removeFromCart'])
+        ->name('user.cart.remove');
+
+    Route::get('/cart/count', [HomeController::class, 'checkCartState'])
+        ->name('user.cart.count');
+
+    Route::get('/cart/count/total', [HomeController::class, 'checkTotalCartCount'])
+        ->name('user.cart.count.total');
+
+    Route::get('/cart/list', [HomeController::class, 'getCartList'])
+        ->name('user.cart.list');
+
+
 });
 
 
