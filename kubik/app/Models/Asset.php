@@ -30,9 +30,9 @@ class Asset extends Model
     // 1 asset → milik 1 asset_master
     public function master()
     {
-        return $this->belongsTo(AssetMaster::class, 'id_master', 'id_master');
+    return $this->belongsTo(AssetMaster::class, 'id_master', 'id_master');
     }
-
+    
     // 1 asset → bisa ada di banyak booking lewat booking_assets
     public function bookingAssets()
     {

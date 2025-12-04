@@ -22,10 +22,11 @@
 
         <div class="flex justify-between gap-3">
 
-            <a href="{{ route('user.register') }}"
-               class="w-1/2 text-center bg-[#F26E21] text-white py-3 rounded-xl font-medium">
+            <a href="{{ route('user.register.role') }}"
+            class="w-1/2 text-center bg-[#F26E21] text-white py-3 rounded-xl font-medium">
                 Sign Up
             </a>
+
 
             <a href="{{ route('user.login') }}"
                class="w-1/2 text-center border border-[#F26E21] text-[#F26E21] py-3 rounded-xl font-medium">

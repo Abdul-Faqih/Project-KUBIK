@@ -76,4 +76,5 @@ class AssetMaster extends Model
         $this->stock_available = $this->availableAssets();
         $this->save();
     }
+    
 }

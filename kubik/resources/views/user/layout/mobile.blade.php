@@ -21,7 +21,6 @@
 
         .mobile-wrapper {
             max-width: 430px;
-            height: 932px;
             margin: 0 auto;
             background: #FBFBFB;
             padding: 32px 24px;
@@ -35,6 +34,12 @@
         .onboarding-wrapper {
             padding: 0 !important;
         }
+        
+        .input-auth {
+        @apply w-full h-[52px] pl-5 border border-[#CFCFCF] rounded-xl
+               text-[#2A2A2A] placeholder-[#CFCFCF]
+               focus:outline-none focus:border-[#F26E21];
+    }
     </style>
 
 </head>
@@ -46,5 +51,6 @@
     </div>
 
 </body>
+
 
 </html>
