@@ -111,4 +111,5 @@ class Booking extends Model
             'updated_at' => now(),
         ]);
     }
+    
 }

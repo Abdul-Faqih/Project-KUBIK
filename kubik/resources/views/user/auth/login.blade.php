@@ -53,7 +53,7 @@
 
     <p class="text-sm text-[#2A2A2A]">
         Don't have account?
-        <a href="{{ route('user.register') }}" class="text-[#F26E21]">Sign Up</a>
+        <a href="{{ route('user.register.role') }}" class="text-[#F26E21]">Sign Up</a>
     </p>
 
 </div>

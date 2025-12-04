@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
     <title>@yield('title')</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@300;400;500&display=swap" />
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
@@ -19,7 +21,6 @@
 
         .mobile-wrapper {
             max-width: 430px;
-            height: 932px;
             margin: 0 auto;
             background: #FBFBFB;
             padding: 32px 24px;
@@ -33,6 +34,12 @@
         .onboarding-wrapper {
             padding: 0 !important;
         }
+        
+        .input-auth {
+        @apply w-full h-[52px] pl-5 border border-[#CFCFCF] rounded-xl
+               text-[#2A2A2A] placeholder-[#CFCFCF]
+               focus:outline-none focus:border-[#F26E21];
+    }
     </style>
 
 </head>
@@ -44,5 +51,6 @@
     </div>
 
 </body>
+
 
 </html>

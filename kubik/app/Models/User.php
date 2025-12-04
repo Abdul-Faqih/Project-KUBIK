@@ -2,66 +2,54 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 
-class User extends Model
+class User extends Authenticatable
 {
-    use HasFactory;
+    use Notifiable;
 
     protected $table = 'users';
     protected $primaryKey = 'id_user';
-    public $incrementing = false;
-    protected $keyType = 'string';
+    public $incrementing = true;         // AUTO INCREMENT
+    protected $keyType = 'int';          // INTEGER PK
 
     protected $fillable = [
-        'id_user',
         'name',
         'email',
         'phone_number',
         'password',
+        'role',
+        'nim',
+        'nip',
+        'enrollment',
+        'program',
+        'unit',
+        'department'
     ];
 
     protected $hidden = [
         'password',
+        'remember_token',
     ];
 
-    /* ===========================
-       RELATIONSHIPS
-    ============================ */
+    // AUTO-HASH PASSWORD
+    //public function setPasswordAttribute($value)
+    //{
+        //if (!empty($value)) {
+            //$this->attributes['password'] = Hash::make($value);
+        //}
+    //}
 
-    // 1 user → banyak booking
+    // RELATIONS
     public function bookings()
     {
         return $this->hasMany(Booking::class, 'id_user', 'id_user');
     }
 
-    // 1 user → banyak notifikasi user
     public function notifications()
     {
         return $this->hasMany(UserNotification::class, 'id_user', 'id_user');
-    }
-
-    /* ===========================
-       ACCESSORS & HELPERS
-    ============================ */
-
-    // Encrypt password saat diset
-    public function setPasswordAttribute($value)
-    {
-        $this->attributes['password'] = Hash::make($value);
-    }
-
-    // Helper: total booking user
-    public function totalBookings()
-    {
-        return $this->bookings()->count();
-    }
-
-    // Helper: booking aktif user
-    public function activeBookings()
-    {
-        return $this->bookings()->whereIn('status', ['Pending', 'Approved'])->get();
     }
 }
