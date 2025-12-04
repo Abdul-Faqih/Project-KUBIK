@@ -50,10 +50,18 @@
                         <label class="block text-[#2A2A2A] text-base mb-1">Attachment</label>
 
                         <div
-                            class="border border-[#ECEFF3] bg-[#F9FAFB] rounded-md h-[405px] flex items-center justify-center text-gray-400">
+                            class="relative border border-[#ECEFF3] bg-[#F9FAFB] rounded-md h-[405px] flex items-center justify-center text-gray-400 overflow-hidden">
                             @if ($booking->attachment)
-                                <a href="{{ asset('uploads/booking/' . $booking->attachment) }}"
-                                    class="underline text-[#F26E21]" target="_blank">View Attachment</a>
+                                {{-- 1. Menampilkan Gambar (Preview) --}}
+                                {{-- object-contain: memastikan seluruh gambar terlihat tanpa terpotong --}}
+                                <img src="{{ asset('uploads/attachments/' . $booking->attachment) }}" alt="Attachment Preview"
+                                    class="w-full h-full object-contain">
+
+                                {{-- 2. Tombol Download di Pojok Kanan Bawah --}}
+                                <a href="{{ asset('uploads/attachments/' . $booking->attachment) }}"
+                                    class="absolute bottom-4 right-4 underline text-[#F26E21]" download>
+                                    <i class="fas fa-download mr-1"></i> Download
+                                </a>
                             @else
                                 <p>No Attachment</p>
                             @endif
@@ -116,8 +124,8 @@
                         <label class="block text-[#2A2A2A] text-base mb-1">Note</label>
 
                         <textarea name="note" id="noteField"
-                            class="w-full min-h-[120px] border border-[#ECEFF3] rounded-md px-3 py-2 bg-[#F9FAFB]"
-                            disabled>{{ $booking->note ?? '' }}</textarea>
+                            class="w-full min-h-[120px] border border-[#ECEFF3] rounded-md px-3 py-2 bg-[#F9FAFB] disabled:text-gray-500 disabled:cursor-not-allowed"
+                            @disabled($booking->status != 'Pending')>{{ $booking->note ?? '' }}</textarea>
                     </div>
 
 

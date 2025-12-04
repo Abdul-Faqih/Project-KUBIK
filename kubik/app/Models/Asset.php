@@ -34,7 +34,7 @@ class Asset extends Model
     }
 
     // 1 asset → bisa ada di banyak booking lewat booking_assets
-    public function bookingAssets()
+    public function booking()
     {
         return $this->hasMany(BookingAsset::class, 'id_asset', 'id_asset');
     }

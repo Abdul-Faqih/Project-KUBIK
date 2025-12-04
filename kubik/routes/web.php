@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\User\Auth\UserAuthController;
 use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\OnBoardingController;
+use App\Http\Controllers\User\UserBookingControlle;
 
 /*
 |--------------------------------------------------------------------------
@@ -213,6 +214,12 @@ Route::prefix('user')->group(function () {
     Route::get('/cart/list', [HomeController::class, 'getCartList'])
         ->name('user.cart.list');
 
+    // form
+    Route::get('/form', [UserBookingControlle::class, 'showForm'])
+    ->name('user.form');
+    
+    Route::post('/form/submit', [UserBookingControlle::class, 'submitForm'])
+    ->name('user.form.submit');
 
 });
 

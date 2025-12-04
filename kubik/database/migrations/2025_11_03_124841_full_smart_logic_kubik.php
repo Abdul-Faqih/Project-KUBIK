@@ -168,53 +168,6 @@ return new class extends Migration {
         ");
 
         /* ============================================================
-        PERBAIKAN LOGIC STATUS ASET SAAT BOOKING DIBUAT & DIUBAH
-        ============================================================ */
-        // Saat booking dibuat
-        DB::unprepared("
-    CREATE TRIGGER trg_booking_assets_update_status
-    AFTER INSERT ON booking_assets
-    FOR EACH ROW
-    BEGIN
-        DECLARE booking_status VARCHAR(20);
-
-        -- Ambil status booking terkait
-        SELECT status INTO booking_status FROM bookings WHERE id_booking = NEW.id_booking;
-
-        -- Jika booking masih aktif → aset dipinjam
-        IF booking_status IN ('Pending', 'Approved') THEN
-            UPDATE assets
-            SET status = 'Borrowed', updated_at = NOW()
-            WHERE id_asset = NEW.id_asset;
-
-        -- Jika booking sudah selesai atau ditolak → aset tetap tersedia
-        ELSEIF booking_status IN ('Completed', 'Rejected') THEN
-            UPDATE assets
-            SET status = 'Available', updated_at = NOW()
-            WHERE id_asset = NEW.id_asset;
-        END IF;
-    END
-");
-
-        // Saat booking diupdate (Completed / Rejected)
-        DB::unprepared("
-    CREATE TRIGGER trg_booking_assets_return_status
-    AFTER UPDATE ON bookings
-    FOR EACH ROW
-    BEGIN
-        -- Kalau booking selesai (Completed) atau ditolak (Rejected)
-        IF NEW.status IN ('Completed', 'Rejected') THEN
-            UPDATE assets
-            SET status = 'Available', updated_at = NOW()
-            WHERE id_asset IN (
-                SELECT id_asset FROM booking_assets WHERE id_booking = NEW.id_booking
-            );
-        END IF;
-    END
-");
-
-
-        /* ============================================================
            AUTO RETURN & LATE RETURN FIELD
         ============================================================ */
         DB::unprepared("
@@ -225,57 +178,6 @@ return new class extends Migration {
                 IF NEW.status = 'Completed' AND NEW.return_at IS NULL THEN
                     SET NEW.return_at = NOW();
                     SET NEW.late_return = TIMESTAMPDIFF(HOUR, NEW.end_time, NEW.return_at);
-                END IF;
-            END
-        ");
-
-        /* ============================================================
-           AUTO NOTIFIKASI USER & ADMIN (BOOKING & RETURN)
-        ============================================================ */
-
-        DB::unprepared("
-            CREATE TRIGGER trg_booking_after_insert_notif
-            AFTER INSERT ON bookings
-            FOR EACH ROW
-            BEGIN
-                -- User notif: booking dibuat
-                INSERT INTO user_notifications(id_user, message, is_read, created_at, updated_at)
-                VALUES(NEW.id_user, CONCAT('Your booking request ', NEW.id_booking, ' has been created.'), FALSE, NOW(), NOW());
-
-                -- Admin notif: booking baru masuk
-                INSERT INTO admin_notifications(id_admin, message, is_read, created_at, updated_at)
-                SELECT id_admin, CONCAT('New booking request received: ', NEW.id_booking), FALSE, NOW(), NOW()
-                FROM admins LIMIT 1;
-            END
-        ");
-
-        DB::unprepared("
-            CREATE TRIGGER trg_booking_after_update_notif
-            AFTER UPDATE ON bookings
-            FOR EACH ROW
-            BEGIN
-                -- Booking disetujui
-                IF NEW.status = 'Approved' THEN
-                    INSERT INTO user_notifications(id_user, message, is_read, created_at, updated_at)
-                    VALUES(NEW.id_user, CONCAT('Your booking ', NEW.id_booking, ' has been approved.'), FALSE, NOW(), NOW());
-                -- Booking ditolak
-                ELSEIF NEW.status = 'Rejected' THEN
-                    INSERT INTO user_notifications(id_user, message, is_read, created_at, updated_at)
-                    VALUES(NEW.id_user, CONCAT('Your booking ', NEW.id_booking, ' has been rejected.'), FALSE, NOW(), NOW());
-                -- User ajukan pengembalian
-                ELSEIF NEW.status = 'Pending' AND NEW.return_at IS NOT NULL THEN
-                    INSERT INTO user_notifications(id_user, message, is_read, created_at, updated_at)
-                    VALUES(NEW.id_user, CONCAT('Your return request for booking ', NEW.id_booking, ' has been submitted.'), FALSE, NOW(), NOW());
-
-                    INSERT INTO admin_notifications(id_admin, message, is_read, created_at, updated_at)
-                    VALUES(OLD.id_admin, CONCAT('User ', NEW.id_user, ' has requested return for ', NEW.id_booking, '.'), FALSE, NOW(), NOW());
-                -- Pengembalian disetujui
-                ELSEIF NEW.status = 'Completed' THEN
-                    INSERT INTO user_notifications(id_user, message, is_read, created_at, updated_at)
-                    VALUES(NEW.id_user, CONCAT('Your return for booking ', NEW.id_booking, ' has been approved.'), FALSE, NOW(), NOW());
-
-                    INSERT INTO admin_notifications(id_admin, message, is_read, created_at, updated_at)
-                    VALUES(OLD.id_admin, CONCAT('User ', NEW.id_user, ' has returned all assets for booking ', NEW.id_booking, '.'), FALSE, NOW(), NOW());
                 END IF;
             END
         ");

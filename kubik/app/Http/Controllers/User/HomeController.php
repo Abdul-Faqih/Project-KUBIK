@@ -112,6 +112,7 @@ class HomeController extends Controller
                 'name' => $i->name,
                 'description' => $i->description,
                 'image_asset' => $i->image_asset,
+                'stock_total' => $i->total,
                 'assets' => $i->assets->map(fn($a) => [
                     'status' => $a->status
                 ]),
