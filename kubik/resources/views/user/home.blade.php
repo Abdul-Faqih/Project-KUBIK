@@ -58,49 +58,84 @@
     </div>
 
     {{-- RECENT ACTIVITY --}}
-    <div class="mt-6 px-4">
-        <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-[#FFE2C7]">
-            <div class="bg-[#f6a124] text-white px-4 py-3 flex justify-between items-center">
-                <p class="text-base font-medium">Recent Activity</p>
-            </div>
+    <div class="px-4 mt-5 mb-10">
 
-            @if($recent)
-                <div class="px-5 py-4">
-                    <h2 class="text-xl font-semibold text-[#2A2A2A]">{{ $recent->id_booking }}</h2>
+        {{-- HEADER CARD --}}
+        <div class="bg-[#FFA826] text-white rounded-t-2xl px-5 py-3 flex justify-between items-center">
+            <p class="font-medium text-base">Borrowing History</p>
 
-                    <div class="flex items-center gap-1.5 mt-3 text-sm text-[#2A2A2A]">
-                        <div class="flex items-center gap-1 bg-[#F1F1F1] px-3 py-1 rounded-full">
-                            <span>⏱</span>
-                            <span>
-                                {{ \Carbon\Carbon::parse($recent->start_time)->format('H:i') }} -
-                                {{ \Carbon\Carbon::parse($recent->end_time)->format('H:i') }}
-                            </span>
+            <a href="{{ route('user.rentals.history') }}">
+                <span class="material-symbols-rounded text-white text-[28px] leading-none">
+                    chevron_right
+                </span>
+            </a>
+        </div>
+
+        {{-- BODY CARD --}}
+        <div class="bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] rounded-b-2xl px-5 py-6 border-x border-b border-[#E5E5E5]">
+
+            {{-- CASE 1: TIDAK ADA ACTIVITY --}}
+            @if(!$latestBooking)
+                <p class="text-base text-[#9A9A9A] mb-4 text-center">
+                    You don’t have any rental history yet.
+                </p>
+
+            {{-- CASE 2: ADA ACTIVITY --}}
+            @else
+                <div class="text-left">
+
+                    {{-- TITLE: ID Booking --}}
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <h2 class="text-lg font-bold text-[#2A2A2A]">
+                                {{ $latestBooking->id_booking }}
+                            </h2>
+                            <p class="text-[13px] text-[#9A9A9A]">Latest Booking</p>
                         </div>
+                        
+                        {{-- STATUS STYLE BARU (Bullet Point) --}}
+                        <div class="flex items-center gap-2 mt-1">
+                            @if($latestBooking->status === 'Pending')
+                                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                <span class="text-[14px] font-bold text-yellow-600">Pending</span>
 
-                        <div class="flex items-center gap-1 text-base">
-                            @if($recent->status === 'Pending')
-                                <span class="px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-600">Pending</span>
-                            @elseif($recent->status === 'Rejected')
-                                <span class="px-3 py-1 rounded-full text-sm bg-red-100 text-red-600">Rejected</span>
-                            @elseif($recent->status === 'Approved')
-                                <span class="px-3 py-1 rounded-full text-sm bg-green-100 text-green-600">Approved</span>
+                            @elseif($latestBooking->status === 'Approved')
+                                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                <span class="text-[14px] font-bold text-green-600">Approved</span>
+
+                            @elseif($latestBooking->status === 'Rejected')
+                                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                <span class="text-[14px] font-bold text-red-600">Rejected</span>
+
                             @else
-                                <span class="px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-600">Completed</span>
+                                <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                                <span class="text-[14px] font-bold text-blue-600">Completed</span>
                             @endif
                         </div>
                     </div>
 
-                    <a href="#"
-                        class="block w-full text-center border border-[#F26E21] text-[#F26E21] py-3 rounded-xl mt-6 font-medium">
-                        See all activity
+                    {{-- TIME SLOT --}}
+                    <div class="flex items-center gap-2 mb-5">
+                        <div class="flex items-center gap-2 bg-[#F5F5F5] px-3 py-1.5 rounded-full">
+                            <span class="material-symbols-rounded text-[18px] text-[#6A6A6A]">schedule</span>
+                            <span class="text-[14px] font-medium text-[#2A2A2A]">
+                                {{ \Carbon\Carbon::parse($latestBooking->start_time)->format('H:i') }} - 
+                                {{ \Carbon\Carbon::parse($latestBooking->end_time)->format('H:i') }}
+                            </span>
+                        </div>
+                    </div>
+
+                    {{-- VIEW DETAIL BUTTON --}}
+                    <a href="{{ route('user.rentals.detail', $latestBooking->id_booking) }}?from=profile"
+                        class="block w-full text-center border border-[#F26E21] text-[#F26E21] py-2.5 rounded-xl font-bold text-[15px] hover:bg-orange-50 transition-colors">
+                        View Detail
                     </a>
-                </div>
-            @else
-                <div class="px-5 py-6 text-center text-[#6A6A6A]">
-                    No activity yet.
+
                 </div>
             @endif
+
         </div>
+
     </div>
 
     {{-- ITEM AVAILABILITY SECTION --}}

@@ -4,11 +4,12 @@
 @section('wrapperClass', 'onboarding-wrapper')
 
 @section('content')
-    <div class="w-full max-w-[430px] mx-auto px-5 py-6 bg-white min-h-screen font-sans">
+    <div class="w-full max-w-[430px] mx-auto px-5 py-6 bg-white min-h-screen font-sans relative">
 
         {{-- Header --}}
         <div class="flex items-center mb-6">
-            <a href="{{ route('user.home') }}" class="mr-3">
+            {{-- UBAH DISINI: Ganti href jadi javascript:void(0) dan tambah onclick --}}
+            <a href="javascript:void(0)" onclick="openLeaveModal()" class="mr-3">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M15 18L9 12L15 6" stroke="#1F2937" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round" />
@@ -17,28 +18,29 @@
             <h1 class="text-xl font-bold text-gray-800">Loan Request Form</h1>
         </div>
 
-        {{-- Alert Error --}}
+        {{-- Alert Error (Server Side) --}}
         @if(session('error'))
             <div class="bg-red-50 text-red-500 text-sm p-3 rounded-lg mb-4 border border-red-200">
                 {{ session('error') }}
             </div>
         @endif
 
-        <form action="{{ route('user.form.submit') }}" method="POST" enctype="multipart/form-data">
+        {{-- FORM UTAMA --}}
+        <form id="loanForm" action="{{ route('user.form.submit') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             {{-- Section: Date Loan --}}
-            <h2 class="text-base font-bold text-gray-800 mb-3">Date Loan</h2>
+            <h2 class="text-base font-bold text-gray-800 mb-3">Date Loan <span class="text-red-500">*</span></h2>
 
             <div class="mb-4">
                 <label class="block text-gray-500 text-sm mb-1">Start</label>
                 <div class="flex items-center border-b border-gray-200 py-2 mb-2">
-                    <input type="date" name="start_date" required value="{{ old('start_date') }}"
+                    <input type="date" name="start_date" id="start_date" required value="{{ old('start_date') }}"
                         class="w-full outline-none text-gray-700 bg-transparent placeholder-gray-400">
                     <i class="far fa-calendar text-gray-400"></i>
                 </div>
                 <div class="flex items-center border-b border-gray-200 py-2">
-                    <input type="time" name="start_time" required value="{{ old('start_time') }}"
+                    <input type="time" name="start_time" id="start_time" required value="{{ old('start_time') }}"
                         class="w-full outline-none text-gray-700 bg-transparent placeholder-gray-400">
                     <i class="far fa-clock text-gray-400"></i>
                 </div>
@@ -47,39 +49,39 @@
             <div class="mb-6">
                 <label class="block text-gray-500 text-sm mb-1">End</label>
                 <div class="flex items-center border-b border-gray-200 py-2 mb-2">
-                    <input type="date" name="end_date" required value="{{ old('end_date') }}"
+                    <input type="date" name="end_date" id="end_date" required value="{{ old('end_date') }}"
                         class="w-full outline-none text-gray-700 bg-transparent placeholder-gray-400">
                     <i class="far fa-calendar text-gray-400"></i>
                 </div>
                 <div class="flex items-center border-b border-gray-200 py-2">
-                    <input type="time" name="end_time" required value="{{ old('end_time') }}"
+                    <input type="time" name="end_time" id="end_time" required value="{{ old('end_time') }}"
                         class="w-full outline-none text-gray-700 bg-transparent placeholder-gray-400">
                     <i class="far fa-clock text-gray-400"></i>
                 </div>
             </div>
 
             {{-- Section: List Assets --}}
-            <h2 class="text-base font-bold text-gray-800 mb-3">List Assets</h2>
+            <h2 class="text-base font-bold text-gray-800 mb-3">List Assets <span class="text-red-500">*</span></h2>
 
             {{-- Rooms --}}
             <div class="mb-5">
                 <p class="text-sm text-gray-500 mb-2">Room</p>
                 @forelse($rooms as $room)
                     <div class="flex items-center mb-2 room-row" id="room-row-{{ $room->id_asset }}">
-                        {{-- REVISI POIN 2: Panggil fungsi deleteCartItem --}}
-                        <button type="button" onclick="deleteCartItem('{{ $room->id_master }}', '{{ $room->id_asset }}', this)" class="mr-2 text-[#F26E21]">
+                        <button type="button" onclick="deleteCartItem('{{ $room->id_master }}', '{{ $room->id_asset }}', this)"
+                            class="mr-2 text-[#F26E21]">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z" />
+                                <path
+                                    d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z" />
                             </svg>
                         </button>
                         <span class="text-gray-800 font-medium">{{ $room->name }}</span>
                         <input type="hidden" name="assets[]" value="{{ $room->id_asset }}">
                     </div>
                 @empty
-                    <p class="text-xs text-gray-400 italic">No room selected</p>
+                    <p class="text-xs text-gray-400 italic" id="empty-room-msg">No room selected</p>
                 @endforelse
 
-                {{-- REVISI POIN 1: Link Availability Rooms --}}
                 <a href="{{ route('user.availability') }}?type=TYP-000001"
                     class="flex items-center text-[#F26E21] text-sm mt-2 font-medium">
                     <span class="mr-1 text-lg font-bold">+</span> Add another room
@@ -94,7 +96,6 @@
                         <span class="text-gray-800 font-medium">{{ $group['name'] }}</span>
 
                         <div class="flex items-center gap-3">
-                            {{-- REVISI POIN 3: Minus Button (Hapus Cart) --}}
                             <button type="button" onclick="deleteCartItem('{{ $group['master_id'] }}', null, this, true)"
                                 class="w-6 h-6 rounded-full bg-[#F26E21] text-white flex items-center justify-center font-bold">
                                 -
@@ -104,14 +105,12 @@
                                 {{ count($group['assets']) }}
                             </span>
 
-                            {{-- REVISI POIN 3: Plus Button (Tambah Cart) --}}
                             <button type="button" onclick="addCartItem('{{ $group['master_id'] }}')"
                                 class="w-6 h-6 rounded-full bg-[#F26E21] text-white flex items-center justify-center font-bold">
                                 +
                             </button>
                         </div>
 
-                        {{-- Hidden Inputs Container --}}
                         <div id="inputs-{{ $group['master_id'] }}" class="hidden">
                             @foreach($group['assets'] as $assetId)
                                 <input type="hidden" name="assets[]" value="{{ $assetId }}" class="asset-input">
@@ -119,10 +118,9 @@
                         </div>
                     </div>
                 @empty
-                    <p class="text-xs text-gray-400 italic">No items selected</p>
+                    <p class="text-xs text-gray-400 italic" id="empty-item-msg">No items selected</p>
                 @endforelse
 
-                {{-- REVISI POIN 1: Link Availability Items --}}
                 <a href="{{ route('user.availability') }}?type=TYP-000002"
                     class="flex items-center text-[#F26E21] text-sm mt-2 font-medium">
                     <span class="mr-1 text-lg font-bold">+</span> Add another item
@@ -130,11 +128,11 @@
             </div>
 
             {{-- Section: Attachment --}}
-            <h2 class="text-base font-bold text-gray-800 mb-2">Attachment</h2>
+            <h2 class="text-base font-bold text-gray-800 mb-3">Attachment <span class="text-red-500">*</span></h2>
             <div>
-                <input type="file" name="attachment" id="attachmentInput" class="hidden" accept=".pdf,.jpg,.png">
+                {{-- Input file wajib diisi logic validasinya lewat JS --}}
+                <input type="file" name="attachment" id="attachmentInput" class="hidden" accept=".pdf, .jpg,.png">
 
-                {{-- REVISI POIN 5: Button Logic (Add / Remove) --}}
                 <p id="file-label" class="text-left text-sm text-gray-500 mb-1 hidden"></p>
                 <button type="button" id="attachmentBtn"
                     class="w-full border border-[#F26E21] text-[#F26E21] rounded-xl py-3 font-semibold hover:bg-orange-50 transition">
@@ -142,56 +140,207 @@
                 </button>
             </div>
 
-            {{-- Submit Button --}}
-            <button type="submit"
-                class="w-full bg-[#F26E21] mt-5 text-white rounded-xl py-4 font-bold text-lg shadow-md hover:bg-orange-600 transition">
+            {{-- Submit Button (Type Button, bukan Submit agar bisa divalidasi JS dulu) --}}
+            <button type="button" onclick="validateAndConfirm()"
+                class="w-full bg-[#F26E21] mt-4 text-white rounded-xl py-4 font-bold text-lg shadow-md hover:bg-orange-600 transition active:scale-95">
                 Submit
             </button>
         </form>
     </div>
 
+    {{-- =========================================== --}}
+    {{-- TOAST NOTIFICATION (Hidden by default) --}}
+    {{-- =========================================== --}}
+    <div id="toast"
+        class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-full shadow-lg z-50 transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                clip-rule="evenodd" />
+        </svg>
+        <span id="toast-message" class="text-sm font-semibold">Please fill all fields!</span>
+    </div>
+
+    {{-- =========================================== --}}
+    {{-- CONFIRMATION MODAL (For Submit) --}}
+    {{-- =========================================== --}}
+    <div id="confirmModal"
+        class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center backdrop-blur-sm opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl w-[85%] max-w-[320px] p-6 text-center transform scale-90 transition-transform duration-300"
+            id="modalContent">
+
+            <h3 class="text-lg font-bold text-gray-800 mb-2">Confirm Submission</h3>
+            <p class="text-sm text-gray-500 mb-6">Are you sure you want to submit this booking request?</p>
+
+            <div class="flex gap-3">
+                <button onclick="closeModal()"
+                    class="flex-1 py-2.5 border border-gray-300 rounded-xl text-gray-600 font-semibold hover:bg-gray-50 transition">
+                    Cancel
+                </button>
+                <button onclick="submitRealForm()"
+                    class="flex-1 py-2.5 bg-[#F26E21] text-white rounded-xl font-semibold shadow-md hover:bg-orange-600 transition">
+                    Submit
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {{-- =========================================== --}}
+    {{-- LEAVE VALIDATION MODAL (NEW!) --}}
+    {{-- =========================================== --}}
+    <div id="leaveModal"
+        class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center backdrop-blur-sm opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl w-[85%] max-w-[320px] p-6 text-center transform scale-90 transition-transform duration-300"
+            id="leaveModalContent">
+
+            <h3 class="text-lg font-bold text-gray-800 mb-2">Discard Changes?</h3>
+            <p class="text-sm text-gray-500 mb-6">If you leave now, your form data will be lost. Are you sure?</p>
+
+            <div class="flex gap-3">
+                <button onclick="closeLeaveModal()"
+                    class="flex-1 py-2.5 border border-gray-300 rounded-xl text-gray-600 font-semibold hover:bg-gray-50 transition">
+                    Stay
+                </button>
+                <button onclick="confirmLeave()"
+                    class="flex-1 py-2.5 bg-red-500 text-white rounded-xl font-semibold shadow-md hover:bg-red-600 transition">
+                    Leave
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // --- LOGIKA ATTACHMENT (REVISI POIN 5) ---
+        // --- LOGIKA ATTACHMENT ---
         const attachmentInput = document.getElementById('attachmentInput');
         const attachmentBtn = document.getElementById('attachmentBtn');
         const fileLabel = document.getElementById('file-label');
 
-        attachmentBtn.addEventListener('click', function() {
+        attachmentBtn.addEventListener('click', function () {
             if (attachmentBtn.innerText === 'Remove') {
-                // Hapus file
-                attachmentInput.value = ''; // Reset input
+                attachmentInput.value = '';
                 fileLabel.innerText = '';
                 fileLabel.classList.add('hidden');
-                
-                // Ubah tombol kembali ke "Add"
+
                 attachmentBtn.innerText = 'Add';
                 attachmentBtn.classList.remove('border-red-500', 'text-red-500', 'hover:bg-red-50');
                 attachmentBtn.classList.add('border-[#F26E21]', 'text-[#F26E21]', 'hover:bg-orange-50');
             } else {
-                // Trigger upload dialog
                 attachmentInput.click();
             }
         });
 
-        attachmentInput.addEventListener('change', function() {
+        attachmentInput.addEventListener('change', function () {
             if (this.files && this.files[0]) {
-                // Tampilkan nama file
                 fileLabel.innerText = this.files[0].name;
                 fileLabel.classList.remove('hidden');
 
-                // Ubah tombol menjadi "Remove"
                 attachmentBtn.innerText = 'Remove';
                 attachmentBtn.classList.remove('border-[#F26E21]', 'text-[#F26E21]', 'hover:bg-orange-50');
                 attachmentBtn.classList.add('border-red-500', 'text-red-500', 'hover:bg-red-50');
             }
         });
 
-        // --- LOGIKA CART (REVISI POIN 2 & 3) ---
+        // --- NEW: VALIDATION & TOAST LOGIC ---
 
-        // Fungsi Hapus Item dari Cart (Minus Button)
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+
+            toastMsg.innerText = message;
+            toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-[-20px]');
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-20px]');
+            }, 3000); // Hilang setelah 3 detik
+        }
+
+        function validateAndConfirm() {
+            // 1. Ambil Value
+            const startDate = document.getElementById('start_date').value;
+            const startTime = document.getElementById('start_time').value;
+            const endDate = document.getElementById('end_date').value;
+            const endTime = document.getElementById('end_time').value;
+            const file = document.getElementById('attachmentInput').files.length;
+
+            // Cek apakah ada asset (minimal 1 hidden input name="assets[]")
+            const assets = document.querySelectorAll('input[name="assets[]"]').length;
+
+            // 2. Logic Check
+            if (!startDate || !startTime || !endDate || !endTime) {
+                showToast("Please fill in all Date & Time fields!");
+                return;
+            }
+
+            if (assets === 0) {
+                showToast("Please select at least one Asset or Room!");
+                return;
+            }
+
+            if (file === 0) {
+                showToast("Please upload the Attachment!");
+                return;
+            }
+
+            // 3. Jika Lolos Semua -> Buka Modal
+            openModal();
+        }
+
+        // --- MODAL SUBMIT LOGIC ---
+        const modal = document.getElementById('confirmModal');
+        const modalContent = document.getElementById('modalContent');
+
+        function openModal() {
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-90');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-90');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function submitRealForm() {
+            document.getElementById('loanForm').submit();
+        }
+
+        // --- NEW: LEAVE CONFIRMATION LOGIC ---
+        const leaveModal = document.getElementById('leaveModal');
+        const leaveModalContent = document.getElementById('leaveModalContent');
+
+        function openLeaveModal() {
+            leaveModal.classList.remove('hidden');
+            setTimeout(() => {
+                leaveModal.classList.remove('opacity-0');
+                leaveModalContent.classList.remove('scale-90');
+                leaveModalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeLeaveModal() {
+            leaveModal.classList.add('opacity-0');
+            leaveModalContent.classList.remove('scale-100');
+            leaveModalContent.classList.add('scale-90');
+
+            setTimeout(() => {
+                leaveModal.classList.add('hidden');
+            }, 300);
+        }
+
+        function confirmLeave() {
+            window.location.href = "{{ route('user.home') }}";
+        }
+
+        // --- EXISTING: CART LOGIC ---
         function deleteCartItem(idMaster, idAsset = null, btnElement, isGrouped = false) {
-            if (!confirm('Apakah Anda yakin ingin menghapus item ini dari keranjang?')) return;
-
             fetch("{{ route('user.cart.remove') }}", {
                 method: "POST",
                 headers: {
@@ -200,42 +349,36 @@
                 },
                 body: JSON.stringify({ id_master: idMaster })
             })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    if (isGrouped) {
-                        // Logic untuk Items (mengurangi counter & hidden input)
-                        removeOneItemInput(idMaster);
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        if (isGrouped) {
+                            removeOneItemInput(idMaster);
+                        } else {
+                            btnElement.closest('.room-row').remove();
+                        }
                     } else {
-                        // Logic untuk Room (menghapus baris)
-                        btnElement.closest('.room-row').remove();
+                        alert('Gagal menghapus item.');
                     }
-                    // Opsional: Reload jika Anda ingin data benar-benar sinkron total
-                    // window.location.reload(); 
-                } else {
-                    alert('Gagal menghapus item.');
-                }
-            })
-            .catch(err => console.error(err));
+                })
+                .catch(err => console.error(err));
         }
 
-        // Helper: Manipulasi DOM untuk pengurangan Item Group
         function removeOneItemInput(masterId) {
             const container = document.getElementById('inputs-' + masterId);
             const counter = document.getElementById('count-' + masterId);
             const inputs = container.getElementsByClassName('asset-input');
 
             if (inputs.length > 0) {
-                inputs[inputs.length - 1].remove(); // Hapus satu input hidden
-                counter.innerText = inputs.length; // Update angka
+                inputs[inputs.length - 1].remove();
+                counter.innerText = inputs.length;
 
                 if (inputs.length === 0) {
-                    document.getElementById('group-' + masterId).remove(); // Hapus baris jika habis
+                    document.getElementById('group-' + masterId).remove();
                 }
             }
         }
 
-        // Fungsi Tambah Item ke Cart (Plus Button)
         function addCartItem(idMaster) {
             fetch("{{ route('user.cart.add') }}", {
                 method: "POST",
@@ -245,18 +388,15 @@
                 },
                 body: JSON.stringify({ id_master: idMaster })
             })
-            .then(res => res.json())
-            .then(data => {
-                if(data.success) {
-                    // PENTING: Kita harus reload halaman karena kita butuh ID Asset baru (ex: AST-002)
-                    // yang digenerate database untuk dimasukkan ke hidden input form.
-                    // Jika tidak reload, form submit nanti error karena ID assetnya tidak ada.
-                    window.location.reload();
-                } else {
-                    alert('Gagal menambah item: ' + (data.message || 'Stok habis'));
-                }
-            })
-            .catch(err => console.error(err));
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.reload();
+                    } else {
+                        alert('Gagal menambah item: ' + (data.message || 'Stok habis'));
+                    }
+                })
+                .catch(err => console.error(err));
         }
     </script>
 @endsection

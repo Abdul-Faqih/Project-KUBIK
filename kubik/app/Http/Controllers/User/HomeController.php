@@ -31,9 +31,10 @@ class HomeController extends Controller
         $userId = session('user_id');
 
         // Ambil booking terbaru user
-        $recent = Booking::where('id_user', $userId)
-            ->orderBy('created_at', 'desc')
-            ->first();
+        $latestBooking = Booking::with(['assets.master'])
+        ->where('id_user', $userId)
+        ->orderBy('created_at', 'desc')
+        ->first();
 
         // Availability — ambil semua master asset
         // Asset Availability — ONLY ITEMS TYPE
@@ -78,7 +79,7 @@ class HomeController extends Controller
 
 
         return view('user.home', compact(
-            'recent',
+            'latestBooking',
             'availability',
             'roomAvailability',
             'itemsJson',

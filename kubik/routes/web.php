@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserNotificationController;
 use Illuminate\Support\Facades\Route;
 
 /* ======================
@@ -201,91 +202,129 @@ Route::prefix('admin')->group(function () {
       USER
 ====================== */
 
-Route::prefix('user')->group(function () {
 
-    /* -------------------
-         ONBOARDING
-    ------------------- */
-    Route::get('/', function () {
-        if (!session()->has('user_onboarding')) {
-            return redirect()->route('user.onboarding.1');
-        }
-        return redirect()->route('user.home');
-    });
+/* -------------------
+     ONBOARDING
+------------------- */
+Route::get('/', function () {
+    if (!session()->has('user_onboarding')) {
+        return redirect()->route('user.onboarding.1');
+    }
+    return redirect()->route('user.home');
+});
 
-    Route::get('/onboarding/1', [OnBoardingController::class, 'screen1'])->name('user.onboarding.1');
-    Route::get('/onboarding/2', [OnBoardingController::class, 'screen2'])->name('user.onboarding.2');
-    Route::get('/onboarding/3', [OnBoardingController::class, 'screen3'])->name('user.onboarding.3');
-    Route::get('/onboarding/finish', [OnBoardingController::class, 'finish'])->name('user.onboarding.finish');
-
-
-
-    /* -------------------
-         USER AUTH
-    ------------------- */
-
-    // LOGIN
-    Route::get('/login', [UserAuthController::class, 'showLogin'])->name('user.login');
-    Route::post('/login', [UserAuthController::class, 'login'])->name('user.login.post');
-    Route::get('/availability', [App\Http\Controllers\User\HomeController::class, 'availability'])
-        ->name('user.availability');
-
-
-    /* -------------------
-        REGISTER (FINAL)
-    ------------------- */
-
-    // 1. Tampilkan Halaman Pilih Role (UBAH JADI GET)
-    Route::get('/register/select-role', [UserAuthController::class, 'selectRole'])
-        ->name('user.register.role');
-
-    // 2. Proses Role & Buka Form Register (POST)
-    Route::match(['get', 'post'], '/register/form', [UserAuthController::class, 'createRegisterForm'])
-        ->name('user.register.form.open');
-
-    // 3. Submit Data Final (POST)
-    Route::post('/register/submit', [UserAuthController::class, 'submitRegister'])
-        ->name('user.register.submit');
+Route::get('/onboarding/1', [OnBoardingController::class, 'screen1'])->name('user.onboarding.1');
+Route::get('/onboarding/2', [OnBoardingController::class, 'screen2'])->name('user.onboarding.2');
+Route::get('/onboarding/3', [OnBoardingController::class, 'screen3'])->name('user.onboarding.3');
+Route::get('/onboarding/finish', [OnBoardingController::class, 'finish'])->name('user.onboarding.finish');
 
 
 
+/* -------------------
+     USER AUTH
+------------------- */
 
-    // LOGOUT
-    Route::post('/logout', [UserAuthController::class, 'logout'])->name('user.logout');
+// LOGIN
+Route::get('/login', [UserAuthController::class, 'showLogin'])->name('user.login');
+Route::post('/login', [UserAuthController::class, 'login'])->name('user.login.post');
+Route::get('/availability', [App\Http\Controllers\User\HomeController::class, 'availability'])
+    ->name('user.availability');
+
+
+/* -------------------
+    REGISTER (FINAL)
+------------------- */
+
+// 1. Tampilkan Halaman Pilih Role (UBAH JADI GET)
+Route::get('/register/select-role', [UserAuthController::class, 'selectRole'])
+    ->name('user.register.role');
+
+// 2. Proses Role & Buka Form Register (POST)
+Route::match(['get', 'post'], '/register/form', [UserAuthController::class, 'createRegisterForm'])
+    ->name('user.register.form.open');
+
+// 3. Submit Data Final (POST)
+Route::post('/register/submit', [UserAuthController::class, 'submitRegister'])
+    ->name('user.register.submit');
 
 
 
-    /* -------------------
-         USER HOME
-    ------------------- */
 
-    Route::get('/home', [HomeController::class, 'index'])->name('user.home');
+// LOGOUT
+Route::post('/logout', [UserAuthController::class, 'logout'])->name('user.logout');
 
-    // ========== AVAILABILITY INFO ==========
-    Route::get('/availability', [HomeController::class, 'availability'])
-        ->name('user.availability');
 
-    // CART
-    Route::post('/cart/add', [HomeController::class, 'addToCart'])
-        ->name('user.cart.add');
 
-    Route::post('/cart/remove', [HomeController::class, 'removeFromCart'])
-        ->name('user.cart.remove');
+/* -------------------
+     USER HOME
+------------------- */
 
-    Route::get('/cart/count', [HomeController::class, 'checkCartState'])
-        ->name('user.cart.count');
+Route::get('/home', [HomeController::class, 'index'])->name('user.home');
 
-    Route::get('/cart/count/total', [HomeController::class, 'checkTotalCartCount'])
-        ->name('user.cart.count.total');
+// ========== AVAILABILITY INFO ==========
+Route::get('/availability', [HomeController::class, 'availability'])
+    ->name('user.availability');
 
-    Route::get('/cart/list', [HomeController::class, 'getCartList'])
-        ->name('user.cart.list');
+// CART
+Route::post('/cart/add', [HomeController::class, 'addToCart'])
+    ->name('user.cart.add');
 
-    // form
-    Route::get('/form', [UserBookingControlle::class, 'showForm'])
+Route::post('/cart/remove', [HomeController::class, 'removeFromCart'])
+    ->name('user.cart.remove');
+
+Route::get('/cart/count', [HomeController::class, 'checkCartState'])
+    ->name('user.cart.count');
+
+Route::get('/cart/count/total', [HomeController::class, 'checkTotalCartCount'])
+    ->name('user.cart.count.total');
+
+Route::get('/cart/list', [HomeController::class, 'getCartList'])
+    ->name('user.cart.list');
+
+// form
+Route::get('/form', [UserBookingControlle::class, 'showForm'])
     ->name('user.form');
-    
-    Route::post('/form/submit', [UserBookingControlle::class, 'submitForm'])
+
+Route::post('/form/submit', [UserBookingControlle::class, 'submitForm'])
     ->name('user.form.submit');
 
-});
+
+
+
+/* -------------------
+     USER PROFILE
+------------------- */
+
+Route::get('/profile', [UserProfileController::class, 'index'])
+    ->name('user.profile');
+
+Route::get('/profile/notifications', [UserNotificationController::class, 'index'])
+    ->name('user.profile.notification');
+
+Route::get('/profile/details', [UserProfileController::class, 'details'])
+    ->name('user.profile.details');
+
+Route::get('/profile/settings', [UserProfileController::class, 'settings'])
+    ->name('user.profile.settings');
+
+Route::get('/profile/settings/phone', [App\Http\Controllers\User\UserProfileController::class, 'editPhone'])
+    ->name('user.settings.phone');
+
+Route::get('/profile/settings/password', [App\Http\Controllers\User\UserProfileController::class, 'editPassword'])
+    ->name('user.settings.password');
+
+Route::get('/permissions/history', [HistoryController::class, 'index']) // Methodnya 'index' bukan 'history'
+    ->name('user.rentals.history');
+
+// Route Detail
+Route::get('/permissions/detail/{id}', [HistoryController::class, 'detail'])
+    ->name('user.rentals.detail');
+
+// Route Download
+Route::get('/permissions/download/{id}', [HistoryController::class, 'download'])
+    ->name('user.rentals.download');
+
+// Route Process Return (Ajukan Pengembalian)
+Route::put('/permissions/return/{id}', [HistoryController::class, 'processReturn'])
+    ->name('user.rentals.return.process');
+

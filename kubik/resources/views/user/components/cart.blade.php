@@ -57,7 +57,7 @@
 
 <script>
     // ----------------------------------------------------
-    // FUNGSI SINKRONISASI GLOBAL (Dapat dipanggil dari komponen lain)
+    // FUNGSI SINKRONISASI GLOBAL
     // ----------------------------------------------------
     function globalUpdateCartCount() {
         fetch("{{ route('user.cart.count.total') }}")
@@ -69,16 +69,15 @@
 
                 if (totalCount > 0) {
                     flyBadge.innerText = totalCount;
-                    // Tampilkan hanya jika modal CART LIST tidak terbuka
                     if (document.getElementById('cartModal').classList.contains('hidden')) {
-                         flyButton.classList.remove('hidden');
+                        flyButton.classList.remove('hidden');
                     }
                 } else {
                     flyButton.classList.add('hidden');
                 }
             });
     }
-    
+
     // ----------------------------------------------------
     // FUNGSI CART LIST MODAL
     // ----------------------------------------------------
@@ -95,7 +94,7 @@
         document.getElementById("cartContent").classList.add("translate-y-full");
         setTimeout(() => {
             document.getElementById("cartModal").classList.add("hidden");
-            globalUpdateCartCount(); 
+            globalUpdateCartCount();
         }, 300);
     }
 
@@ -114,29 +113,58 @@
                 if (data.length === 0) {
                     emptyMsg.classList.remove('hidden');
                     listBody.classList.add('hidden');
-                    continueBtn.classList.add('disabled');
-                    continueBtn.setAttribute('href', '#');
-                    continueBtn.setAttribute('aria-disabled', 'true'); 
+                    continueBtn.classList.add('disabled', 'opacity-50', 'cursor-not-allowed');
+                    continueBtn.removeAttribute('href');
                 } else {
                     emptyMsg.classList.add('hidden');
                     listBody.classList.remove('hidden');
-                    continueBtn.classList.remove('disabled');
-                    continueBtn.setAttribute('href', '{{ route('user.form') }}'); 
-                    continueBtn.setAttribute('aria-disabled', 'false');
+                    continueBtn.classList.remove('disabled', 'opacity-50', 'cursor-not-allowed');
+                    continueBtn.setAttribute('href', '{{ route('user.form') }}');
 
-                    data.forEach((item, index) => {
+                    // 1. GROUPING DATA BERDASARKAN MASTER ID
+                    // Kita ubah array flat menjadi object group untuk menghitung Qty
+                    const groupedItems = {};
+
+                    data.forEach(item => {
+                        if (!groupedItems[item.master_id]) {
+                            groupedItems[item.master_id] = {
+                                ...item,
+                                qty: 0
+                            };
+                        }
+                        groupedItems[item.master_id].qty += 1;
+                    });
+
+                    // 2. RENDER HASIL GROUPING
+                    Object.values(groupedItems).forEach(item => {
                         const listItem = `
-                            <li class="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl shadow-sm">
-                                <div class="flex flex-col space-y-1">
-                                    <p class="font-bold text-base text-gray-800 line-clamp-1">${item.name}</p>
-                                    <span class="text-sm text-gray-500">${item.id_asset}</span>
+                            <li class="flex items-center justify-between py-4 border-b border-gray-100 last:border-0">
+                                {{-- KIRI: NAMA ASET --}}
+                                <div class="pr-4">
+                                    <p class="font-semibold text-[#2A2A2A] text-[15px] leading-tight line-clamp-2">
+                                        ${item.name}
+                                    </p>
                                 </div>
-                                <button onclick="deleteCartItem('${item.master_id}', '${item.id_asset}')" 
-                                        class="text-red-500 hover:text-red-700 p-2 rounded-full bg-red-50">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M7 6V3C7 2.44772 7.44772 2 8 2H16C16.5523 2 17 2.44772 17 3V6H22V8H20V20C20 20.5523 19.5523 21 19 21H5C4.44772 21 4 20.5523 4 20V8H2V6H7ZM9 4V6H15V4H9Z" />
-                                    </svg>
-                                </button>
+
+                                {{-- KANAN: COUNTER WIDGET --}}
+                                <div class="flex items-center gap-3 flex-shrink-0">
+                                    {{-- TOMBOL KURANG (-) --}}
+                                    <button onclick="updateCartItem('${item.master_id}', 'decrease')" 
+                                            class="w-7 h-7 rounded-full bg-[#F26E21] text-white flex items-center justify-center shadow-sm active:scale-90 transition">
+                                        <span class="text-xl font-bold leading-none mb-[2px]">-</span>
+                                    </button>
+
+                                    {{-- JUMLAH QTY --}}
+                                    <span class="text-[#2A2A2A] font-semibold text-lg w-4 text-center">
+                                        ${item.qty}
+                                    </span>
+
+                                    {{-- TOMBOL TAMBAH (+) --}}
+                                    <button onclick="updateCartItem('${item.master_id}', 'increase')" 
+                                            class="w-7 h-7 rounded-full bg-[#F26E21] text-white flex items-center justify-center shadow-sm active:scale-90 transition">
+                                        <span class="text-xl font-bold leading-none mb-[2px]">+</span>
+                                    </button>
+                                </div>
                             </li>
                         `;
                         listBody.innerHTML += listItem;
@@ -144,11 +172,22 @@
                 }
             });
     }
-    
-    function deleteCartItem(idMaster, idAsset) {
-        if (!confirm('Apakah Anda yakin ingin menghapus item ini dari keranjang?')) return;
-        
-        fetch("{{ route('user.cart.remove') }}", {
+
+    // FUNGSI UPDATE ITEM (TAMBAH / KURANG)
+    function updateCartItem(idMaster, action) {
+        // Tentukan URL berdasarkan aksi
+        // Asumsi: Anda punya route 'user.cart.add' untuk menambah. 
+        // Jika belum ada, pastikan buat route-nya atau sesuaikan URL di bawah.
+        let url = "";
+
+        if (action === 'decrease') {
+            url = "{{ route('user.cart.remove') }}";
+        } else {
+            // Ganti route ini dengan route untuk menambah item (sama seperti di halaman katalog)
+            url = "{{ route('user.cart.add') }}";
+        }
+
+        fetch(url, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -156,13 +195,13 @@
             },
             body: JSON.stringify({ id_master: idMaster })
         })
-        .then(res => res.json())
-        .then(() => {
-            fetchAndRenderCart(); 
-            globalUpdateCartCount(); 
-            // Opsional: Sinkronisasi modal detail jika sedang terbuka
-            if (typeof updateUI !== 'undefined') updateUI(); 
-        });
+            .then(res => res.json())
+            .then(response => {
+                // Refresh list setelah update
+                fetchAndRenderCart();
+                globalUpdateCartCount();
+            })
+            .catch(err => console.error("Error updating cart:", err));
     }
 
     // Event listeners
@@ -172,6 +211,6 @@
     });
 
     document.getElementById('flyButton').addEventListener('click', openCartModal);
-    
+
     document.addEventListener('DOMContentLoaded', globalUpdateCartCount);
 </script>

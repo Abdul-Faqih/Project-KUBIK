@@ -2,7 +2,7 @@
     
     {{-- Header Oranye --}}
     <div class="bg-[#F7941E] px-5 py-3 flex justify-between items-center">
-        <p class="text-white text-[15px] font-medium">Peminjaman no. {{ $item->id_booking }}</p>
+        <p class="text-white text-[15px] font-medium">{{ $item->id_booking }}</p>
     </div>
 
     {{-- Body --}}
@@ -43,7 +43,7 @@
                         {{-- Jika lebih dari 1 barang --}}
                         @if($item->total_items > 1)
                             <span class="text-[#F26E21] text-[13px] font-medium mt-1">
-                                + {{ $item->total_items - 1 }} Item Lainnya
+                                + {{ $item->total_items - 1 }} Other
                             </span>
                         @endif
                     </div>
@@ -57,22 +57,22 @@
                     @if($item->status == 'Pending')
                         {{-- KUNING --}}
                         <div class="w-3 h-3 rounded-full bg-yellow-500 shadow-sm"></div>
-                        <span class="text-[14px] font-bold text-yellow-600">Menunggu Konfirmasi</span>
+                        <span class="text-[14px] font-bold text-yellow-600">Pending</span>
                 
                     @elseif($item->status == 'Approved')
                         {{-- HIJAU --}}
                         <div class="w-3 h-3 rounded-full bg-green-500 shadow-sm"></div>
-                        <span class="text-[14px] font-bold text-green-600">Disetujui</span>
+                        <span class="text-[14px] font-bold text-green-600">Approved</span>
                 
                     @elseif($item->status == 'Rejected')
                         {{-- MERAH --}}
                         <div class="w-3 h-3 rounded-full bg-red-500 shadow-sm"></div>
-                        <span class="text-[14px] font-bold text-red-600">Ditolak</span>
+                        <span class="text-[14px] font-bold text-red-600">Rejected</span>
                 
                     @elseif($item->status == 'Completed')
                         {{-- BIRU --}}
                         <div class="w-3 h-3 rounded-full bg-blue-500 shadow-sm"></div>
-                        <span class="text-[14px] font-bold text-blue-600">Selesai</span>
+                        <span class="text-[14px] font-bold text-blue-600">Completed</span>
                     @endif
                 </div>
             </div>
@@ -81,7 +81,7 @@
         {{-- 4. BUTTON DETAIL (Dikasih jarak mt-5) --}}
         <a href="{{ route('user.rentals.detail', $item->id_booking) }}" 
            class="block w-full border border-[#F26E21] text-[#F26E21] text-center py-2.5 rounded-xl text-[15px] font-bold hover:bg-[#FFF2E9] transition-colors mt-5">
-            Lihat Detail
+            See Details
         </a>
     </div>
 </div>
