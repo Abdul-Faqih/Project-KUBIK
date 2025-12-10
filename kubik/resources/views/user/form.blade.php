@@ -8,7 +8,6 @@
 
         {{-- Header --}}
         <div class="flex items-center mb-6">
-            {{-- UBAH DISINI: Ganti href jadi javascript:void(0) dan tambah onclick --}}
             <a href="javascript:void(0)" onclick="openLeaveModal()" class="mr-3">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M15 18L9 12L15 6" stroke="#1F2937" stroke-width="2" stroke-linecap="round"
@@ -131,16 +130,22 @@
             <h2 class="text-base font-bold text-gray-800 mb-3">Attachment <span class="text-red-500">*</span></h2>
             <div>
                 {{-- Input file wajib diisi logic validasinya lewat JS --}}
-                <input type="file" name="attachment" id="attachmentInput" class="hidden" accept=".pdf, .jpg,.png">
+                <input type="file" name="attachment" id="attachmentInput" class="hidden" accept=".pdf, .jpg, .jpeg, .png">
 
                 <p id="file-label" class="text-left text-sm text-gray-500 mb-1 hidden"></p>
+
                 <button type="button" id="attachmentBtn"
                     class="w-full border border-[#F26E21] text-[#F26E21] rounded-xl py-3 font-semibold hover:bg-orange-50 transition">
                     Add
                 </button>
+
+                {{-- KETERANGAN FORMAT FILE (BARU) --}}
+                <p class="text-[11px] text-gray-400 mt-2 italic text-left">
+                    Only PDF, JPG, or PNG formats allowed.
+                </p>
             </div>
 
-            {{-- Submit Button (Type Button, bukan Submit agar bisa divalidasi JS dulu) --}}
+            {{-- Submit Button --}}
             <button type="button" onclick="validateAndConfirm()"
                 class="w-full bg-[#F26E21] mt-4 text-white rounded-xl py-4 font-bold text-lg shadow-md hover:bg-orange-600 transition active:scale-95">
                 Submit
@@ -149,7 +154,7 @@
     </div>
 
     {{-- =========================================== --}}
-    {{-- TOAST NOTIFICATION (Hidden by default) --}}
+    {{-- TOAST NOTIFICATION --}}
     {{-- =========================================== --}}
     <div id="toast"
         class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-full shadow-lg z-50 transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] flex items-center gap-2">
@@ -162,7 +167,7 @@
     </div>
 
     {{-- =========================================== --}}
-    {{-- CONFIRMATION MODAL (For Submit) --}}
+    {{-- MODAL CONFIRM SUBMIT --}}
     {{-- =========================================== --}}
     <div id="confirmModal"
         class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center backdrop-blur-sm opacity-0 transition-opacity duration-300">
@@ -186,7 +191,7 @@
     </div>
 
     {{-- =========================================== --}}
-    {{-- LEAVE VALIDATION MODAL (NEW!) --}}
+    {{-- MODAL LEAVE CONFIRMATION --}}
     {{-- =========================================== --}}
     <div id="leaveModal"
         class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center backdrop-blur-sm opacity-0 transition-opacity duration-300">
@@ -210,6 +215,13 @@
     </div>
 
     <script>
+        // --- HELPER: Validasi Ekstensi File ---
+        function isValidFileType(fileName) {
+            const allowedExtensions = ['pdf', 'jpg', 'jpeg', 'png'];
+            const fileExtension = fileName.split('.').pop().toLowerCase();
+            return allowedExtensions.includes(fileExtension);
+        }
+
         // --- LOGIKA ATTACHMENT ---
         const attachmentInput = document.getElementById('attachmentInput');
         const attachmentBtn = document.getElementById('attachmentBtn');
@@ -229,9 +241,19 @@
             }
         });
 
+        // VALIDASI SAAT PILIH FILE (onChange)
         attachmentInput.addEventListener('change', function () {
             if (this.files && this.files[0]) {
-                fileLabel.innerText = this.files[0].name;
+                const fileName = this.files[0].name;
+
+                // Cek Format File
+                if (!isValidFileType(fileName)) {
+                    showToast("Invalid format! Only PDF, JPG, PNG allowed.");
+                    this.value = ''; // Reset input
+                    return;
+                }
+
+                fileLabel.innerText = fileName;
                 fileLabel.classList.remove('hidden');
 
                 attachmentBtn.innerText = 'Remove';
@@ -240,8 +262,7 @@
             }
         });
 
-        // --- NEW: VALIDATION & TOAST LOGIC ---
-
+        // --- TOAST FUNCTION ---
         function showToast(message) {
             const toast = document.getElementById('toast');
             const toastMsg = document.getElementById('toast-message');
@@ -251,18 +272,19 @@
 
             setTimeout(() => {
                 toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-20px]');
-            }, 3000); // Hilang setelah 3 detik
+            }, 3000);
         }
 
+        // --- VALIDASI SUBMIT ---
         function validateAndConfirm() {
             // 1. Ambil Value
             const startDate = document.getElementById('start_date').value;
             const startTime = document.getElementById('start_time').value;
             const endDate = document.getElementById('end_date').value;
             const endTime = document.getElementById('end_time').value;
-            const file = document.getElementById('attachmentInput').files.length;
+            const fileInput = document.getElementById('attachmentInput');
+            const file = fileInput.files.length;
 
-            // Cek apakah ada asset (minimal 1 hidden input name="assets[]")
             const assets = document.querySelectorAll('input[name="assets[]"]').length;
 
             // 2. Logic Check
@@ -279,6 +301,15 @@
             if (file === 0) {
                 showToast("Please upload the Attachment!");
                 return;
+            }
+
+            // Cek ulang ekstensi file sebelum submit (untuk keamanan ganda)
+            if (file > 0) {
+                const fileName = fileInput.files[0].name;
+                if (!isValidFileType(fileName)) {
+                    showToast("Invalid file format! Please upload PDF or Image.");
+                    return;
+                }
             }
 
             // 3. Jika Lolos Semua -> Buka Modal
@@ -312,7 +343,7 @@
             document.getElementById('loanForm').submit();
         }
 
-        // --- NEW: LEAVE CONFIRMATION LOGIC ---
+        // --- MODAL LEAVE LOGIC ---
         const leaveModal = document.getElementById('leaveModal');
         const leaveModalContent = document.getElementById('leaveModalContent');
 
@@ -339,7 +370,7 @@
             window.location.href = "{{ route('user.home') }}";
         }
 
-        // --- EXISTING: CART LOGIC ---
+        // --- CART LOGIC ---
         function deleteCartItem(idMaster, idAsset = null, btnElement, isGrouped = false) {
             fetch("{{ route('user.cart.remove') }}", {
                 method: "POST",

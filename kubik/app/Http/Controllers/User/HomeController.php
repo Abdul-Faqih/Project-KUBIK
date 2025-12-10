@@ -32,9 +32,9 @@ class HomeController extends Controller
 
         // Ambil booking terbaru user
         $latestBooking = Booking::with(['assets.master'])
-        ->where('id_user', $userId)
-        ->orderBy('created_at', 'desc')
-        ->first();
+            ->where('id_user', $userId)
+            ->orderBy('created_at', 'desc')
+            ->first();
 
         // Availability — ambil semua master asset
         // Asset Availability — ONLY ITEMS TYPE
@@ -56,10 +56,11 @@ class HomeController extends Controller
                 'name' => $i->name,
                 'description' => $i->description,
                 'image_asset' => $i->image_asset,
+                'stock_total' => $i->total,
+                'id_type' => $i->id_type, // <--- PASTIKAN INI ADA
                 'assets' => $i->assets->map(fn($a) => [
                     'status' => $a->status
                 ]),
-                'type' => 'Item'
             ];
         });
 
@@ -114,6 +115,7 @@ class HomeController extends Controller
                 'description' => $i->description,
                 'image_asset' => $i->image_asset,
                 'stock_total' => $i->total,
+                'id_type' => $i->id_type, // <--- TAMBAHKAN INI AGAR JS BISA BACA TIPE
                 'assets' => $i->assets->map(fn($a) => [
                     'status' => $a->status
                 ]),
@@ -224,15 +226,18 @@ class HomeController extends Controller
         $cartItems = Cart::where('id_user', $userId)
             ->join('assets', 'carts.id_asset', '=', 'assets.id_asset')
             ->join('asset_masters', 'assets.id_master', '=', 'asset_masters.id_master')
+            // Tambahkan join ke tabel types (opsional jika id_type ada di asset_masters)
+            // ->join('types', 'asset_masters.id_type', '=', 'types.id_type') 
             ->select(
-                'assets.id_asset', 
-                'assets.id_master', 
+                'assets.id_asset',
+                'assets.id_master',
                 'asset_masters.name',
-                'asset_masters.id_master as master_id'
+                'asset_masters.id_master as master_id',
+                'asset_masters.id_type' // TAMBAHKAN INI AGAR BISA DICEK DI JS
             )
             ->orderBy('carts.id', 'asc')
             ->get();
-        
+
         return response()->json($cartItems);
     }
 }

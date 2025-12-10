@@ -43,15 +43,20 @@
                     // Ambil total dari $item->stock_total atau assets->count()
                     $total = $item->stock_total ?? $item->assets->count();
                     $available = $item->assets->where('status', 'Available')->count();
-                    $image = $item->image_asset
+
+                    // MODIFIKASI: Cek jika image_asset ada DAN tidak kosong
+                    $image = ($item->image_asset && file_exists(public_path('uploads/assetmasters/' . $item->image_asset)))
                         ? asset('uploads/assetmasters/' . $item->image_asset)
-                        : asset('images/noimage.png');
+                        : asset('images/no_images.png'); // Pastikan nama file default benar (noimage.png atau no_images.png)
                 @endphp
 
                 <div onclick="openDetail('{{ $item->id_master }}')"
                     class="bg-white rounded-2xl shadow-md border border-[#F1F1F1] p-3 flex flex-col h-[250px] cursor-pointer">
 
-                    <img src="{{ $image }}" class="w-full h-[120px] object-cover rounded-xl mb-3">
+                    {{-- Gambar --}}
+                    <img src="{{ $image }}" class="w-full h-[120px] object-cover rounded-xl mb-3"
+                        onerror="this.onerror=null;this.src='{{ asset('images/noimage.png') }}';">
+                    {{-- Tambahan onerror untuk jaga-jaga jika file fisik hilang --}}
 
                     <div class="flex-grow">
                         <p class="font-semibold text-sm text-[#2A2A2A] leading-tight line-clamp-2 h-[36px]">
@@ -73,7 +78,7 @@
         </div>
 
     </div>
-    
+
     {{-- Cart --}}
     @include('user.components.cart', ['cartCount' => $cartCount])
 
