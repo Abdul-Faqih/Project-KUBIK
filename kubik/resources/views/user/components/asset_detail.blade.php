@@ -48,7 +48,6 @@
 
                 <div class="flex items-center justify-between gap-3 bg-[#FFFFFF] rounded-full shadow-md p-2 px-3">
 
-                    {{-- TOMBOL MINUS (Style Baru: Orange Solid) --}}
                     <button id="minusBtn"
                         class="w-8 h-8 rounded-full bg-[#F26E21] flex items-center justify-center text-white text-xl font-semibold shadow-md active:scale-90 transition p-0">
                         –
@@ -58,7 +57,6 @@
                         1
                     </span>
 
-                    {{-- TOMBOL PLUS (Style Baru: Orange Solid) --}}
                     <button id="plusBtn"
                         class="w-8 h-8 rounded-full bg-[#F26E21] flex items-center justify-center text-white text-xl font-semibold shadow-md active:scale-90 transition p-0">
                         +
@@ -83,7 +81,8 @@
     let assets = [];
 
     // Fungsi-fungsi detail modal
-    function openDetail(id) {
+    // PERBAIKAN: Menambahkan parameter filteredCount
+    function openDetail(id, filteredCount = null) {
         currentMaster = id;
         const item = itemData.find(i => i.id_master == id);
         if (!item) return;
@@ -92,7 +91,14 @@
         currentType = item.id_type || (item.type ? item.type.id_type : '');
 
         assets = item.assets;
-        maxAvailable = item.assets.filter(a => a.status === "Available").length;
+
+        // PERBAIKAN: Gunakan filteredCount jika ada (dari PHP logic date filter),
+        // jika tidak ada, gunakan default (hitung yang status Available)
+        if (filteredCount !== null) {
+            maxAvailable = filteredCount;
+        } else {
+            maxAvailable = item.assets.filter(a => a.status === "Available").length;
+        }
 
         document.getElementById("detailTitle").innerText = item.name;
         document.getElementById("detailImage").src =
@@ -173,9 +179,7 @@
 
                         // UBAH JADI TONG SAMPAH (STYLE MERAH/PUTIH)
                         minusBtn.innerHTML = '<span class="material-symbols-rounded text-xl">delete</span>';
-                        // Hapus style Orange Solid
                         minusBtn.classList.remove('bg-[#F26E21]', 'text-white');
-                        // Tambah style Merah/Putih
                         minusBtn.classList.add('bg-red-50', 'text-red-500');
 
                         qtyText.classList.add("hidden");
@@ -186,8 +190,6 @@
                     }
                 } else {
                     // --- BARANG (ITEM) ---
-
-                    // KEMBALIKAN KE STYLE DEFAULT (ORANGE SOLID)
                     minusBtn.innerHTML = '–';
                     minusBtn.classList.remove('bg-red-50', 'text-red-500');
                     minusBtn.classList.add('bg-[#F26E21]', 'text-white');
@@ -211,7 +213,7 @@
                     if (plusBtn.disabled) {
                         plusBtn.classList.add('opacity-50', 'cursor-not-allowed', "bg-gray-400");
                     } else {
-                        plusBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                        plusBtn.classList.remove('opacity-50', 'cursor-not-allowed', "bg-gray-400");
                     }
                 }
 

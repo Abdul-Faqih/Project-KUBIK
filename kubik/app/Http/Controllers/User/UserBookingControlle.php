@@ -157,7 +157,8 @@ class UserBookingControlle extends Controller
             }
             if ($booking->status == 'Pending') {
                 $booking->update(['status' => 'Canceled']);
-                return redirect()->back()->with('success', 'Booking has been successfully canceled.');
+                // GANTI DISINI: Kirim ID booking agar bisa dipakai di link See Details
+                return redirect()->back()->with('successCanceled', $booking->id_booking);
             } else {
                 return redirect()->back()->with('error', 'Booking cannot be canceled (current status: ' . $booking->status . ').');
             }

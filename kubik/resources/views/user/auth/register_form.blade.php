@@ -135,7 +135,7 @@
                 </div>
 
                 {{-- CONFIRM PASSWORD (TEXT SHOW/HIDE) --}}
-                <div class="mb-10 space-y-1">
+                <div class="mb-4 space-y-1">
                     <div class="relative w-full">
                         <input type="password" name="password_confirm" id="confirmPassword" class="input-auth pr-16"
                             placeholder="Confirm Password">
@@ -145,6 +145,27 @@
                         </span>
                     </div>
                 </div>
+
+                {{-- === TAMBAHAN: CAPTCHA SIMPEL === --}}
+                <div class="mb-10 space-y-1">
+                    <div class="flex gap-3">
+                        {{-- Display Code --}}
+                        <div
+                            class="w-[120px] flex-shrink-0 h-[52px] bg-gray-200 rounded-[0.875rem] border border-gray-300 flex items-center justify-center select-none">
+                            <span
+                                class="text-xl font-mono font-bold tracking-widest text-gray-600 line-through decoration-gray-400">
+                                {{ $captcha }}
+                            </span>
+                        </div>
+                        {{-- Input Code --}}
+                        <div class="flex-1">
+                            <input type="number" name="captcha" id="captchaInput" class="input-auth"
+                                placeholder="Enter Code" autocomplete="off">
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-gray-400 ml-2 italic">Enter the code shown in the box.</p>
+                </div>
+                {{-- ================================= --}}
 
                 {{-- BUTTON --}}
                 <button type="button" id="submitBtn" disabled onclick="validateAndOpenModal()"
@@ -333,9 +354,10 @@
             const phoneInput = document.getElementById('phoneNumber').value;
             const pass = document.getElementById('registerPassword').value;
             const confirmPass = document.getElementById('confirmPassword').value;
+            // TAMBAHAN: Get Captcha
+            const captchaInput = document.getElementById('captchaInput').value;
 
             // UBAH DISINI: Validasi Phone Number (Hanya Angka & Panjang 7-13)
-            // Note: Meskipun 'oninput' sudah memfilter huruf, kita validasi lagi panjangnya di sini
             const phoneRegex = /^[0-9]+$/;
             if (!phoneRegex.test(phoneInput)) {
                 showToast("Phone number must contain only numbers!");
@@ -355,6 +377,12 @@
             // Validasi Password Match
             if (pass !== confirmPass) {
                 showToast("Passwords do not match!");
+                return;
+            }
+
+            // TAMBAHAN: Validasi Captcha Kosong
+            if (captchaInput.trim() === '') {
+                showToast("Please enter the CAPTCHA code!");
                 return;
             }
 

@@ -103,36 +103,31 @@ class HistoryController extends Controller
 
     public function processReturn(Request $request, $id)
     {
-        // 1. Validasi Input Foto
         $request->validate([
-            'proof_return' => 'required|image|mimes:jpeg,png,jpg|max:2048', // Max 2MB
+            'proof_return' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        // 2. Ambil Data Booking
         $booking = DB::table('bookings')->where('id_booking', $id)->first();
 
         if (!$booking) {
             return back()->with('error', 'Data peminjaman tidak ditemukan.');
         }
 
-        // 3. Proses Upload Foto
         if ($request->hasFile('proof_return')) {
             $file = $request->file('proof_return');
             $fileName = time() . '_' . $file->getClientOriginalName();
-
-            // Pindahkan file ke folder public/uploads/proofs
             $file->move(public_path('uploads/proofs'), $fileName);
 
-            // 4. Update Database
             DB::table('bookings')
                 ->where('id_booking', $id)
                 ->update([
-                    'status' => 'Completed',      // Ubah status jadi Completed
-                    'proof_return' => $fileName,  // Simpan nama file
+                    'status' => 'Completed',
+                    'proof_return' => $fileName,
                     'updated_at' => now()
                 ]);
 
-            return back()->with('success', 'Pengembalian berhasil diajukan dan status selesai.');
+            // GANTI DISINI: Kirim ID booking agar bisa dipakai di link See Details
+            return back()->with('successReturn', $id);
         }
 
         return back()->with('error', 'Gagal mengupload bukti foto.');

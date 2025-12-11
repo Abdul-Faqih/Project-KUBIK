@@ -22,14 +22,8 @@
         <span class="material-symbols-rounded text-[28px] text-[#2A2A2A]">more_vert</span>
     </div>
 
-    {{-- FLASH MESSAGE --}}
-    @if(session('success'))
-        <div class="px-5 mb-4">
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-                <span class="block sm:inline">{{ session('success') }}</span>
-            </div>
-        </div>
-    @endif
+    {{-- FLASH MESSAGE (ERROR ONLY) --}}
+    {{-- Success message kita handle pakai Modal di bawah, jadi alert success dihapus agar tidak double --}}
     @if(session('error'))
         <div class="px-5 mb-4">
             <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
@@ -203,26 +197,22 @@
                     <input type="file" name="proof_return" id="fileInput" class="hidden" accept="image/*"
                         onchange="previewFile()" required>
 
-                    {{-- WRAPPER AREA UPLOAD (DENGAN TOMBOL HAPUS) --}}
+                    {{-- WRAPPER AREA UPLOAD --}}
                     <div class="relative mb-4">
-                        {{-- Tombol Pilih Foto --}}
                         <div onclick="document.getElementById('fileInput').click()"
                             class="w-full border-2 border-dashed border-gray-300 text-gray-500 py-6 rounded-xl flex flex-col items-center justify-center gap-2 hover:bg-white transition relative overflow-hidden cursor-pointer bg-white">
 
-                            {{-- Preview Image --}}
                             <div id="previewContainer"
                                 class="hidden w-full h-full absolute inset-0 bg-white items-center justify-center">
                                 <img id="imgPreview" src="" class="h-full object-contain">
                             </div>
 
-                            {{-- Default Icon --}}
                             <div id="defaultUploadInfo" class="flex flex-col items-center">
                                 <span class="material-symbols-rounded text-3xl">add_a_photo</span>
                                 <span id="fileNameLabel" class="text-xs mt-1">Only image formats allowed.</span>
                             </div>
                         </div>
 
-                        {{-- Tombol Hapus (Muncul jika ada gambar) --}}
                         <button type="button" id="removeBtn" onclick="removeFile()"
                             class="hidden absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-7 h-7 flex items-center justify-center shadow-md hover:bg-red-600 transition z-10">
                             <span class="material-symbols-rounded text-sm font-bold">close</span>
@@ -276,7 +266,7 @@
 
     {{-- TOAST --}}
     <div id="toast"
-        class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-full shadow-lg z-50 transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] flex items-center gap-2">
+        class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-full shadow-lg z-[80] transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] flex items-center gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd"
                 d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
@@ -285,10 +275,91 @@
         <span id="toast-message" class="text-sm font-semibold">Please fill all fields!</span>
     </div>
 
-    {{-- MODALS (Code Modal Cancel, Submit, CancelBooking sama seperti sebelumnya) --}}
-    {{-- ... (Sisanya sama, modal tidak diubah sesuai instruksi) ... --}}
+    {{-- =========================================== --}}
+    {{-- MODAL SUCCESS: RETURN SUBMITTED --}}
+    {{-- =========================================== --}}
+    @if(session('successReturn'))
+        <div class="fixed inset-0 z-[70] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+            <div class="bg-white p-8 rounded-2xl shadow-2xl text-center max-w-sm w-[90%] transform scale-100 transition-all">
+                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <span class="material-symbols-rounded text-5xl text-green-600">check_circle</span>
+                </div>
+                <h2 class="text-2xl font-bold text-[#2A2A2A] mb-2">Return Submitted!</h2>
+                <p class="text-[#9A9A9A] mb-6">Redirecting to details in <span id="countdownReturn">5</span>s...</p>
+                <div class="w-full bg-gray-200 rounded-full h-1.5 mb-6 overflow-hidden">
+                    <div class="bg-green-500 h-1.5 rounded-full animate-progress"></div>
+                </div>
+                <div class="flex gap-3">
+                    <a href="{{ route('user.home') }}"
+                        class="flex-1 py-2.5 border border-gray-300 rounded-xl text-gray-600 font-semibold hover:bg-gray-50 text-sm">Back
+                        to Home</a>
+                    <a href="{{ route('user.rentals.detail', session('successReturn')) }}"
+                        class="flex-1 py-2.5 bg-[#F26E21] text-white rounded-xl font-semibold shadow-md hover:bg-orange-600 text-sm">See
+                        Details</a>
+                </div>
+            </div>
+        </div>
+        <script>
+            let timeLeftR = 5;
+            const countdownElR = document.getElementById('countdownReturn');
+            setInterval(() => {
+                timeLeftR--; if (countdownElR) countdownElR.innerText = timeLeftR;
+                if (timeLeftR <= 0) window.location.href = "{{ route('user.rentals.detail', session('successReturn')) }}";
+            }, 1000);
+        </script>
+    @endif
 
-    {{-- MODAL VALIDASI CANCEL RETURN --}}
+    {{-- =========================================== --}}
+    {{-- MODAL SUCCESS: CANCEL BOOKING --}}
+    {{-- =========================================== --}}
+    @if(session('successCanceled'))
+        <div class="fixed inset-0 z-[70] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+            <div class="bg-white p-8 rounded-2xl shadow-2xl text-center max-w-sm w-[90%] transform scale-100 transition-all">
+                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <span class="material-symbols-rounded text-5xl text-green-600">check_circle</span>
+                </div>
+                <h2 class="text-2xl font-bold text-[#2A2A2A] mb-2">Booking Canceled!</h2>
+                <p class="text-[#9A9A9A] mb-6">Redirecting to details in <span id="countdownCancel">5</span>s...</p>
+                <div class="w-full bg-gray-200 rounded-full h-1.5 mb-6 overflow-hidden">
+                    <div class="bg-green-500 h-1.5 rounded-full animate-progress"></div>
+                </div>
+                <div class="flex gap-3">
+                    <a href="{{ route('user.home') }}"
+                        class="flex-1 py-2.5 border border-gray-300 rounded-xl text-gray-600 font-semibold hover:bg-gray-50 text-sm">Back
+                        to Home</a>
+                    <a href="{{ route('user.rentals.detail', session('successCanceled')) }}"
+                        class="flex-1 py-2.5 bg-[#F26E21] text-white rounded-xl font-semibold shadow-md hover:bg-orange-600 text-sm">See
+                        Details</a>
+                </div>
+            </div>
+        </div>
+        <script>
+            let timeLeftC = 5;
+            const countdownElC = document.getElementById('countdownCancel');
+            setInterval(() => {
+                timeLeftC--; if (countdownElC) countdownElC.innerText = timeLeftC;
+                if (timeLeftC <= 0) window.location.href = "{{ route('user.rentals.detail', session('successCanceled')) }}";
+            }, 1000);
+        </script>
+    @endif
+
+    <style>
+        @keyframes progress {
+            from {
+                width: 0%;
+            }
+
+            to {
+                width: 100%;
+            }
+        }
+
+        .animate-progress {
+            animation: progress 5s linear forwards;
+        }
+    </style>
+
+    {{-- MODAL LAINNYA (TIDAK BERUBAH) --}}
     <div id="cancelReturnModal"
         class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center backdrop-blur-sm opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-2xl w-[85%] max-w-[320px] p-6 text-center transform scale-90 transition-transform duration-300"
@@ -304,7 +375,6 @@
         </div>
     </div>
 
-    {{-- MODAL VALIDASI SUBMIT RETURN --}}
     <div id="submitReturnModal"
         class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center backdrop-blur-sm opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-2xl w-[85%] max-w-[320px] p-6 text-center transform scale-90 transition-transform duration-300"
@@ -320,7 +390,6 @@
         </div>
     </div>
 
-    {{-- MODAL CANCEL BOOKING --}}
     <div id="cancelBookingModal"
         class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center backdrop-blur-sm opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-2xl w-[85%] max-w-[320px] p-6 text-center transform scale-90 transition-transform duration-300"
@@ -350,8 +419,19 @@
         </div>
     </div>
 
+    {{-- SCRIPT JAVA SCRIPT UNTUK INTERAKSI --}}
     <script>
-        // --- PREVIEW & VALIDATION FILE ---
+        function showReturnForm() {
+            document.getElementById('btnAjukanContainer').classList.add('hidden');
+            document.getElementById('formReturn').classList.remove('hidden');
+        }
+
+        function hideReturnForm() {
+            document.getElementById('btnAjukanContainer').classList.remove('hidden');
+            document.getElementById('formReturn').classList.add('hidden');
+            removeFile();
+        }
+
         function previewFile() {
             const input = document.getElementById('fileInput');
             const previewContainer = document.getElementById('previewContainer');
@@ -364,54 +444,37 @@
                 const fileType = file.type;
                 const validImageTypes = ['image/gif', 'image/jpeg', 'image/png', 'image/jpg'];
 
-                // 1. VALIDASI TIPE FILE
                 if (!validImageTypes.includes(fileType)) {
                     showToast("Invalid file format! Please upload an image (JPG, PNG).");
-                    input.value = ''; // Reset input
+                    input.value = '';
                     return;
                 }
 
-                // Tampilkan Preview
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     imgPreview.src = e.target.result;
                     previewContainer.classList.remove('hidden');
                     previewContainer.classList.add('flex');
                     defaultInfo.classList.add('hidden');
-                    removeBtn.classList.remove('hidden'); // Tampilkan tombol hapus
+                    removeBtn.classList.remove('hidden');
                 }
                 reader.readAsDataURL(file);
             }
         }
 
-        // --- HAPUS FILE (NEW) ---
         function removeFile() {
             const input = document.getElementById('fileInput');
             const previewContainer = document.getElementById('previewContainer');
             const defaultInfo = document.getElementById('defaultUploadInfo');
             const removeBtn = document.getElementById('removeBtn');
 
-            input.value = ''; // Reset value input file
+            input.value = '';
             previewContainer.classList.add('hidden');
             previewContainer.classList.remove('flex');
             defaultInfo.classList.remove('hidden');
-            removeBtn.classList.add('hidden'); // Sembunyikan tombol hapus
+            removeBtn.classList.add('hidden');
         }
 
-        // --- SHOW/HIDE FORM ---
-        function showReturnForm() {
-            document.getElementById('btnAjukanContainer').classList.add('hidden');
-            document.getElementById('formReturn').classList.remove('hidden');
-        }
-
-        function hideReturnForm() {
-            document.getElementById('btnAjukanContainer').classList.remove('hidden');
-            document.getElementById('formReturn').classList.add('hidden');
-            // Reset form saat hide
-            removeFile();
-        }
-
-        // --- TOAST ---
         function showToast(message) {
             const toast = document.getElementById('toast');
             const toastMsg = document.getElementById('toast-message');
@@ -423,7 +486,6 @@
         }
 
         // --- MODAL LOGIC (CANCEL & SUBMIT) ---
-        // (Tetap sama seperti sebelumnya)
         const cancelModal = document.getElementById('cancelReturnModal');
         const cancelModalContent = document.getElementById('cancelModalContent');
         const submitModal = document.getElementById('submitReturnModal');
