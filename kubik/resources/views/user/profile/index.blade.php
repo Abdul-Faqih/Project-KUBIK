@@ -105,6 +105,11 @@
                                 <div class="w-3 h-3 rounded-full bg-red-500"></div>
                                 <span class="text-[14px] font-bold text-red-600">Rejected</span>
 
+                            @elseif($latestBooking->status == 'Canceled')
+                                {{-- ABU-ABU / MERAH --}}
+                                <div class="w-3 h-3 rounded-full bg-red-500 shadow-sm"></div>
+                                <span class="text-[14px] font-bold text-red-600">Canceled</span>
+
                             @else
                                 <div class="w-3 h-3 rounded-full bg-blue-500"></div>
                                 <span class="text-[14px] font-bold text-blue-600">Completed</span>

@@ -1,6 +1,6 @@
 @props(['cartCount'])
 
-{{-- 🟢 FLY BUTTON (ICON BOX) 🟢 --}}
+{{--FLY BUTTON (ICON BOX)--}}
 <div id="flyButton"
     class="fixed right-5 bottom-5 z-40 w-16 h-16 rounded-full bg-[#F26E21] flex items-center justify-center shadow-lg cursor-pointer {{ $cartCount > 0 ? '' : 'hidden' }}">
 
@@ -128,7 +128,9 @@
                         if (!groupedItems[item.master_id]) {
                             groupedItems[item.master_id] = {
                                 ...item,
-                                qty: 0
+                                qty: 0,
+                                // Pastikan stock_available dikirim dari controller
+                                stock_available: item.stock_available || 999
                             };
                         }
                         groupedItems[item.master_id].qty += 1;
@@ -136,13 +138,12 @@
 
                     // 2. RENDER ITEM
                     Object.values(groupedItems).forEach(item => {
-                        
-                        // --- LOGIKA PENGECEKAN TIPE ---
-                        let actionButtons = '';
+
+                        let rightSideContent = '';
 
                         if (item.id_type === 'TYP-000001') {
-                            // JIKA ROOM (TYP-000001) -> TAMPILKAN ICON REMOVE (TONG SAMPAH)
-                            actionButtons = `
+                            // --- TAMPILAN ROOM (TONG SAMPAH) ---
+                            rightSideContent = `
                                 <button onclick="updateCartItem('${item.master_id}', 'decrease')" 
                                         class="w-9 h-9 rounded-full bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-100 transition shadow-sm border border-red-100">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
@@ -151,8 +152,22 @@
                                 </button>
                             `;
                         } else {
-                            // JIKA BUKAN ROOM -> TAMPILKAN QTY COUNTER
-                            actionButtons = `
+                            // --- TAMPILAN ITEM BIASA (COUNTER) ---
+
+                            // Cek apakah Qty sudah mencapai stok tersedia
+                            const isMax = item.qty >= item.stock_available;
+
+                            // Style Button Plus (Jika Max -> Abu-abu, Jika Belum -> Oranye)
+                            const plusBtnClass = isMax
+                                ? 'bg-[#E0E0E0] text-[#A0A0A0] cursor-not-allowed'
+                                : 'bg-[#F26E21] text-white shadow-sm active:scale-90 transition';
+
+                            // Action Button Plus (Jika Max -> Tidak bisa diklik)
+                            const plusBtnAction = isMax
+                                ? ''
+                                : `onclick="updateCartItem('${item.master_id}', 'increase')"`;
+
+                            rightSideContent = `
                                 <button onclick="updateCartItem('${item.master_id}', 'decrease')" 
                                         class="w-7 h-7 rounded-full bg-[#F26E21] text-white flex items-center justify-center shadow-sm active:scale-90 transition">
                                     <span class="text-xl font-bold leading-none mb-[2px]">-</span>
@@ -162,16 +177,15 @@
                                     ${item.qty}
                                 </span>
 
-                                <button onclick="updateCartItem('${item.master_id}', 'increase')" 
-                                        class="w-7 h-7 rounded-full bg-[#F26E21] text-white flex items-center justify-center shadow-sm active:scale-90 transition">
-                                    <span class="text-xl font-bold leading-none mb-[2px]">+</span>
+                                <button ${plusBtnAction} 
+                                        class="w-7 h-7 rounded-full flex items-center justify-center font-bold mb-[2px] ${plusBtnClass}">
+                                    <span class="text-xl leading-none">+</span>
                                 </button>
                             `;
                         }
 
                         const listItem = `
                             <li class="flex items-center justify-between py-4 border-b border-gray-100 last:border-0">
-                                {{-- KIRI: NAMA ASET --}}
                                 <div class="pr-4">
                                     <p class="font-semibold text-[#2A2A2A] text-[15px] leading-tight line-clamp-2">
                                         ${item.name}
@@ -179,9 +193,8 @@
                                     <span class="text-xs text-gray-400 block mt-0.5">${item.id_asset}</span>
                                 </div>
 
-                                {{-- KANAN: ACTION BUTTONS --}}
                                 <div class="flex items-center gap-3 flex-shrink-0">
-                                    ${actionButtons}
+                                    ${rightSideContent}
                                 </div>
                             </li>
                         `;

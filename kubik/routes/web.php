@@ -77,7 +77,7 @@ Route::prefix('admin')->group(function () {
         ->name('admin.dashboard.assets.delete');
 
     // ASSET MASTER DETAIL
-    Route::get('/asset-masters/{id_master}', [AssetMasterController::class, 'show'])
+    Route::get('/dashboard/asset-masters/{id_master}', [AssetMasterController::class, 'show'])
         ->name('admin.assetmasters.detail');
 
     // Update Asset Master
@@ -111,12 +111,12 @@ Route::prefix('admin')->group(function () {
         ->name('admin.dashboard.permissions');
 
     // Filter AJAX
-    Route::get('/admin/permissions/filter', [BookingController::class, 'filter'])
+    Route::get('/permissions/filter', [BookingController::class, 'filter'])
         ->name('admin.permissions.filter');
 
     // Permission Detail
     Route::get('/permissions/{id}', [BookingController::class, 'show'])
-        ->name('admin.permissions.detail');
+        ->name('admin.permissions.detail'); 
 
     // Update
     Route::post('/permissions/{id}/update', [BookingController::class, 'update'])
@@ -323,6 +323,8 @@ Route::get('/permissions/detail/{id}', [HistoryController::class, 'detail'])
 // Route Download
 Route::get('/permissions/download/{id}', [HistoryController::class, 'download'])
     ->name('user.rentals.download');
+    Route::put('/permissions/{id}/cancel', [UserBookingControlle::class, 'cancelBooking'])
+    ->name('user.booking.cancel');
 
 // Route Process Return (Ajukan Pengembalian)
 Route::put('/permissions/return/{id}', [HistoryController::class, 'processReturn'])

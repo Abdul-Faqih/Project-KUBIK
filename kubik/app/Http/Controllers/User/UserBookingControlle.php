@@ -11,7 +11,7 @@ use App\Models\Booking;
 use App\Models\BookingAsset;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\File; // Tambahkan ini untuk manajemen file
+use Illuminate\Support\Facades\File;
 
 class UserBookingControlle extends Controller
 {
@@ -19,6 +19,16 @@ class UserBookingControlle extends Controller
     {
         if (!session()->has('user_id')) {
             return redirect()->route('user.login')->with('error', 'Silakan login terlebih dahulu.');
+        }
+
+        // === BYPASS UNTUK POPUP SUKSES ===
+        // Jika session 'booking_success' ada, kita render view kosong saja (atau dengan data dummy)
+        // supaya modal sukses bisa muncul tanpa error query keranjang kosong.
+        if (session('booking_success')) {
+            return view('user.form', [
+                'rooms' => collect([]),
+                'groupedItems' => []
+            ]);
         }
 
         $userId = session('user_id');
@@ -31,6 +41,7 @@ class UserBookingControlle extends Controller
                 'assets.id_asset',
                 'asset_masters.name',
                 'asset_masters.id_master',
+                'asset_masters.stock_available', // <--- PENTING: Ambil stok tersedia dari master
                 'types.name as type_name'
             )
             ->orderBy('asset_masters.name', 'asc')
@@ -40,12 +51,14 @@ class UserBookingControlle extends Controller
 
         $itemsRaw = $cartItems->filter(fn($item) => $item->type_name !== 'Rooms');
         $groupedItems = [];
+
         foreach ($itemsRaw as $item) {
             $masterId = $item->id_master;
             if (!isset($groupedItems[$masterId])) {
                 $groupedItems[$masterId] = [
                     'name' => $item->name,
                     'master_id' => $masterId,
+                    'max_stock' => $item->stock_available, // <--- Simpan max stock ke array
                     'assets' => []
                 ];
             }
@@ -108,34 +121,48 @@ class UserBookingControlle extends Controller
                 BookingAsset::insert($bookingAssetsData);
             }
 
-            // REVISI POIN 4: Upload ke public/uploads/attachments
             if ($request->hasFile('attachment')) {
                 $file = $request->file('attachment');
                 $fileName = $newBookingId . '_' . time() . '.' . $file->getClientOriginalExtension();
-                
-                // Tentukan path tujuan di folder public
+
                 $destinationPath = public_path('uploads/attachments');
-                
-                // Pastikan folder ada
                 if (!File::exists($destinationPath)) {
                     File::makeDirectory($destinationPath, 0755, true);
                 }
 
-                // Pindahkan file
                 $file->move($destinationPath, $fileName);
-
-                // Simpan path relatif ke database
                 $booking->update(['attachment' => $fileName]);
             }
 
             Cart::where('id_user', $user_id)->delete();
             DB::commit();
 
-            return redirect()->route('user.home')->with('success', 'Permintaan peminjaman berhasil dikirim!');
+            // UBAH DISINI: Kembali ke halaman ini dengan membawa ID Booking sukses
+            return back()->with('booking_success', $newBookingId);
 
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
+        }
+    }
+
+    // ... (Fungsi cancelBooking & generateBookingId biarkan saja, tidak berubah) ...
+
+    public function cancelBooking($id)
+    {
+        try {
+            $booking = Booking::where('id_booking', $id)->firstOrFail();
+            if ($booking->id_user != session('user_id')) {
+                return redirect()->back()->with('error', 'Unauthorized access.');
+            }
+            if ($booking->status == 'Pending') {
+                $booking->update(['status' => 'Canceled']);
+                return redirect()->back()->with('success', 'Booking has been successfully canceled.');
+            } else {
+                return redirect()->back()->with('error', 'Booking cannot be canceled (current status: ' . $booking->status . ').');
+            }
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error canceling booking: ' . $e->getMessage());
         }
     }
 

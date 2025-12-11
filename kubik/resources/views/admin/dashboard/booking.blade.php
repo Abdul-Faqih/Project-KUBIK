@@ -24,6 +24,7 @@
                         <option value="Pending">Pending</option>
                         <option value="Completed">Completed</option>
                         <option value="Rejected">Rejected</option>
+                        <option value="Canceled">Canceled</option>
                     </select>
 
                     <!-- SORT BY DATE -->

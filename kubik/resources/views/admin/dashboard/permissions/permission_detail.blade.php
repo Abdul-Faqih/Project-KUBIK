@@ -98,6 +98,7 @@
                             <option value="Pending" {{ $booking->status == 'Pending' ? 'selected' : '' }}>Pending</option>
                             <option value="Approved" {{ $booking->status == 'Approved' ? 'selected' : '' }}>Approved</option>
                             <option value="Rejected" {{ $booking->status == 'Rejected' ? 'selected' : '' }}>Rejected</option>
+                            <option value="Canceled" {{ $booking->status == 'Canceled' ? 'selected' : '' }}>Canceled</option>
                             <option value="Completed" {{ $booking->status == 'Completed' ? 'selected' : '' }}>Completed
                             </option>
                         </select>
@@ -139,6 +140,7 @@
                         <tr class="border-b border-gray-200 text-[#2A2A2A]">
                             <th class="py-3 px-2">No.</th>
                             <th class="py-3 px-2">ID Asset</th>
+                            <th class="py-3 px-2">Name</th>
                             <th class="py-3 px-2">Updated at</th>
                             <th class="py-3 px-2">Condition</th>
                             <th class="py-3 px-2">Status</th>
@@ -152,6 +154,7 @@
 
                                 <td class="py-3 px-2">{{ $i + 1 }}</td>
                                 <td class="py-3 px-2">{{ $asset->id_asset }}</td>
+                                <td class="py-3 px-2">{{ $asset->master->name }}</td>
 
                                 <td class="py-3 px-2">
                                     {{ \Carbon\Carbon::parse($asset->updated_at)->format('d/m/Y H:i') }}

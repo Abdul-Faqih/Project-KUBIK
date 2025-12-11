@@ -98,6 +98,10 @@ class HomeController extends Controller
 
         $search = $request->search;
         $filterType = $request->type;
+        $startDate = $request->start_date;
+        $startTime = $request->start_time;
+        $endDate = $request->end_date;
+        $endTime = $request->end_time;
 
         $types = Type::all();
 
@@ -130,6 +134,10 @@ class HomeController extends Controller
             'types',
             'search',
             'filterType',
+            'startDate',
+            'startTime',
+            'endDate',
+            'endTime',
             'itemsJson',
             'cartCount'
         ));
@@ -226,14 +234,13 @@ class HomeController extends Controller
         $cartItems = Cart::where('id_user', $userId)
             ->join('assets', 'carts.id_asset', '=', 'assets.id_asset')
             ->join('asset_masters', 'assets.id_master', '=', 'asset_masters.id_master')
-            // Tambahkan join ke tabel types (opsional jika id_type ada di asset_masters)
-            // ->join('types', 'asset_masters.id_type', '=', 'types.id_type') 
             ->select(
                 'assets.id_asset',
                 'assets.id_master',
                 'asset_masters.name',
                 'asset_masters.id_master as master_id',
-                'asset_masters.id_type' // TAMBAHKAN INI AGAR BISA DICEK DI JS
+                'asset_masters.id_type',
+                'asset_masters.stock_available'
             )
             ->orderBy('carts.id', 'asc')
             ->get();

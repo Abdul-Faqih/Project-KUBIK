@@ -42,6 +42,10 @@
             </div>
 
             <div class="ads-slide w-full h-full absolute inset-0 hidden">
+                <img src="{{ asset('images/ads/ADS0.PNG') }}" class="w-full h-full object-cover">
+            </div>
+
+            <div class="ads-slide w-full h-full absolute inset-0 hidden">
                 <img src="{{ asset('images/ads/ADS2.PNG') }}" class="w-full h-full object-cover">
             </div>
 
@@ -51,6 +55,7 @@
         </div>
 
         <div class="flex justify-end mt-3 gap-2 px-5">
+            <span class="ads-dot w-2 h-2 bg-[#CFCFCF] rounded-full cursor-pointer"></span>
             <span class="ads-dot w-2 h-2 bg-[#CFCFCF] rounded-full cursor-pointer"></span>
             <span class="ads-dot w-2 h-2 bg-[#CFCFCF] rounded-full cursor-pointer"></span>
             <span class="ads-dot w-2 h-2 bg-[#CFCFCF] rounded-full cursor-pointer"></span>
@@ -106,6 +111,11 @@
                             @elseif($latestBooking->status === 'Rejected')
                                 <div class="w-3 h-3 rounded-full bg-red-500"></div>
                                 <span class="text-[14px] font-bold text-red-600">Rejected</span>
+
+                            @elseif($latestBooking->status == 'Canceled')
+                                {{-- ABU-ABU / MERAH --}}
+                                <div class="w-3 h-3 rounded-full bg-red-500 shadow-sm"></div>
+                                <span class="text-[14px] font-bold text-red-600">Canceled</span>
 
                             @else
                                 <div class="w-3 h-3 rounded-full bg-blue-500"></div>
