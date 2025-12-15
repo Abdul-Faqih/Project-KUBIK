@@ -13,7 +13,7 @@
 | Nama                                   | Peran                               | Kontak                                  
 | -------------------------------------- | ----------------------------------- | ----------------------------------------
 | **Ahmad Abdul Faqih**                        | Fullstack Developer / Project Owner | [GitHub](https://github.com/Abdul-Faqih), [Instagram](https://www.instagram.com/bdlllll_/) |
-| **Muhammad Aghnat Mumtaz**                        | Fullstack  | [GitHub](https://github.com/AghnatMumtaz), [Instagram](https://www.instagram.com/mumoon_z/) |
+| **Muhammad Aghnat Mumtaz**                        | Fullstack Developer | [GitHub](https://github.com/AghnatMumtaz), [Instagram](https://www.instagram.com/mumoon_z/) |
 | Tambahkan Nama Kamu  | Frontend / Backend                  | —                                        |
 
 ---
