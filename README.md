@@ -30,16 +30,16 @@
 ### User
 - [x] On Boarding
 - [x] login & regist
-- [ ] dashboard awal
-- [ ] tampil ketersedian asset
-- [ ] membuat permission
-- [ ] mengembalikan asset
-- [ ] tampil status booking
-- [ ] tampil detail booking
-- [ ] tampil riwayat booking
+- [x] dashboard awal
+- [x] tampil ketersedian asset
+- [x] membuat permission
+- [x] mengembalikan asset
+- [x] tampil status booking
+- [x] tampil detail booking
+- [x] tampil riwayat booking
 - [ ] notifikasi
 - [ ] ubah profil
-- [ ] logout
+- [x] logout
 ---
 
 ## 📘 Deskripsi Singkat
@@ -292,7 +292,8 @@ Route::prefix('admin/dashboard')->group(function () {
 
 | Nama                                   | Peran                               | Kontak                                  
 | -------------------------------------- | ----------------------------------- | ----------------------------------------
-| **Abdul Faqih**                        | Fullstack Developer / Project Owner | [GitHub](https://github.com/Abdul-Faqih), [Instagram](https://www.instagram.com/bdlllll_/) |
+| **Ahmad Abdul Faqih**                        | Fullstack Developer / Project Owner | [GitHub](https://github.com/Abdul-Faqih), [Instagram](https://www.instagram.com/bdlllll_/) |
+| **Muhammad Aghnat Mumtaz**                        | Fullstack  | [GitHub](https://github.com/AghnatMumtaz), [Instagram](https://www.instagram.com/mumoon_z/) |
 | Tambahkan Nama Kamu  | Frontend / Backend                  | —                                        |
 
 ---
