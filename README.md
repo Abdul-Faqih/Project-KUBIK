@@ -5,6 +5,8 @@
 ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-3.x-38B2AC?logo=tailwind-css&logoColor=white)
 ![License](https://img.shields.io/badge/License-Academic-blue)
 ![Status](https://img.shields.io/badge/Status-Active-brightgreen)
+![GitHub last commit](https://img.shields.io/github/last-commit/Abdul-Faqih/Project-KUBIK?style=flat-square&color=38B2AC)
+![GitHub repo size](https://img.shields.io/github/repo-size/Abdul-Faqih/Project-KUBIK?style=flat-square&color=orange)
 
 ---
 
@@ -15,6 +17,22 @@
 | **Ahmad Abdul Faqih**                        | Fullstack Developer / Project Owner | [GitHub](https://github.com/Abdul-Faqih), [Instagram](https://www.instagram.com/bdlllll_/) |
 | **Muhammad Aghnat Mumtaz**                        | Fullstack Developer | [GitHub](https://github.com/AghnatMumtaz), [Instagram](https://www.instagram.com/mumoon_z/) |
 | Tambahkan Nama Kamu  | Frontend / Backend                  | —                                        |
+
+---
+
+## 🚀 Panel Kontribusi
+
+Terima kasih kepada seluruh kontributor yang telah membantu mengembangkan **Project KUBIK**.
+
+<a href="https://github.com/Abdul-Faqih/Project-KUBIK/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Abdul-Faqih/Project-KUBIK" />
+</a>
+
+<br><br>
+
+<img src="https://github-readme-activity-graph.vercel.app/graph?username=Abdul-Faqih&bg_color=0D1117&color=5BCDEC&line=5BCDEC&point=FFFFFF&hide_border=true&area=true" width="100%" alt="Activity Graph Abdul" />
+
+<img src="https://github-readme-activity-graph.vercel.app/graph?username=AghnatMumtaz&bg_color=0D1117&color=9F7AEA&line=9F7AEA&point=FFFFFF&hide_border=true&area=true" width="100%" alt="Activity Graph Aghnat" />
 
 ---
 
