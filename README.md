@@ -8,6 +8,17 @@
 
 ---
 
+## 👥 9. Tim Pengembang
+
+| Nama                                   | Peran                               | Kontak                                  
+| -------------------------------------- | ----------------------------------- | ----------------------------------------
+| **Ahmad Abdul Faqih**                        | Fullstack Developer / Project Owner | [GitHub](https://github.com/Abdul-Faqih), [Instagram](https://www.instagram.com/bdlllll_/) |
+| **Muhammad Aghnat Mumtaz**                        | Fullstack  | [GitHub](https://github.com/AghnatMumtaz), [Instagram](https://www.instagram.com/mumoon_z/) |
+| Tambahkan Nama Kamu  | Frontend / Backend                  | —                                        |
+
+---
+
+
 ## Daftar function
 ### Admin
 - [x] login & regist
@@ -285,16 +296,6 @@ Route::prefix('admin/dashboard')->group(function () {
 | Error `1364 (stock_available)` | Kolom tidak diisi        | Tambahkan `'stock_available' => $request->stock_total` di controller |
 | Tailwind tidak muncul          | Build tidak dijalankan   | Jalankan `npm run dev`                                               |
 | Login gagal                    | Database kosong          | Jalankan `php artisan migrate:fresh --seed`                          |
-
----
-
-## 👥 9. Tim Pengembang
-
-| Nama                                   | Peran                               | Kontak                                  
-| -------------------------------------- | ----------------------------------- | ----------------------------------------
-| **Ahmad Abdul Faqih**                        | Fullstack Developer / Project Owner | [GitHub](https://github.com/Abdul-Faqih), [Instagram](https://www.instagram.com/bdlllll_/) |
-| **Muhammad Aghnat Mumtaz**                        | Fullstack  | [GitHub](https://github.com/AghnatMumtaz), [Instagram](https://www.instagram.com/mumoon_z/) |
-| Tambahkan Nama Kamu  | Frontend / Backend                  | —                                        |
 
 ---
 
