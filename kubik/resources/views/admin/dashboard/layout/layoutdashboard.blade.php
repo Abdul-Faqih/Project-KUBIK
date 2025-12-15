@@ -29,6 +29,12 @@
                 Home
             </a>
 
+            <a href="{{ route('admin.dashboard.permissions') }}" class="text-base font-medium px-2 py-2 rounded-lg
+            {{ request()->routeIs('admin.dashboard.permissions*', 'admin.permissions*') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }}
+             hover:text-[#F26E21] transition">
+                Permissions
+            </a>
+
             <a href="{{ route('admin.dashboard.assets') }}" class="text-base font-medium px-2 py-2 rounded-lg 
             {{ request()->routeIs('admin.dashboard.assets*', 'admin.assetmasters*', 'admin.assets*') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }} 
             hover:text-[#F26E21] transition">
@@ -55,14 +61,20 @@
                     Categories
                 </a>
 
+                <a href="{{ route('admin.dashboard.admin_management') }}" class="text-base font-medium px-2 py-2 rounded-lg
+                        {{ request()->routeIs('admin.dashboard.admin_management*') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }}
+                         hover:text-[#F26E21] transition">
+                    Admin Management
+                </a>
+
+                <a href="{{ route('admin.dashboard.user_management') }}" class="text-base font-medium px-2 py-2 rounded-lg
+                        {{ request()->routeIs('admin.dashboard.user_management*') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }}
+                         hover:text-[#F26E21] transition">
+                    User Management
+                </a>
+
             @endif
             {{-- END LOGIC --}}
-
-            <a href="{{ route('admin.dashboard.permissions') }}" class="text-base font-medium px-2 py-2 rounded-lg
-            {{ request()->routeIs('admin.dashboard.permissions*', 'admin.permissions*') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }}
-             hover:text-[#F26E21] transition">
-                Permissions
-            </a>
         </nav>
 
 

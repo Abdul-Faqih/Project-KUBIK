@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminManagementController;
 use App\Http\Controllers\UserNotificationController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +16,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\TypeController;
 use App\Http\Controllers\Admin\ExportController;
 use App\Http\Controllers\Admin\BookingController;
+use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\User\Auth\UserAuthController;
 use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\OnBoardingController;
@@ -116,7 +118,7 @@ Route::prefix('admin')->group(function () {
 
     // Permission Detail
     Route::get('/permissions/{id}', [BookingController::class, 'show'])
-        ->name('admin.permissions.detail'); 
+        ->name('admin.permissions.detail');
 
     // Update
     Route::post('/permissions/{id}/update', [BookingController::class, 'update'])
@@ -150,6 +152,35 @@ Route::prefix('admin')->group(function () {
     // Add Asset
     Route::get('/dashboard/assets/add', [AssetMasterController::class, 'create'])->name('admin.assets.create');
     Route::post('/dashboard/assets/store', [AssetMasterController::class, 'store'])->name('admin.assets.store');
+
+    // ADMIN MANAGEMENT PAGE (List)
+    Route::get('/admin-management', [AdminManagementController::class, 'index'])
+        ->name('admin.dashboard.admin_management');
+
+    // Page Add Admin (Form)
+    Route::get('admin-management/add', [AdminAuthController::class, 'showCreate'])
+        ->name('admin.dashboard.admin_management.create');
+
+    // Process Store Admin (POST)
+    Route::post('admin-management/store', [AdminAuthController::class, 'store'])
+        ->name('admin.dashboard.admin_management.store');
+    // --------------------------------------------
+
+    // Admin Detail (Route ini menangkap apa saja yg tersisa)
+    Route::get('/admin-management/{id}', [AdminManagementController::class, 'detail'])
+        ->name('admin.dashboard.admin_management.detail');
+
+    // Page List User
+    Route::get('/user-management', [UserManagementController::class, 'index'])
+        ->name('admin.dashboard.user_management');
+
+    // AJAX Filter Route
+    Route::get('/user-management/filter', [UserManagementController::class, 'filter'])
+        ->name('admin.dashboard.user_management.filter');
+    
+        // DETAIL USER ROUTE
+    Route::get('/user-management/{id}', [UserManagementController::class, 'detail'])
+        ->name('admin.dashboard.user_management.detail');
 
     // ===============================
     // AUTH
@@ -323,7 +354,7 @@ Route::get('/permissions/detail/{id}', [HistoryController::class, 'detail'])
 // Route Download
 Route::get('/permissions/download/{id}', [HistoryController::class, 'download'])
     ->name('user.rentals.download');
-    Route::put('/permissions/{id}/cancel', [UserBookingControlle::class, 'cancelBooking'])
+Route::put('/permissions/{id}/cancel', [UserBookingControlle::class, 'cancelBooking'])
     ->name('user.booking.cancel');
 
 // Route Process Return (Ajukan Pengembalian)
