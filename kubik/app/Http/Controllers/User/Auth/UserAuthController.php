@@ -18,7 +18,7 @@ class UserAuthController extends Controller
     {
         // Cek jika user sudah login (asumsi helper user() sudah anda buat)
         // Jika helper user() belum ada, ganti jadi: if(Session::has('user_id'))
-        if (Session::has('user_id')) { 
+        if (Session::has('user_id')) {
             return redirect()->route('user.home');
         }
 
@@ -77,27 +77,57 @@ class UserAuthController extends Controller
 
         // C. Data Dropdown (Disimpan di sini agar View bersih)
         $programs = [
-            'Accounting', 'Architecture', 'Business Information System', 'Civil Engineering', 
-            'Culinary Arts', 'Hospitality & Tourism', 'Informatics', 'Information Systems', 
-            'Information Technology', 'Interior Design', 'Management', 'Urban Planning', 
+            'Accounting',
+            'Architecture',
+            'Business Information System',
+            'Civil Engineering',
+            'Culinary Arts',
+            'Hospitality & Tourism',
+            'Informatics',
+            'Information Systems',
+            'Information Technology',
+            'Interior Design',
+            'Management',
+            'Urban Planning',
             'Visual Communication Design'
         ];
         sort($programs); // Urutkan A-Z
-        
+
         $units = [
-            'Academic Administration', 'Admission', 'Facilities', 'Finance', 'Human Resources', 
-            'IT Support', 'Library', 'Marketing', 'Procurement', 'Security', 'Student Affairs'
+            'Academic Administration',
+            'Admission',
+            'Facilities',
+            'Finance',
+            'Human Resources',
+            'IT Support',
+            'Library',
+            'Marketing',
+            'Procurement',
+            'Security',
+            'Student Affairs'
         ];
         sort($units);
 
         $departments = [
-            'Academic', 'Communication', 'Finance', 'HR', 'IT', 'Informatics', 
-            'Information Systems', 'Management', 'Marketing'
+            'Academic',
+            'Communication',
+            'Finance',
+            'HR',
+            'IT',
+            'Informatics',
+            'Information Systems',
+            'Management',
+            'Marketing'
         ];
         sort($departments);
 
-        // D. Tampilkan View
-        return view('user.auth.register_form', compact('role', 'programs', 'units', 'departments'));
+        // --- TAMBAHAN: GENERATE CAPTCHA (Angka Random 6 Digit) ---
+        $captcha = rand(100000, 999999);
+        // Simpan hasil ke session untuk divalidasi nanti
+        session(['captcha_code' => $captcha]);
+
+        // D. Tampilkan View (Kirim $captcha ke view)
+        return view('user.auth.register_form', compact('role', 'programs', 'units', 'departments', 'captcha'));
     }
 
     // 3. SUBMIT FINAL REGISTER
@@ -116,6 +146,7 @@ class UserAuthController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
             'password_confirm' => 'required|same:password',
+            'captcha' => 'required', // --- TAMBAHAN: Rule Captcha wajib diisi
         ];
 
         // ROLE SPECIFIC VALIDATION
@@ -132,6 +163,12 @@ class UserAuthController extends Controller
         }
 
         $validated = $request->validate($rules);
+
+        // --- TAMBAHAN: VALIDASI CAPTCHA ---
+        // Cek apakah input user sama dengan session yg dibuat di halaman form
+        if ($request->captcha != session('captcha_code')) {
+            return back()->withErrors(['captcha' => 'Incorrect CAPTCHA code! Please try again.'])->withInput();
+        }
 
         // BUILD USER DATA
         $data = [
@@ -158,10 +195,12 @@ class UserAuthController extends Controller
         User::create($data);
 
         // --- UPDATE LOGIC UNTUK POPUP ---
-        
+
         // JANGAN hapus session role dulu, karena kita redirect back ke form.
-        // session()->forget('register_role'); <--- Baris ini dihapus sementara
-        
+        // session()->forget('register_role'); 
+        // Hapus session captcha setelah dipakai
+        session()->forget('captcha_code');
+
         // Redirect kembali ke form dengan trigger sukses untuk popup
         return redirect()->back()->with('register_success', true);
     }
@@ -174,8 +213,8 @@ class UserAuthController extends Controller
     {
         Session::forget(['user_id', 'user_name']);
         // Hapus session role juga saat logout biar bersih
-        Session::forget('register_role'); 
-        
+        Session::forget('register_role');
+
         return redirect()->route('user.login');
     }
 }

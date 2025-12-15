@@ -1,5 +1,7 @@
 @extends('admin.dashboard.layout.layoutdashboard')
 
+@section('title', 'Add Asset')
+
 @section('content')
     <div class="-mt-5">
 

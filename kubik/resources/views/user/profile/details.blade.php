@@ -3,15 +3,16 @@
 @section('title', 'Profile')
 
 @section('content')
+@section('wrapperClass', 'onboarding-wrapper')
 
-<div class="flex items-center gap-3 mb-6 mt-2 px-2">
+<div class="flex items-center gap-3 mb-6 mt-6 px-2">
     <a href="{{ route('user.profile') }}" class="material-symbols-rounded text-[26px] text-[#2A2A2A]">arrow_back</a>
     <h1 class="text-lg font-semibold text-[#2A2A2A]">Profile</h1>
 </div>
 
 <div class="px-4 pb-10"> {{-- Tambah pb-10 biar scroll bawah ga mentok --}}
 
-    <h2 class="text-base font-semibold text-[#2A2A2A] mb-4">Personal Data</h2>
+    <h2 class="text-base font-semibold text-[#2A2A2A] mb-2">Personal Data</h2>
 
     @php
         $user = user(); // helper
@@ -85,8 +86,6 @@
                 <p class="text-base font-medium text-[#2A2A2A]">{{ $user->enrollment }}</p>
             </div>
         </div>
-
-        {{-- FACULTY DIHAPUS DISINI --}}
 
         {{-- PROGRAM --}}
         <div class="flex items-center py-4 border-b border-[#E5E5E5]">

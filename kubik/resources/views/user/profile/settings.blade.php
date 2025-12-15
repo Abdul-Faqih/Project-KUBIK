@@ -1,11 +1,12 @@
 @extends('user.layout.mobile')
 
 @section('title', 'Account Settings')
+@section('wrapperClass', 'onboarding-wrapper')
 
 @section('content')
 
 {{-- BACK + TITLE --}}
-    <div class="flex items-center gap-3 mb-6 mt-2 px-2">
+    <div class="flex items-center gap-3 mb-6 mt-6 px-2">
         <a href="{{ route('user.profile') }}" class="material-symbols-rounded text-[26px] text-[#2A2A2A]">arrow_back</a>
         <h1 class="text-lg font-semibold text-[#2A2A2A]">Account Settings</h1>
     </div>

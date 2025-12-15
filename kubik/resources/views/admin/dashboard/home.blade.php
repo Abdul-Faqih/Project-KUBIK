@@ -107,6 +107,8 @@
                                 <span class="px-3 py-1 rounded-full text-xs bg-yellow-100 text-yellow-600">Pending</span>
                             @elseif($item->status === 'Rejected')
                                 <span class="px-3 py-1 rounded-full text-xs bg-red-100 text-red-600">Rejected</span>
+                            @elseif($item->status === 'Canceled')
+                                <span class="px-3 py-1 rounded-full text-xs bg-gray-100 text-gray-600">Canceled</span>
                             @elseif($item->status === 'Approved')
                                 <span class="px-3 py-1 rounded-full text-xs bg-green-100 text-green-600">Approved</span>
                             @else

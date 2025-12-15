@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Dashboard | KUBIK')</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     @vite('resources/css/app.css')
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <!-- Date Range Picker -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" />
     <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
 </head>
@@ -17,54 +17,64 @@
     {{-- ================= SIDE NAVBAR (DISABLED) ================= --}}
     <aside class="w-64 bg-white shadow-lg h-screen fixed top-0 left-0 p-6 flex flex-col space-y-6">
 
-        <!-- Logo -->
-        <div class="flex items-center space-x-2 mb-8">
-            <img src="{{ asset('images/logo.png') }}" class="w-12 h-12">
+        <div class="flex items-center space-x-2">
+            <img src="{{ asset('images/logo2.png') }}" class="w-40 h-full">
         </div>
 
-        <!-- Main Navigation -->
         <nav class="flex flex-col space-y-3 flex-grow">
 
-            <!-- Home -->
             <a href="{{ route('admin.dashboard.home') }}" class="text-base font-medium px-2 py-2 rounded-lg 
             {{ request()->routeIs('admin.dashboard.home') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }} 
             hover:text-[#F26E21] transition">
                 Home
             </a>
 
-            <!-- Assets -->
+            <a href="{{ route('admin.dashboard.permissions') }}" class="text-base font-medium px-2 py-2 rounded-lg
+            {{ request()->routeIs('admin.dashboard.permissions*', 'admin.permissions*') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }}
+             hover:text-[#F26E21] transition">
+                Permissions
+            </a>
+
             <a href="{{ route('admin.dashboard.assets') }}" class="text-base font-medium px-2 py-2 rounded-lg 
-            {{ request()->routeIs('admin.dashboard.assets*') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }} 
+            {{ request()->routeIs('admin.dashboard.assets*', 'admin.assetmasters*', 'admin.assets*') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }} 
             hover:text-[#F26E21] transition">
                 Assets
             </a>
 
-            <!-- Types -->
-            <a href="{{ route('admin.dashboard.types') }}" class="text-base font-medium px-2 py-2 rounded-lg
-        {{ request()->routeIs('admin.dashboard.types*') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }}
-        hover:text-[#F26E21] transition">
-                Types
-            </a>
+            {{-- LOGIC: Hanya Tampilkan Types & Categories jika Role == Super-Admin --}}
+            @php
+                $adminId = session('admin_id');
+                $currentRole = $adminId ? \App\Models\Admin::where('id_admin', $adminId)->value('role') : null;
+            @endphp
 
-            <!-- Categories -->
-            <a href="{{ route('admin.dashboard.categories') }}" class="text-base font-medium px-2 py-2 rounded-lg
-        {{ request()->routeIs('admin.dashboard.categories*') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }}
-        hover:text-[#F26E21] transition">
-                Categories
-            </a>
+            @if($currentRole === 'Super-Admin')
 
-            <!-- Permissions -->
-            <a href="{{ route('admin.dashboard.permissions') }}" class="text-base font-medium px-2 py-2 rounded-lg
-    {{ request()->routeIs('admin.dashboard.permissions*') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }}
-    hover:text-[#F26E21] transition">
-                Permissions
-            </a>
+                <a href="{{ route('admin.dashboard.types') }}" class="text-base font-medium px-2 py-2 rounded-lg
+                        {{ request()->routeIs('admin.dashboard.types*') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }}
+                         hover:text-[#F26E21] transition">
+                    Types
+                </a>
 
-            <!-- Account -->
-            <a href="#"
-                class="text-base font-medium px-3 py-2 rounded-lg text-[#AEAEAE] hover:text-[#F26E21] transition">
-                Account
-            </a>
+                <a href="{{ route('admin.dashboard.categories') }}" class="text-base font-medium px-2 py-2 rounded-lg
+                        {{ request()->routeIs('admin.dashboard.categories*') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }}
+                         hover:text-[#F26E21] transition">
+                    Categories
+                </a>
+
+                <a href="{{ route('admin.dashboard.admin_management') }}" class="text-base font-medium px-2 py-2 rounded-lg
+                        {{ request()->routeIs('admin.dashboard.admin_management*') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }}
+                         hover:text-[#F26E21] transition">
+                    Admin Management
+                </a>
+
+                <a href="{{ route('admin.dashboard.user_management') }}" class="text-base font-medium px-2 py-2 rounded-lg
+                        {{ request()->routeIs('admin.dashboard.user_management*') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }}
+                         hover:text-[#F26E21] transition">
+                    User Management
+                </a>
+
+            @endif
+            {{-- END LOGIC --}}
         </nav>
 
 
@@ -78,7 +88,6 @@
     </aside>
 
 
-    <!-- ================= CONTENT ================= -->
     <main class="flex-1 p-8 ml-64">
         @yield('content')
     </main>
