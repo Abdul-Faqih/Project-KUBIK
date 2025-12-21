@@ -102,7 +102,7 @@ Pastikan environment berikut sudah ter-install di komputer Anda:
 Karena proyek ini tidak menggunakan migrasi bawaan, silakan import database secara manual:
 
 1. Buat database baru di MySQL/MariaDB (misalnya bernama: `kubik`).
-2. Cari file SQL di direktori project: `Import database/db_kubik.sql`.
+2. Cari file SQL di direktori project: `db_kubik.sql`.
 3. **Import** file `db_kubik.sql` tersebut ke dalam database yang baru Anda buat (gunakan phpMyAdmin, TablePlus, atau DBeaver).
 
 ---
