@@ -19,7 +19,7 @@
                 <td class="py-2 px-3 text-center">{{ $asset->id_asset }}</td>
                 <td class="py-2 px-3 text-center">
                     <a href="{{ route('admin.assetmasters.detail', $asset->id_master) }}"
-                        class="hover:bg-[#FBFBFB] hover:text-[#F26E21] py-1 px-3 rounded-md">
+                        class="hover:text-[#F26E21] hover:bg-[#FBFBFB] py-1 px-3 rounded-md">
                         {{ $asset->id_master }}
                     </a>
                 </td>

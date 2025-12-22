@@ -5,10 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Asset;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class AssetMaster extends Model
 {
     use HasFactory;
+    use LogsActivity; // <--- Pasang Trait
 
     protected $table = 'asset_masters';
     protected $primaryKey = 'id_master';
@@ -26,6 +29,24 @@ class AssetMaster extends Model
         'stock_total',
         'stock_available',
     ];
+
+    // Konfigurasi Log
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'name', 
+                'description', 
+                'image_asset', 
+                'id_category', 
+                'id_type', 
+                'stock_total', 
+                'stock_available'
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('master');
+    }
 
     /* ===========================
        RELATIONSHIPS

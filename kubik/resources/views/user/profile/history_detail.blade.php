@@ -23,7 +23,6 @@
     </div>
 
     {{-- FLASH MESSAGE (ERROR ONLY) --}}
-    {{-- Success message kita handle pakai Modal di bawah, jadi alert success dihapus agar tidak double --}}
     @if(session('error'))
         <div class="px-5 mb-4">
             <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
@@ -111,6 +110,55 @@
             </div>
         </div>
 
+        {{-- ================================================= --}}
+        {{-- TAMBAHAN BARU: RETURN INFO (Completed Only) --}}
+        {{-- ================================================= --}}
+        @if($booking->status == 'Completed')
+            <div class="mb-6">
+                <p class="text-[15px] font-semibold text-[#2A2A2A] mb-3">Return Information</p>
+
+                {{-- Tanggal Pengembalian --}}
+                <div class="mb-4">
+                    <p class="text-[13px] text-gray-700 mb-1">Returned at</p>
+                    <div class="flex items-center gap-3 text-[#2A2A2A]">
+                        <span class="material-symbols-rounded text-[20px]">event_available</span>
+                        <span class="text-[15px] font-medium">
+                            {{ $booking->return_at ? \Carbon\Carbon::parse($booking->return_at)->translatedFormat('l, d F Y') : '-' }}
+                        </span>
+                    </div>
+                    <div class="flex items-center gap-3 text-[#2A2A2A] mt-1">
+                        <span class="material-symbols-rounded text-[20px]">schedule</span>
+                        <span class="text-[15px] font-medium">
+                            {{ $booking->return_at ? \Carbon\Carbon::parse($booking->return_at)->format('H : i') . ' WIB' : '-' }}
+                        </span>
+                    </div>
+                </div>
+
+                {{-- Keterlambatan (Jika ada) --}}
+                @if($booking->late_return > 0)
+                    <div class="mt-2">
+                        <p class="text-[13px] text-red-600 mb-1 font-medium">Late Return Duration</p>
+                        <div class="flex items-center gap-3 text-red-600">
+                            <span class="material-symbols-rounded text-[20px]">warning</span>
+                            <span class="text-[15px] font-bold">
+                                @php
+                                    $mTotal = round($booking->late_return); // Asumsi kolom late_return dalam Menit (sesuai request trigger sebelumnya)
+                                    if ($mTotal < 60) {
+                                        echo $mTotal . ' Minutes';
+                                    } else {
+                                        $h = floor($mTotal / 60);
+                                        $m = $mTotal % 60;
+                                        echo $h . ' Hour' . ($h > 1 ? 's' : '') . ($m > 0 ? ' ' . $m . ' Minutes' : '');
+                                    }
+                                @endphp
+                            </span>
+                        </div>
+                    </div>
+                @endif
+            </div>
+        @endif
+        {{-- ================================================= --}}
+
         {{-- DETAIL PEMINJAMAN --}}
         <div class="mb-8">
             <p class="text-[15px] font-semibold text-[#2A2A2A] mb-3">List Asset</p>
@@ -144,16 +192,59 @@
         </div>
 
         {{-- ================================================= --}}
-        {{-- LOGIKA TOMBOL & PENGEMBALIAN --}}
+        {{-- TAMBAHAN BARU: NOTE FROM ADMIN --}}
+        {{-- Tampil jika status BUKAN Pending dan BUKAN Canceled --}}
+        {{-- ================================================= --}}
+        @if($booking->status != 'Pending' && $booking->status != 'Canceled')
+            <div class="mb-8 bg-gray-50 border border-gray-200 rounded-xl p-4">
+                <p class="text-[15px] font-semibold text-[#2A2A2A] mb-2 flex items-center gap-2">
+                    <span class="material-symbols-rounded text-[#F26E21]">admin_panel_settings</span>
+                    Note from Admin
+                </p>
+
+                {{-- Nama Admin --}}
+                <p class="text-[13px] text-gray-500 mb-1">
+                    Processed by: <span class="font-medium text-gray-700">{{ $booking->admin_name ?? 'Admin' }}</span>
+                </p>
+
+                {{-- Isi Catatan --}}
+                <div class="text-[14px] text-[#2A2A2A] mt-2 leading-relaxed">
+                    @if($booking->note)
+                        {{ $booking->note }}
+                    @else
+                        <span class="italic text-gray-400">No additional notes.</span>
+                    @endif
+                </div>
+            </div>
+        @endif
+        {{-- ================================================= --}}
+
+
+        {{-- ================================================= --}}
+        {{-- LOGIKA TOMBOL & PENGEMBALIAN (UPDATED MULTIPLE IMAGES) --}}
         {{-- ================================================= --}}
 
         @if($booking->status == 'Completed')
             <div class="mb-8">
-                <p class="text-[15px] font-semibold text-[#2A2A2A] mb-3">Image</p>
-                @if($booking->proof_return)
-                    <div class="mb-4 rounded-xl overflow-hidden border border-gray-200">
-                        <img src="{{ asset('uploads/proofs/' . $booking->proof_return) }}" alt="Return"
-                            class="w-full h-auto object-cover">
+                <p class="text-[15px] font-semibold text-[#2A2A2A] mb-3">Images (Proof of Return)</p>
+
+                @php
+                    // Decode JSON jika formatnya array, jika tidak (legacy string) jadikan array
+                    $proofs = json_decode($booking->proof_return);
+                    if (json_last_error() !== JSON_ERROR_NONE || !is_array($proofs)) {
+                        $proofs = $booking->proof_return ? [$booking->proof_return] : [];
+                    }
+                @endphp
+
+                @if(!empty($proofs))
+                    {{-- Grid Layout untuk Multiple Images --}}
+                    <div class="grid grid-cols-2 gap-2">
+                        @foreach($proofs as $img)
+                            <div class="rounded-xl overflow-hidden border border-gray-200 aspect-square">
+                                <img src="{{ asset('uploads/proofs/' . $img) }}" alt="Return Proof"
+                                    class="w-full h-full object-cover cursor-pointer" onclick="window.open(this.src, '_blank')">
+                            </div>
+                        @endforeach
                     </div>
                 @else
                     <div
@@ -192,30 +283,35 @@
                     @csrf
                     @method('PUT')
 
-                    <p class="text-[13px] text-gray-500 mb-3 font-medium text-center">Upload photo of return</p>
+                    <p class="text-[13px] text-gray-500 mb-3 font-medium text-center">Upload photos of return (Multiple)</p>
 
-                    <input type="file" name="proof_return" id="fileInput" class="hidden" accept="image/*"
-                        onchange="previewFile()" required>
+                    {{-- Input file tetap hidden --}}
+                    <input type="file" name="proof_return[]" id="fileInput" class="hidden" accept="image/*"
+                        onchange="handleFiles(this.files)" multiple>
 
                     {{-- WRAPPER AREA UPLOAD --}}
                     <div class="relative mb-4">
-                        <div onclick="document.getElementById('fileInput').click()"
-                            class="w-full border-2 border-dashed border-gray-300 text-gray-500 py-6 rounded-xl flex flex-col items-center justify-center gap-2 hover:bg-white transition relative overflow-hidden cursor-pointer bg-white">
+                        {{-- Area Klik Upload --}}
+                        <div id="uploadArea" onclick="document.getElementById('fileInput').click()"
+                            class="w-full border-2 border-dashed border-gray-300 text-gray-500 py-6 rounded-xl flex flex-col items-center justify-center gap-2 hover:bg-white transition relative overflow-hidden cursor-pointer bg-white min-h-[150px]">
 
+                            {{-- Container Preview (Grid) --}}
                             <div id="previewContainer"
-                                class="hidden w-full h-full absolute inset-0 bg-white items-center justify-center">
-                                <img id="imgPreview" src="" class="h-full object-contain">
+                                class="hidden w-full h-full absolute inset-0 bg-white overflow-y-auto p-2 grid grid-cols-2 gap-2 z-10">
+                                {{-- Gambar akan dimasukkan di sini oleh JS --}}
                             </div>
 
-                            <div id="defaultUploadInfo" class="flex flex-col items-center">
+                            {{-- Default Info (Tampil saat kosong) --}}
+                            <div id="defaultUploadInfo" class="flex flex-col items-center pointer-events-none">
                                 <span class="material-symbols-rounded text-3xl">add_a_photo</span>
-                                <span id="fileNameLabel" class="text-xs mt-1">Only image formats allowed.</span>
+                                <span class="text-xs mt-1">Click to select images.</span>
                             </div>
                         </div>
 
-                        <button type="button" id="removeBtn" onclick="removeFile()"
-                            class="hidden absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-7 h-7 flex items-center justify-center shadow-md hover:bg-red-600 transition z-10">
-                            <span class="material-symbols-rounded text-sm font-bold">close</span>
+                        {{-- Tombol Add More (Opsional, agar user tau bisa nambah) --}}
+                        <button type="button" onclick="document.getElementById('fileInput').click()" id="addMoreBtn"
+                            class="hidden absolute bottom-2 right-2 bg-gray-800/50 text-white rounded-full p-1 z-20 hover:bg-gray-800">
+                            <span class="material-symbols-rounded text-sm">add</span>
                         </button>
                     </div>
 
@@ -266,8 +362,8 @@
 
     {{-- TOAST --}}
     <div id="toast"
-        class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-full shadow-lg z-[80] transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" viewBox="0 0 20 20" fill="currentColor">
+        class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-full shadow-lg z-[80] transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] flex items-center gap-2 w-max">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd"
                 d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
                 clip-rule="evenodd" />
@@ -380,7 +476,7 @@
         <div class="bg-white rounded-2xl w-[85%] max-w-[320px] p-6 text-center transform scale-90 transition-transform duration-300"
             id="submitModalContent">
             <h3 class="text-lg font-bold text-gray-800 mb-2">Confirm Submission</h3>
-            <p class="text-sm text-gray-500 mb-6">Are you sure you want to leave the return form and submit?</p>
+            <p class="text-sm text-gray-500 mb-6">Are you sure you want to submit these proofs?</p>
             <div class="flex gap-3">
                 <button onclick="closeSubmitModal()"
                     class="flex-1 py-2.5 border border-gray-300 rounded-xl text-gray-600 font-semibold hover:bg-gray-50 transition">Cancel</button>
@@ -421,6 +517,9 @@
 
     {{-- SCRIPT JAVA SCRIPT UNTUK INTERAKSI --}}
     <script>
+        // Global variable untuk menampung file
+        let dt = new DataTransfer();
+
         function showReturnForm() {
             document.getElementById('btnAjukanContainer').classList.add('hidden');
             document.getElementById('formReturn').classList.remove('hidden');
@@ -429,50 +528,109 @@
         function hideReturnForm() {
             document.getElementById('btnAjukanContainer').classList.remove('hidden');
             document.getElementById('formReturn').classList.add('hidden');
-            removeFile();
+            resetFiles(); // Reset form saat ditutup
         }
 
-        function previewFile() {
-            const input = document.getElementById('fileInput');
+        // --- LOGIC MULTIPLE FILE WITH INDIVIDUAL DELETE ---
+
+        function handleFiles(files) {
+            const validImageTypes = ['image/gif', 'image/jpeg', 'image/png', 'image/jpg'];
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (validImageTypes.includes(file.type)) {
+                    // Tambahkan file ke DataTransfer
+                    dt.items.add(file);
+                } else {
+                    showToast("Invalid file type! Only JPG/PNG allowed.");
+                }
+            }
+
+            // Update input file asli dengan data baru
+            document.getElementById('fileInput').files = dt.files;
+
+            // Render ulang tampilan
+            renderPreviews();
+        }
+
+        function renderPreviews() {
             const previewContainer = document.getElementById('previewContainer');
-            const imgPreview = document.getElementById('imgPreview');
             const defaultInfo = document.getElementById('defaultUploadInfo');
-            const removeBtn = document.getElementById('removeBtn');
+            const addMoreBtn = document.getElementById('addMoreBtn');
 
-            if (input.files && input.files[0]) {
-                const file = input.files[0];
-                const fileType = file.type;
-                const validImageTypes = ['image/gif', 'image/jpeg', 'image/png', 'image/jpg'];
+            previewContainer.innerHTML = ''; // Clear display lama
 
-                if (!validImageTypes.includes(fileType)) {
-                    showToast("Invalid file format! Please upload an image (JPG, PNG).");
-                    input.value = '';
-                    return;
+            if (dt.files.length > 0) {
+                previewContainer.classList.remove('hidden');
+                defaultInfo.classList.add('hidden');
+                addMoreBtn.classList.remove('hidden');
+
+                // Loop semua file di DataTransfer
+                for (let i = 0; i < dt.files.length; i++) {
+                    const file = dt.files[i];
+                    const reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        // Wrapper div untuk gambar + tombol hapus
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'relative rounded-xl overflow-hidden border border-gray-200 aspect-square group';
+
+                        // Gambar
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'w-full h-full object-cover';
+
+                        // Tombol Hapus (X) per gambar
+                        const removeBtn = document.createElement('button');
+                        removeBtn.type = 'button';
+                        // Style tombol X merah di pojok kanan atas gambar
+                        removeBtn.className = 'absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md hover:bg-red-600 transition z-20';
+                        removeBtn.innerHTML = '<span class="material-symbols-rounded text-sm font-bold">close</span>';
+
+                        // Event Hapus
+                        removeBtn.onclick = function (event) {
+                            event.stopPropagation(); // Mencegah trigger klik upload
+                            removeImage(i); // Hapus berdasarkan index
+                        };
+
+                        wrapper.appendChild(img);
+                        wrapper.appendChild(removeBtn);
+                        previewContainer.appendChild(wrapper);
+                    }
+                    reader.readAsDataURL(file);
                 }
-
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    imgPreview.src = e.target.result;
-                    previewContainer.classList.remove('hidden');
-                    previewContainer.classList.add('flex');
-                    defaultInfo.classList.add('hidden');
-                    removeBtn.classList.remove('hidden');
-                }
-                reader.readAsDataURL(file);
+            } else {
+                // Jika kosong kembali ke tampilan awal
+                previewContainer.classList.add('hidden');
+                defaultInfo.classList.remove('hidden');
+                addMoreBtn.classList.add('hidden');
             }
         }
 
-        function removeFile() {
-            const input = document.getElementById('fileInput');
-            const previewContainer = document.getElementById('previewContainer');
-            const defaultInfo = document.getElementById('defaultUploadInfo');
-            const removeBtn = document.getElementById('removeBtn');
+        function removeImage(index) {
+            // Buat DataTransfer baru (karena items.remove tidak support di semua browser lama, kita rebuild)
+            const newDt = new DataTransfer();
 
-            input.value = '';
-            previewContainer.classList.add('hidden');
-            previewContainer.classList.remove('flex');
-            defaultInfo.classList.remove('hidden');
-            removeBtn.classList.add('hidden');
+            for (let i = 0; i < dt.files.length; i++) {
+                if (i !== index) { // Skip file yg dihapus
+                    newDt.items.add(dt.files[i]);
+                }
+            }
+
+            // Replace global dt dengan yg baru
+            dt = newDt;
+
+            // Update input file asli
+            document.getElementById('fileInput').files = dt.files;
+
+            // Render ulang
+            renderPreviews();
+        }
+
+        function resetFiles() {
+            dt = new DataTransfer(); // Kosongkan
+            document.getElementById('fileInput').value = '';
+            renderPreviews();
         }
 
         function showToast(message) {
@@ -504,7 +662,8 @@
 
         function openSubmitModal() {
             const fileInput = document.getElementById('fileInput');
-            if (!fileInput.files || fileInput.files.length === 0) { showToast('Please upload photo first!'); return; }
+            // Cek file dari DataTransfer (dt) bukan input langsung krn input readonly
+            if (dt.files.length === 0) { showToast('Please upload photos first!'); return; }
             submitModal.classList.remove('hidden');
             setTimeout(() => { submitModal.classList.remove('opacity-0'); submitModalContent.classList.remove('scale-90'); submitModalContent.classList.add('scale-100'); }, 10);
         }

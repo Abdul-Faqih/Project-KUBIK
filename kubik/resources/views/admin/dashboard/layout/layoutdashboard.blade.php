@@ -9,6 +9,8 @@
     @vite('resources/css/app.css')
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@300;400;500&display=swap" />
     <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
 </head>
 
@@ -50,31 +52,36 @@
             @if($currentRole === 'Super-Admin')
 
                 <a href="{{ route('admin.dashboard.types') }}" class="text-base font-medium px-2 py-2 rounded-lg
-                        {{ request()->routeIs('admin.dashboard.types*') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }}
-                         hover:text-[#F26E21] transition">
+                            {{ request()->routeIs('admin.dashboard.types*') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }}
+                             hover:text-[#F26E21] transition">
                     Types
                 </a>
 
                 <a href="{{ route('admin.dashboard.categories') }}" class="text-base font-medium px-2 py-2 rounded-lg
-                        {{ request()->routeIs('admin.dashboard.categories*') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }}
-                         hover:text-[#F26E21] transition">
+                            {{ request()->routeIs('admin.dashboard.categories*') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }}
+                             hover:text-[#F26E21] transition">
                     Categories
                 </a>
 
                 <a href="{{ route('admin.dashboard.admin_management') }}" class="text-base font-medium px-2 py-2 rounded-lg
-                        {{ request()->routeIs('admin.dashboard.admin_management*') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }}
-                         hover:text-[#F26E21] transition">
+                            {{ request()->routeIs('admin.dashboard.admin_management*') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }}
+                             hover:text-[#F26E21] transition">
                     Admin Management
                 </a>
 
                 <a href="{{ route('admin.dashboard.user_management') }}" class="text-base font-medium px-2 py-2 rounded-lg
-                        {{ request()->routeIs('admin.dashboard.user_management*') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }}
-                         hover:text-[#F26E21] transition">
+                            {{ request()->routeIs('admin.dashboard.user_management*') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }}
+                             hover:text-[#F26E21] transition">
                     User Management
                 </a>
 
             @endif
             {{-- END LOGIC --}}
+            <a href="{{ route('admin.dashboard.profile', $adminId) }}" class="text-base font-medium px-2 py-2 rounded-lg 
+            {{ request()->routeIs('admin.dashboard.profile*') ? 'text-[#F26E21] bg-[#FFF3EC]' : 'text-[#AEAEAE]' }} 
+            hover:text-[#F26E21] transition">
+                Details Profile
+            </a>
         </nav>
 
 
@@ -91,7 +98,75 @@
     <main class="flex-1 p-8 ml-64">
         @yield('content')
     </main>
+    
+    {{-- TOAST NOTIFICATION --}}
+    <div id="adminToast"
+        class="fixed top-24 right-5 z-[9999] transition-transform duration-500 transform translate-x-[150%] max-w-sm w-full bg-white border-l-4 border-[#F26E21] rounded-lg shadow-lg p-4 flex items-start gap-3">
 
+        {{-- Icon --}}
+        <div class="flex-shrink-0 pt-0.5">
+            <span class="material-symbols-rounded text-[#F26E21] text-2xl">notifications_active</span>
+        </div>
+
+        {{-- Content --}}
+        <div class="flex-1">
+            <h4 class="text-sm font-bold text-gray-800 mb-1">New Permission Found</h4>
+            <p id="toastMessageBody" class="text-sm text-gray-600 leading-snug">
+                {{-- Pesan dari JS --}}
+            </p>
+            <p id="toastTime" class="text-xs text-gray-400 mt-2">Just now</p>
+        </div>
+
+        {{-- Close Button --}}
+        <button onclick="hideAdminToast()" class="text-gray-400 hover:text-gray-600 transition">
+            <span class="material-symbols-rounded text-xl">close</span>
+        </button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Cek setiap 5 detik
+            setInterval(checkAdminNotifications, 5000);
+        });
+
+        function checkAdminNotifications() {
+            fetch("{{ route('admin.notifications.check') }}")
+                .then(res => res.json())
+                .then(data => {
+                    if (data.found) {
+                        showAdminToast(data.message, data.time);
+                    }
+                })
+                .catch(err => console.error('Notif error:', err));
+        }
+
+        const toast = document.getElementById('adminToast');
+        let hideTimeout;
+
+        function showAdminToast(msg, time) {
+            document.getElementById('toastMessageBody').innerHTML = msg;
+            document.getElementById('toastTime').innerText = time;
+
+            // Slide In (Show)
+            toast.classList.remove('translate-x-[150%]');
+            toast.classList.add('translate-x-0');
+
+            // Mainkan suara 'ting' (Opsional, pastikan file ada di public/sounds/)
+            // new Audio('/sounds/notification.mp3').play().catch(() => {});
+
+            // Reset timer jika ada notif baru menimpa yang lama
+            if (hideTimeout) clearTimeout(hideTimeout);
+
+            // Auto hide 5 detik
+            hideTimeout = setTimeout(hideAdminToast, 5000);
+        }
+
+        function hideAdminToast() {
+            // Slide Out (Hide)
+            toast.classList.remove('translate-x-0');
+            toast.classList.add('translate-x-[150%]');
+        }
+    </script>
 </body>
 
 </html>

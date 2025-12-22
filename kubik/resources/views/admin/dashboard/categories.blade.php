@@ -5,6 +5,12 @@
 @section('content')
     <div class="grid">
 
+        {{-- COMPONENT LOG MODAL --}}
+        {{-- Pastikan controller mengirim variable $activities --}}
+        <div class="">
+            @include('admin.dashboard.components.log_modal', ['activities' => $activities ?? collect([])])
+        </div>
+
         <!-- CATEGORIES LIST -->
         <div class="bg-white rounded-2xl shadow p-6 mt-6">
             <div class="flex justify-between items-center mb-4">

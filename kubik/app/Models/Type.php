@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Type extends Model
 {
     use HasFactory;
+    use LogsActivity; // <--- Pasang Trait
 
     protected $table = 'types';
     protected $primaryKey = 'id_type';
@@ -20,6 +23,16 @@ class Type extends Model
         'name',
         'updated_at',
     ];
+
+    // Konfigurasi Log
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name']) // Catat jika nama tipe berubah
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('type');
+    }
 
     /* ===========================
        RELATIONSHIPS

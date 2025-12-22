@@ -25,7 +25,7 @@
                 <div class="flex flex-col gap-4">
                     {{-- ID (Database ID) --}}
                     <div>
-                        <label class="block text-[#2A2A2A] text-sm font-semibold mb-1">ID User</label>
+                        <label class="block text-[#2A2A2A] text-sm font-semibold mb-1">ID</label>
                         <input type="text" value="{{ $user->id_user }}"
                             class="w-full border border-[#ECEFF3] rounded-md px-3 py-2 bg-[#F9FAFB] text-gray-600" disabled>
                     </div>
@@ -35,13 +35,6 @@
                         <label class="block text-[#2A2A2A] text-sm font-semibold mb-1">Email</label>
                         <input type="text" value="{{ $user->email }}"
                             class="w-full border border-[#ECEFF3] rounded-md px-3 py-2 bg-[#F9FAFB] text-gray-600" disabled>
-                    </div>
-
-                    {{-- PASSWORD (HIDDEN) --}}
-                    <div>
-                        <label class="block text-[#2A2A2A] text-sm font-semibold mb-1">Password</label>
-                        <input type="password" value="DummyPassword123"
-                            class="w-full border border-[#ECEFF3] rounded-md px-3 py-2 bg-[#F9FAFB] text-gray-600 tracking-widest" disabled>
                     </div>
 
                     {{-- CREATED AT --}}
@@ -137,7 +130,7 @@
                         <thead class="text-[#2A2A2A] font-semibold">
                             <tr>
                                 <th class="py-2 px-3  text-center">ID</th>
-                                <th class="py-2 px-3 ">Processed By (Admin)</th>
+                                <th class="py-2 px-3  text-center">Processed By (Admin)</th>
                                 <th class="py-2 px-3  text-center">Submitted at</th>
                                 <th class="py-2 px-3  text-center">Returning at</th>
                                 <th class="py-2 px-3  text-center">Time (Start - End)</th>

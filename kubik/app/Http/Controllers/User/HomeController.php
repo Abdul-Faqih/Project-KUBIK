@@ -8,26 +8,22 @@ use App\Models\AssetMaster;
 use App\Models\Type;
 use Illuminate\Http\Request;
 use App\Models\Cart;
-use Illuminate\Support\Facades\DB;
 use App\Models\Asset;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        return $this->home(); // ← langsung panggil fungsi home()
+        return $this->home();
     }
 
     // Home Page
     public function home()
     {
-        // ===== AUTH CHECK =====
         if (!user()) {
-            return redirect()->route('user.login')
-                ->with('error', 'Please login first.');
+            return redirect()->route('user.login')->with('error', 'Please login first.');
         }
 
-        // Ambil id user
         $userId = session('user_id');
 
         // Ambil booking terbaru user
@@ -36,16 +32,23 @@ class HomeController extends Controller
             ->orderBy('created_at', 'desc')
             ->first();
 
-        // Availability — ambil semua master asset
-        // Asset Availability — ONLY ITEMS TYPE
-        $availability = AssetMaster::with(['assets', 'type'])
+        // --- QUERY HELPER: Ambil Booking yang Approved & Belum Selesai ---
+        $bookingQuery = function ($q) {
+            $q->select('bookings.id_booking', 'start_time', 'end_time', 'status')
+                ->where('status', 'Approved')
+                ->where('end_time', '>', now()) // Hanya booking masa depan
+                ->orderBy('start_time', 'asc');
+        };
+
+        // Availability — ONLY ITEMS TYPE (Load assets.bookings)
+        $availability = AssetMaster::with(['assets.bookings' => $bookingQuery, 'type'])
             ->whereHas('type', function ($q) {
-                $q->where('name', 'Items');   // <--- filter type items
+                $q->where('name', 'Items');
             })
             ->get();
 
-        //Room Availability
-        $roomAvailability = AssetMaster::with(['assets', 'type'])
+        // Room Availability (Load assets.bookings)
+        $roomAvailability = AssetMaster::with(['assets.bookings' => $bookingQuery, 'type'])
             ->whereHas('type', fn($q) => $q->where('name', 'Rooms'))
             ->get();
 
@@ -57,9 +60,10 @@ class HomeController extends Controller
                 'description' => $i->description,
                 'image_asset' => $i->image_asset,
                 'stock_total' => $i->total,
-                'id_type' => $i->id_type, // <--- PASTIKAN INI ADA
+                'id_type' => $i->id_type,
                 'assets' => $i->assets->map(fn($a) => [
-                    'status' => $a->status
+                    'status' => $a->status,
+                    'bookings' => $a->bookings // <-- Data booking dikirim ke JS
                 ]),
             ];
         });
@@ -72,12 +76,12 @@ class HomeController extends Controller
                 'description' => $i->description,
                 'image_asset' => $i->image_asset,
                 'assets' => $i->assets->map(fn($a) => [
-                    'status' => $a->status
+                    'status' => $a->status,
+                    'bookings' => $a->bookings // <-- Data booking dikirim ke JS
                 ]),
                 'type' => 'Room'
             ];
         });
-
 
         return view('user.home', compact(
             'latestBooking',
@@ -86,7 +90,6 @@ class HomeController extends Controller
             'itemsJson',
             'roomsJson'
         ));
-
     }
 
     // Availability Page
@@ -105,7 +108,16 @@ class HomeController extends Controller
 
         $types = Type::all();
 
-        $items = AssetMaster::with('assets', 'type')
+        // Query Booking Filter
+        $bookingQuery = function ($q) {
+            $q->select('bookings.id_booking', 'start_time', 'end_time', 'status')
+                ->where('status', 'Approved')
+                ->where('end_time', '>', now())
+                ->orderBy('start_time', 'asc');
+        };
+
+        // Load AssetMaster dengan assets dan bookings
+        $items = AssetMaster::with(['assets.bookings' => $bookingQuery, 'type'])
             ->when($search, fn($q) => $q->where('name', 'LIKE', "%$search%"))
             ->when($filterType, fn($q) => $q->where('id_type', $filterType))
             ->orderBy('name', 'asc')
@@ -119,14 +131,14 @@ class HomeController extends Controller
                 'description' => $i->description,
                 'image_asset' => $i->image_asset,
                 'stock_total' => $i->total,
-                'id_type' => $i->id_type, // <--- TAMBAHKAN INI AGAR JS BISA BACA TIPE
+                'id_type' => $i->id_type,
                 'assets' => $i->assets->map(fn($a) => [
-                    'status' => $a->status
+                    'status' => $a->status,
+                    'bookings' => $a->bookings // <-- Data booking dikirim ke JS
                 ]),
             ];
         });
 
-        // Cart count
         $cartCount = Cart::where('id_user', session('user_id'))->count();
 
         return view('user.availability.index', compact(
@@ -142,17 +154,16 @@ class HomeController extends Controller
             'cartCount'
         ));
     }
+
     public function addToCart(Request $request)
     {
         if (!user())
             return response()->json(['error' => 'Unauthorized'], 401);
 
         $request->validate(['id_master' => 'required']);
-
         $userId = session('user_id');
         $master = $request->id_master;
 
-        // Ambil asset available yang belum masuk cart
         $asset = Asset::where('id_master', $master)
             ->where('status', 'Available')
             ->whereNotIn('id_asset', function ($q) use ($userId) {
@@ -161,9 +172,8 @@ class HomeController extends Controller
             ->orderBy('id_asset', 'asc')
             ->first();
 
-        if (!$asset) {
+        if (!$asset)
             return response()->json(['error' => 'No asset available']);
-        }
 
         Cart::create([
             'id_user' => $userId,
@@ -182,7 +192,6 @@ class HomeController extends Controller
         $userId = session('user_id');
         $master = $request->id_master;
 
-        // Ambil asset paling akhir (descending)
         $cartItem = Cart::where('id_user', $userId)
             ->whereIn('id_asset', function ($q) use ($master) {
                 $q->select('id_asset')->from('assets')->where('id_master', $master);
@@ -190,9 +199,8 @@ class HomeController extends Controller
             ->orderBy('id', 'desc')
             ->first();
 
-        if ($cartItem) {
+        if ($cartItem)
             $cartItem->delete();
-        }
 
         return response()->json(['success' => true]);
     }
@@ -215,20 +223,15 @@ class HomeController extends Controller
     {
         if (!user())
             return response()->json(['count' => 0]);
-
         $userId = session('user_id');
-
         $count = Cart::where('id_user', $userId)->count();
-
         return response()->json(['count' => $count]);
     }
 
-    // Get cart list
     public function getCartList()
     {
         if (!user())
             return response()->json([], 401);
-
         $userId = session('user_id');
 
         $cartItems = Cart::where('id_user', $userId)

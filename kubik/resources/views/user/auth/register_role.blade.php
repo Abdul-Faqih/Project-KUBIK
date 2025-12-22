@@ -41,11 +41,11 @@
                     <span class="font-medium text-[#2A2A2A] text-base">Lecturer</span>
                 </div>
 
-                <div class="role-card flex items-center gap-4 px-4 py-4 rounded-xl border border-[#E5E5E5] cursor-pointer transition"
+                {{-- <div class="role-card flex items-center gap-4 px-4 py-4 rounded-xl border border-[#E5E5E5] cursor-pointer transition"
                     data-role="Staff">
                     <img src="{{ asset('images/icon_staff.png') }}" class="w-10">
                     <span class="font-medium text-[#2A2A2A] text-base">Staff</span>
-                </div>
+                </div> --}}
 
             </div>
 

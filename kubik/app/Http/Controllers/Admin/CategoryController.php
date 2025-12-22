@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Spatie\Activitylog\Models\Activity;
 
 class CategoryController extends Controller
 {
@@ -19,7 +20,14 @@ class CategoryController extends Controller
 
         $categories = Category::with(['assetMasters', 'assets'])->get();
 
-        return view('admin.dashboard.categories', compact('categories'));
+        //MENGAMBIL LOG
+        $activities = Activity::where('subject_type', 'App\Models\Category') // Sesuaikan dengan isi kolom subject_type di DB
+            ->with('causer') // Load data admin yang mengubah
+            ->latest() // Urutkan dari yang terbaru
+            ->limit(50) // Batasi 50 log terakhir biar tidak berat
+            ->get();
+
+        return view('admin.dashboard.categories', compact('categories', 'activities'));
     }
 
     /**

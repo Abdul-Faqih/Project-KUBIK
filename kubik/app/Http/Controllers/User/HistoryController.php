@@ -11,6 +11,11 @@ class HistoryController extends Controller
 {
     public function index(Request $request)
     {
+        if (!user()) {
+            return redirect()->route('user.login')
+                ->with('error', 'Please login first.');
+        }
+
         $userId = user()->id_user;
 
         // 1. AMBIL FILTER DARI URL (Default: kosong/all)
@@ -64,10 +69,18 @@ class HistoryController extends Controller
 
     public function detail($id)
     {
+        if (!user()) {
+            return redirect()->route('user.login')->with('error', 'Please login first.');
+        }
         // 1. HEADER BOOKING
         $booking = DB::table('bookings')
-            ->where('id_booking', $id)
-            ->where('id_user', user()->id_user)
+            ->leftJoin('admins', 'bookings.id_admin', '=', 'admins.id_admin') // <--- HUBUNGKAN KE TABEL ADMIN
+            ->where('bookings.id_booking', $id)
+            ->where('bookings.id_user', user()->id_user)
+            ->select(
+                'bookings.*',               // Ambil semua data booking
+                'admins.name as admin_name' // Ambil nama admin sebagai 'admin_name'
+            )
             ->first();
 
         if (!$booking) {
@@ -103,8 +116,10 @@ class HistoryController extends Controller
 
     public function processReturn(Request $request, $id)
     {
+        // VALIDASI ARRAY FILES
         $request->validate([
-            'proof_return' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'proof_return' => 'required',
+            'proof_return.*' => 'image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $booking = DB::table('bookings')->where('id_booking', $id)->first();
@@ -114,19 +129,25 @@ class HistoryController extends Controller
         }
 
         if ($request->hasFile('proof_return')) {
-            $file = $request->file('proof_return');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads/proofs'), $fileName);
+            $savedFiles = [];
 
+            // LOOPING UPLOAD FILES
+            foreach ($request->file('proof_return') as $file) {
+                // Tambahkan uniqid agar nama file tidak bentrok
+                $fileName = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
+                $file->move(public_path('uploads/proofs'), $fileName);
+                $savedFiles[] = $fileName;
+            }
+
+            // SIMPAN KE DB SEBAGAI JSON (String)
             DB::table('bookings')
                 ->where('id_booking', $id)
                 ->update([
                     'status' => 'Completed',
-                    'proof_return' => $fileName,
+                    'proof_return' => json_encode($savedFiles), // Encode array ke JSON
                     'updated_at' => now()
                 ]);
 
-            // GANTI DISINI: Kirim ID booking agar bisa dipakai di link See Details
             return back()->with('successReturn', $id);
         }
 

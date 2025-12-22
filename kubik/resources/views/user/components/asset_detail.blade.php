@@ -34,6 +34,14 @@
 
             <h3 class="text-lg font-semibold mb-1">Detail</h3>
             <p id="detailDescription" class="text-sm text-gray-700 leading-snug"></p>
+            {{-- TAMBAHAN: JADWAL PEMINJAMAN --}}
+            <div id="borrowedScheduleBox" class="mt-4 hidden">
+                <h4 class="text-base font-semibold text-[#F26E21] uppercase tracking-wider mb-2">Booked Schedule</h4>
+                <div id="borrowedList"
+                    class="space-y-2 max-h-[100px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 pr-1">
+                    {{-- List jadwal akan di-inject lewat JS --}}
+                </div>
+            </div>
         </div>
 
         {{-- CART CONTROLS --}}
@@ -46,7 +54,7 @@
 
             <div id="counterBox" class="flex items-center justify-end w-full select-none ">
 
-                <div class="flex items-center justify-between gap-3 bg-[#FFFFFF] rounded-full shadow-md p-2 px-3">
+                <div class="flex items-center justify-between gap-3 bg-[#ffffff] rounded-full shadow-md p-2 px-3">
 
                     <button id="minusBtn"
                         class="w-8 h-8 rounded-full bg-[#F26E21] flex items-center justify-center text-white text-xl font-semibold shadow-md active:scale-90 transition p-0">
@@ -81,7 +89,6 @@
     let assets = [];
 
     // Fungsi-fungsi detail modal
-    // PERBAIKAN: Menambahkan parameter filteredCount
     function openDetail(id, filteredCount = null) {
         currentMaster = id;
         const item = itemData.find(i => i.id_master == id);
@@ -89,17 +96,16 @@
 
         // Ambil ID Type
         currentType = item.id_type || (item.type ? item.type.id_type : '');
-
         assets = item.assets;
 
-        // PERBAIKAN: Gunakan filteredCount jika ada (dari PHP logic date filter),
-        // jika tidak ada, gunakan default (hitung yang status Available)
+        // Hitung Ketersediaan (Logic Lama)
         if (filteredCount !== null) {
             maxAvailable = filteredCount;
         } else {
             maxAvailable = item.assets.filter(a => a.status === "Available").length;
         }
 
+        // Update UI Text & Image (Logic Lama)
         document.getElementById("detailTitle").innerText = item.name;
         document.getElementById("detailImage").src =
             item.image_asset ? `/uploads/assetmasters/${item.image_asset}` : `/images/noimage.png`;
@@ -114,6 +120,59 @@
 
         document.getElementById("detailDescription").innerText =
             item.description ?? "-";
+
+        // --- TAMBAHAN BARU: LOGIKA JADWAL BOOKING ---
+        const scheduleBox = document.getElementById("borrowedScheduleBox");
+        const scheduleList = document.getElementById("borrowedList");
+        scheduleList.innerHTML = ""; // Reset list
+
+        let hasSchedule = false;
+
+        // Loop semua aset di master ini
+        if (item.assets && item.assets.length > 0) {
+            item.assets.forEach(asset => {
+                // Cek bookings di setiap aset
+                if (asset.bookings && asset.bookings.length > 0) {
+                    asset.bookings.forEach(booking => {
+                        // Hanya tampilkan yang APPROVED dan belum selesai (End time > Now)
+                        // Logika sederhana: ambil yang status Approved
+                        if (booking.status === 'Approved') {
+                            hasSchedule = true;
+
+                            // Format Tanggal & Jam (Custom YYYY-MM-DD HH:MM)
+                            const start = new Date(booking.start_time);
+                            const end = new Date(booking.end_time);
+
+                            // Helper function untuk format 2 digit
+                            const pad = (n) => n.toString().padStart(2, '0');
+
+                            const startStr = `${start.getFullYear()}-${pad(start.getMonth() + 1)}-${pad(start.getDate())} ${pad(start.getHours())}:${pad(start.getMinutes())}`;
+                            const endStr = `${end.getFullYear()}-${pad(end.getMonth() + 1)}-${pad(end.getDate())} ${pad(end.getHours())}:${pad(end.getMinutes())}`;
+
+                            // Buat Elemen List
+                            const div = document.createElement("div");
+                            div.className = "bg-orange-50 border border-orange-100 rounded-lg p-2 text-xs text-gray-700 flex items-center gap-2";
+                            div.innerHTML = `
+                                <span class="material-symbols-rounded text-[#F26E21] text-3xl mt-0.5">event_busy</span>
+                                <div>
+                                    <p class="font-semibold text-base text-[#2A2A2A]">Booked for</p>
+                                    <p class="text-sm">${startStr} - ${endStr}</p>
+                                </div>
+                            `;
+                            scheduleList.appendChild(div);
+                        }
+                    });
+                }
+            });
+        }
+
+        // Tampilkan/Sembunyikan Box Jadwal
+        if (hasSchedule) {
+            scheduleBox.classList.remove("hidden");
+        } else {
+            scheduleBox.classList.add("hidden");
+        }
+        // --------------------------------------------
 
         updateUI();
         document.getElementById("detailModal").classList.remove("hidden");
@@ -178,7 +237,7 @@
                         counterBox.classList.remove("hidden");
 
                         // UBAH JADI TONG SAMPAH (STYLE MERAH/PUTIH)
-                        minusBtn.innerHTML = '<span class="material-symbols-rounded text-xl">delete</span>';
+                        minusBtn.innerHTML = '<span class="material-symbols-rounded text-2xl px-20">delete</span>';
                         minusBtn.classList.remove('bg-[#F26E21]', 'text-white');
                         minusBtn.classList.add('bg-red-50', 'text-red-500');
 
