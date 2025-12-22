@@ -8,10 +8,13 @@ use App\Models\Cart;
 use App\Models\Asset;
 use App\Models\AssetMaster;
 use App\Models\Booking;
+use App\Models\Admin;
+use App\Models\AdminNotification;
 use App\Models\BookingAsset;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\File;
+
 
 class UserBookingControlle extends Controller
 {
@@ -77,6 +80,7 @@ class UserBookingControlle extends Controller
 
     public function submitForm(Request $request)
     {
+        // 1. VALIDASI
         $validator = Validator::make($request->all(), [
             'start_date' => 'required|date',
             'start_time' => 'required',
@@ -94,11 +98,13 @@ class UserBookingControlle extends Controller
             DB::beginTransaction();
 
             $user_id = session('user_id');
+            // Pastikan method generateBookingId() ada di class ini
             $newBookingId = $this->generateBookingId();
 
             $startDateTime = $request->start_date . ' ' . $request->start_time . ':00';
             $endDateTime = $request->end_date . ' ' . $request->end_time . ':00';
 
+            // 2. CREATE BOOKING
             $booking = Booking::create([
                 'id_booking' => $newBookingId,
                 'id_user' => $user_id,
@@ -107,6 +113,7 @@ class UserBookingControlle extends Controller
                 'status' => 'Pending',
             ]);
 
+            // 3. INSERT ASSETS (PIVOT)
             $assets = $request->input('assets', []);
             $bookingAssetsData = [];
 
@@ -121,6 +128,7 @@ class UserBookingControlle extends Controller
                 BookingAsset::insert($bookingAssetsData);
             }
 
+            // 4. HANDLE FILE UPLOAD
             if ($request->hasFile('attachment')) {
                 $file = $request->file('attachment');
                 $fileName = $newBookingId . '_' . time() . '.' . $file->getClientOriginalExtension();
@@ -134,15 +142,45 @@ class UserBookingControlle extends Controller
                 $booking->update(['attachment' => $fileName]);
             }
 
+            // 5. HAPUS KERANJANG
             Cart::where('id_user', $user_id)->delete();
+
+            // === 6. NOTIFIKASI ADMIN (FIX UNTUK TRIGGER) ===
+            // Pastikan model Admin sudah di-import: use App\Models\Admin;
+            // Pastikan model AdminNotification sudah di-import: use App\Models\AdminNotification;
+
+            $userName = session('user_name') ?? 'A User';
+            $admins = Admin::all();
+            $notifData = [];
+            $now = now();
+
+            foreach ($admins as $admin) {
+                $notifData[] = [
+                    // PENTING: Set 'null' agar kolom ini masuk query SQL.
+                    // Trigger database kemudian akan menimpa 'null' ini dengan ID acak.
+                    'id_notification' => null,
+
+                    'id_admin' => $admin->id_admin,
+                    'message' => "User <b>{$userName}</b> has submitted a Permission with ID: <b class='text-[#F26E21]'>{$newBookingId}</b>.",
+                    'is_read' => 0,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+            }
+
+            if (!empty($notifData)) {
+                AdminNotification::insert($notifData);
+            }
+            // ======================================
+
             DB::commit();
 
-            // UBAH DISINI: Kembali ke halaman ini dengan membawa ID Booking sukses
             return back()->with('booking_success', $newBookingId);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
+            // Tampilkan error jika terjadi kegagalan sistem
+            return back()->with('error', 'Error: ' . $e->getMessage());
         }
     }
 

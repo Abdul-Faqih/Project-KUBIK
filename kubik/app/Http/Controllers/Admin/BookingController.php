@@ -18,7 +18,7 @@ class BookingController extends Controller
         }
 
         $bookings = Booking::with(['user', 'admin'])
-            ->orderBy('created_at', 'desc')
+            ->orderBy('updated_at', 'desc')
             ->get();
 
         return view('admin.dashboard.booking', compact('bookings'));
@@ -50,7 +50,7 @@ class BookingController extends Controller
 
         // SORTING created_at
         $sortOrder = $request->sort === "asc" ? "asc" : "desc";
-        $query->orderBy('created_at', $sortOrder);
+        $query->orderBy('updated_at', $sortOrder);
 
         $bookings = $query->get();
 
@@ -73,6 +73,32 @@ class BookingController extends Controller
             ->firstOrFail();
 
         return view('admin.dashboard.permissions.permission_detail', compact('booking'));
+    }
+
+    /**
+     * REMOVE ITEM (DETACH ASSET)
+     */
+    public function removeItem($id_booking, $id_asset)
+    {
+        if (!admin())
+            return redirect()->route('admin.login');
+
+        $booking = Booking::findOrFail($id_booking);
+
+        // Hanya boleh hapus jika status masih Pending
+        if ($booking->status !== 'Pending') {
+            return back()->with('error', 'Cannot remove items from processed booking.');
+        }
+
+        // Cek sisa barang, jika tinggal 1 jangan dihapus (harus reject booking sekalian)
+        if ($booking->assets()->count() <= 1) {
+            return back()->with('error', 'Cannot remove the last item. Please reject the booking instead.');
+        }
+
+        // Hapus relasi asset dari booking ini
+        $booking->assets()->detach($id_asset);
+
+        return back()->with('success', 'Item removed from booking list.');
     }
 
     /**

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Type;
 use Illuminate\Http\Request;
+use Spatie\Activitylog\Models\Activity;
 
 class TypeController extends Controller
 {
@@ -25,7 +26,14 @@ class TypeController extends Controller
             ->orderBy('id_type')
             ->get();
 
-        return view('admin.dashboard.types', compact('types'));
+        //MENGAMBIL LOG
+        $activities = Activity::where('subject_type', 'App\Models\Type') // Sesuaikan dengan isi kolom subject_type di DB
+            ->with('causer') // Load data admin yang mengubah
+            ->latest() // Urutkan dari yang terbaru
+            ->limit(50) // Batasi 50 log terakhir biar tidak berat
+            ->get();
+
+        return view('admin.dashboard.types', compact('types', 'activities'));
     }
 
     /**

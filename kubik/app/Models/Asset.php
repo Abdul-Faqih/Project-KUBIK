@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Asset extends Model
 {
     use HasFactory;
+    use LogsActivity; // <--- Pasang Trait
 
     protected $table = 'assets';
     protected $primaryKey = 'id_asset';
@@ -22,6 +25,16 @@ class Asset extends Model
         'condition',
         'updated_at',
     ];
+
+    // Konfigurasi Log
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['id_master', 'status', 'condition']) // Kolom yang dicatat perubahannya
+            ->logOnlyDirty() // Hanya catat jika ada yang berubah
+            ->dontSubmitEmptyLogs()
+            ->useLogName('asset'); // Nama log (opsional, memudahkan filter)
+    }
 
     /* ===========================
        RELATIONSHIPS
@@ -39,6 +52,12 @@ class Asset extends Model
         return $this->hasMany(BookingAsset::class, 'id_asset', 'id_asset');
     }
 
+    public function bookings()
+    {
+        // Relasi ke Booking melalui tabel pivot 'booking_assets'
+        return $this->belongsToMany(Booking::class, 'booking_assets', 'id_asset', 'id_booking');
+    }
+    
     /* ===========================
        HELPERS
     ============================ */

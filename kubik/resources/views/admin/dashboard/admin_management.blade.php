@@ -22,7 +22,7 @@
                 <table class="w-full">
                     <thead class="text-[#2A2A2A] sticky top-0 bg-white text-base">
                         <tr>
-                            <th class="py-2 px-3 text-center">ID Admin</th>
+                            <th class="py-2 px-3 text-center">ID</th>
                             <th class="py-2 px-3 text-left">Name</th>
                             <th class="py-2 px-3 text-left">Email</th>
                             <th class="py-2 px-3 text-center">Role</th>

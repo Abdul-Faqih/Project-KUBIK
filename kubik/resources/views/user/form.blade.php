@@ -362,6 +362,26 @@
                 return;
             }
 
+            // === PERBAIKAN: VALIDASI DURASI MAKSIMAL 3 HARI (72 JAM) ===
+            const startDateTime = new Date(`${startDate}T${startTime}`);
+            const endDateTime = new Date(`${endDate}T${endTime}`);
+
+            if (endDateTime <= startDateTime) {
+                showToast("End time cannot be before or same as Start time!");
+                return;
+            }
+
+            // Hitung selisih waktu dalam milidetik
+            const diffTime = endDateTime - startDateTime;
+            // Konversi ke jam (1000ms * 60s * 60m)
+            const diffHours = diffTime / (1000 * 60 * 60);
+
+            if (diffHours > 72) {
+                showToast("Maximum loan duration is 3 days (72 hours)!");
+                return;
+            }
+            // ============================================================
+
             if (assets === 0) {
                 showToast("Please select at least one Asset or Room!");
                 return;

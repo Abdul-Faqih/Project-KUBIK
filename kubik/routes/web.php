@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\AdminManagementController;
-use App\Http\Controllers\UserNotificationController;
 use Illuminate\Support\Facades\Route;
 
 /* ======================
@@ -17,6 +15,10 @@ use App\Http\Controllers\Admin\TypeController;
 use App\Http\Controllers\Admin\ExportController;
 use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\Admin\UserManagementController;
+use App\Http\Controllers\Admin\AdminManagementController;
+use App\Http\Controllers\Admin\AdminNotificationController;
+use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\ActivityController;
 use App\Http\Controllers\User\Auth\UserAuthController;
 use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\OnBoardingController;
@@ -35,6 +37,16 @@ Route::get('/test-admin', function () {
 
 
 Route::prefix('admin')->group(function () {
+
+    Route::get('/', function () {
+        if (admin()) {
+            // Jika SUDAH login (user() mengembalikan objek user/truthy), arahkan ke home.
+            return redirect()->route('admin.dashboard.home');
+        }
+
+        // Jika BELUM login (user() mengembalikan null/falsy), arahkan ke onboarding 1.
+        return redirect()->route('admin.login');
+    });
 
     // Landing Page / Root
     Route::get('/', function () {
@@ -120,6 +132,10 @@ Route::prefix('admin')->group(function () {
     Route::get('/permissions/{id}', [BookingController::class, 'show'])
         ->name('admin.permissions.detail');
 
+    // Route untuk menghapus item dari list booking
+    Route::delete('/permissions/{id_booking}/remove/{id_asset}', [BookingController::class, 'removeAsset'])
+        ->name('admin.permissions.remove_item');
+
     // Update
     Route::post('/permissions/{id}/update', [BookingController::class, 'update'])
         ->name('admin.permissions.update');
@@ -170,6 +186,10 @@ Route::prefix('admin')->group(function () {
     Route::get('/admin-management/{id}', [AdminManagementController::class, 'detail'])
         ->name('admin.dashboard.admin_management.detail');
 
+    // Route Filter untuk Detail Admin (AJAX)
+    Route::get('/admin-management/{id}/filter', [AdminManagementController::class, 'filterPermissions'])
+        ->name('admin.dashboard.admin_management.filter');
+
     // Page List User
     Route::get('/user-management', [UserManagementController::class, 'index'])
         ->name('admin.dashboard.user_management');
@@ -177,10 +197,22 @@ Route::prefix('admin')->group(function () {
     // AJAX Filter Route
     Route::get('/user-management/filter', [UserManagementController::class, 'filter'])
         ->name('admin.dashboard.user_management.filter');
-    
-        // DETAIL USER ROUTE
+
+    // DETAIL USER ROUTE
     Route::get('/user-management/{id}', [UserManagementController::class, 'detail'])
         ->name('admin.dashboard.user_management.detail');
+
+    // Admin Detail (Route ini menangkap apa saja yg tersisa)
+    Route::get('/profile/{id}', [ProfileController::class, 'detail'])
+        ->name('admin.dashboard.profile');
+
+    // Route Filter untuk Detail Admin (AJAX)
+    Route::get('/profile/{id}/filter', [ProfileController::class, 'filterPermissions'])
+        ->name('admin.dashboard.profile.filter');
+
+    //Log History
+    Route::post('/activity/revert/{id}', [ActivityController::class, 'revert'])
+        ->name('admin.activity.revert');
 
     // ===============================
     // AUTH
@@ -223,6 +255,10 @@ Route::prefix('admin')->group(function () {
     Route::post('/permissions/{id}/update', [BookingController::class, 'update'])->name('admin.permissions.update');
     Route::post('/permissions/{id}/accept', [BookingController::class, 'accept'])->name('admin.permissions.accept');
     Route::post('/permissions/{id}/reject', [BookingController::class, 'reject'])->name('admin.permissions.reject');
+
+    //notification
+    Route::get('/check-notifications', [AdminNotificationController::class, 'checkNotifications'])
+        ->name('admin.notifications.check');
 
     // Export
     Route::get('/export/bookings', [ExportController::class, 'exportBookings'])->name('admin.export.bookings');
@@ -328,9 +364,6 @@ Route::post('/form/submit', [UserBookingControlle::class, 'submitForm'])
 
 Route::get('/profile', [UserProfileController::class, 'index'])
     ->name('user.profile');
-
-Route::get('/profile/notifications', [UserNotificationController::class, 'index'])
-    ->name('user.profile.notification');
 
 Route::get('/profile/details', [UserProfileController::class, 'details'])
     ->name('user.profile.details');

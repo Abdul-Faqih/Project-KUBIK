@@ -10,6 +10,7 @@ use App\Models\Type;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Spatie\Activitylog\Models\Activity;
 
 class DashboardController extends Controller
 {
@@ -153,7 +154,14 @@ class DashboardController extends Controller
             ->orderBy('id_asset')
             ->get();
 
-        return view('admin.dashboard.assets', compact('types', 'categories', 'assets'));
+        //MENGAMBIL LOG
+        $activities = Activity::where('subject_type', 'App\Models\Asset') // Sesuaikan dengan isi kolom subject_type di DB
+            ->with('causer') // Load data admin yang mengubah
+            ->latest() // Urutkan dari yang terbaru
+            ->limit(50) // Batasi 50 log terakhir biar tidak berat
+            ->get();
+
+        return view('admin.dashboard.assets', compact('types', 'categories', 'assets', 'activities'));
     }
 
     /**
