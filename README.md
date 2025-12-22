@@ -9,14 +9,16 @@
 ![GitHub repo size](https://img.shields.io/github/repo-size/Abdul-Faqih/Project-KUBIK?style=flat-square&color=orange)
 
 ---
-
 ## Tim Pengembang
 
 | Nama | Peran | Kontak |
 | :--- | :--- | :--- |
 | **Ahmad Abdul Faqih** | Fullstack Developer / Project Owner | [GitHub](https://github.com/Abdul-Faqih), [Instagram](https://www.instagram.com/bdlllll_/) |
 | **Muhammad Aghnat Mumtaz** | Fullstack Developer | [GitHub](https://github.com/AghnatMumtaz), [Instagram](https://www.instagram.com/mumoon_z/) |
-| Tambahkan Nama Kamu | Frontend / Backend | — |
+| **Oktavian Luthfi** | Perancang Sistem | [Instagram](https://www.instagram.com/okta.luthfi) |
+| **Gabriella Paulita** | Perancang Sistem | [Instagram](https://www.instagram.com/sh.gablerker) |
+| **Wilmaya Firmandatiyas** | Perancang Sistem | [Instagram](https://www.instagram.com/wilmayafirm) |
+| **M. Jafni Abbas** | Perancang Sistem | [Instagram](https://www.instagram.com/abas.sgf) |
 
 ---
 
